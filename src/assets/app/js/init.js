@@ -248,6 +248,7 @@ if (upload) {
         const video = document.getElementById('videoPlayer');
         if (video.src && video.src.startsWith('blob:')) URL.revokeObjectURL(video.src);
         video.src = URL.createObjectURL(selectedFile);
+        document.getElementById('videoSection').classList.add('has-video');
         document.getElementById('uploadText').innerText = selectedFile.name;
         pendingVideoMeta = {
             fileName: selectedFile.name, fileSize: selectedFile.size,

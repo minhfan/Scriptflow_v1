@@ -1,44 +1,50 @@
-            <div class="video-section" id="videoSection">
-                <label class="file-upload" id="uploadLabel">
-                    <input type="file" id="videoUpload" accept="video/*" style="display: none;">
-                    <span id="uploadText">Click or press 'V' to upload a video file</span>
-                </label>
-                <div id="videoMetaSummary" class="video-meta-summary"></div>
-                <div class="video-wrapper" style="position: relative;">
-                    <video id="videoPlayer" disablePictureInPicture></video>
-                    <img id="playbackAnnotationOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 9; pointer-events: none; display: none;" />
-                    <canvas id="videoAnnotationCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: auto; cursor: crosshair; touch-action: none; display: block;"></canvas>
-                </div>
+<div class="video-section" id="videoSection">
+    <label class="file-upload" id="uploadLabel">
+        <input type="file" id="videoUpload" accept="video/*" style="display: none;">
+        <div class="upload-content">
+            <svg class="upload-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span class="upload-title" id="uploadText">Click or press 'V' to select video</span>
+            <span class="upload-subtitle">MP4, MOV, WEBM supported</span>
+            <div id="videoMetaSummary" class="video-meta-summary"></div>
+        </div>
+    </label>
+    <div class="video-wrapper" style="position: relative;">
+        <video id="videoPlayer" disablePictureInPicture></video>
+        <img id="playbackAnnotationOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 9; pointer-events: none; display: none;" />
+        <canvas id="videoAnnotationCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: auto; cursor: crosshair; touch-action: none; display: block;"></canvas>
+    </div>
 
-                <div class="video-controls">
-                    <div class="control-group">
-                        <span class="control-label">Speed</span>
-                        <div class="speed-control" id="speedDisplay" title="Drag L/R or Click">1.00x</div>
-                    </div>
+    <div class="video-controls">
+        <div class="control-group">
+            <span class="control-label">Speed</span>
+            <div class="speed-control" id="speedDisplay" title="Drag L/R or Click">1.00x</div>
+        </div>
 
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <button type="button" class="tool-btn icon primary" id="btnPlayVideo" title="Phát video" aria-label="Phát video" style="font-size: 20px; min-width: 48px; height: 32px; display: flex; justify-content: center; align-items: center; padding: 0;">&#9658;</button>
-                        <div class="big-timecode" id="bigTimecode" title="Click to Copy" style="margin: 0; padding: 0;">00:00:00:00</div>
-                        
-                        <!-- Inline Annotation Toolbar -->
-                        <div class="annotation-toolbar" id="inlineAnnotationToolbar" style="display: flex; gap: 6px; align-items: center; margin-left: 10px; opacity: 0.5; transition: opacity 0.2s;">
-                            <button class="color-btn active" data-color="#ef4444" style="width: 18px; height: 18px; border-radius: 50%; background: #ef4444; border: 2px solid white; cursor: pointer; padding: 0;" title="Red"></button>
-                            <button class="color-btn" data-color="#eab308" style="width: 18px; height: 18px; border-radius: 50%; background: #eab308; border: 2px solid transparent; cursor: pointer; padding: 0;" title="Yellow"></button>
-                            <button class="color-btn" data-color="#22c55e" style="width: 18px; height: 18px; border-radius: 50%; background: #22c55e; border: 2px solid transparent; cursor: pointer; padding: 0;" title="Green"></button>
-                            <input type="color" id="customColorPicker" class="color-btn custom-color" value="#ffffff" style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; background: none;" title="Custom Color">
-                            <div style="width: 1px; height: 16px; background: var(--border); margin: 0 4px;"></div>
-                            <button id="btnAnnotationText" class="btn-fs" style="padding: 2px 6px; font-size: 10px; font-weight: bold;" title="Text Tool">T</button>
-                            <button id="btnAnnotationUndo" class="btn-fs" style="padding: 2px 6px; font-size: 10px;" title="Undo (Ctrl+Z)">Undo</button>
-                            <button id="btnAnnotationClear" class="btn-delete" style="padding: 2px 6px; font-size: 10px;" title="Clear">Clear</button>
-                        </div>
-                    </div>
-
-                    <div class="control-group" style="display: flex; gap: 15px;">
-                        <div class="control-group" style="margin: 0;">
-                            <span class="control-label">Vol</span>
-                            <input type="range" id="volumeSlider" class="vol-slider" min="0" max="1" step="0.05" value="1">
-                        </div>
-                        <button type="button" class="preview-cut-btn" id="btnPreviewCut" title="Preview Cut: OFF (P)" aria-label="Toggle Preview Cut"></button>
-                    </div>
-                </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <button type="button" class="tool-btn icon primary" id="btnPlayVideo" title="Phát video" aria-label="Phát video" style="font-size: 20px; min-width: 48px; height: 32px; display: flex; justify-content: center; align-items: center; padding: 0;">&#9658;</button>
+            <div class="big-timecode" id="bigTimecode" title="Click to Copy" style="margin: 0; padding: 0;">00:00:00:00</div>
+            
+            <!-- Inline Annotation Toolbar -->
+            <div class="annotation-toolbar" id="inlineAnnotationToolbar" style="display: flex; gap: 6px; align-items: center; margin-left: 10px; opacity: 0.5; transition: opacity 0.2s;">
+                <button class="color-btn active" data-color="#ef4444" style="width: 18px; height: 18px; border-radius: 50%; background: #ef4444; border: 2px solid white; cursor: pointer; padding: 0;" title="Red"></button>
+                <button class="color-btn" data-color="#eab308" style="width: 18px; height: 18px; border-radius: 50%; background: #eab308; border: 2px solid transparent; cursor: pointer; padding: 0;" title="Yellow"></button>
+                <button class="color-btn" data-color="#22c55e" style="width: 18px; height: 18px; border-radius: 50%; background: #22c55e; border: 2px solid transparent; cursor: pointer; padding: 0;" title="Green"></button>
+                <input type="color" id="customColorPicker" class="color-btn custom-color" value="#ffffff" style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; background: none;" title="Custom Color">
+                <div style="width: 1px; height: 16px; background: var(--border); margin: 0 4px;"></div>
+                <button id="btnAnnotationText" class="btn-fs" style="padding: 2px 6px; font-size: 10px; font-weight: bold;" title="Text Tool">T</button>
+                <button id="btnAnnotationUndo" class="btn-fs" style="padding: 2px 6px; font-size: 10px;" title="Undo (Ctrl+Z)">Undo</button>
+                <button id="btnAnnotationClear" class="btn-delete" style="padding: 2px 6px; font-size: 10px;" title="Clear">Clear</button>
             </div>
+        </div>
+
+        <div class="control-group" style="display: flex; gap: 10px; align-items: center;">
+            <span class="control-label" style="font-size: 8px;">VOL</span>
+            <input type="range" class="slider" id="volumeSlider" min="0" max="1" step="0.01" value="1" style="width: 50px;">
+            <button type="button" class="preview-cut-btn" id="btnPreviewCut" title="Preview Cut: OFF (P)" aria-label="Toggle Preview Cut"></button>
+            <div style="width: 1px; height: 14px; background: var(--border); margin: 0 4px;"></div>
+            <button type="button" class="tool-btn icon" title="Change Video (V)" aria-label="Change Video" onclick="document.getElementById('videoUpload').click()" style="width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; padding: 0;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            </button>
+        </div>
+    </div>
+</div>

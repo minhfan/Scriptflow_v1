@@ -410,7 +410,7 @@ function renderProjectVideoMeta() {
     if (updatedText)  detailParts.push(updatedText);
 
     summaryEl.style.display = 'block';
-    summaryEl.innerHTML = `<strong>Video gần nhất:</strong> ${escapeHtml(meta.fileName)}${detailParts.length ? `<br>${escapeHtml(detailParts.join(' · '))}` : ''}<br>Chọn lại file để tiếp tục trên máy này.`;
+    summaryEl.innerHTML = `<strong>LAST ACTIVE:</strong> <span style="color:var(--text-main); font-weight: 600;">${escapeHtml(meta.fileName)}</span>${detailParts.length ? `<br><span style="color:var(--text-muted); font-size: 9px; text-transform: uppercase;">${escapeHtml(detailParts.join(' · '))}</span>` : ''}`;
 }
 
 // ── Update Active Sheet Link in header ───────────────────────
