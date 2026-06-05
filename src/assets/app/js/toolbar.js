@@ -54,7 +54,7 @@ async function logAction(actionName) {
     let rv = '';
     let stt = 'pending';
     
-    if (window.isFeedbackMode) {
+    if (isFeedbackMode) {
         const rvEl = document.getElementById('inputReview');
         const sttEl = document.getElementById('inputStatus');
         if (rvEl) rv = rvEl.value.trim();
@@ -77,7 +77,7 @@ async function logAction(actionName) {
         drawing: window.activeDrawing || null,
         status: stt,
         reviewNote: rv,
-        isFeedback: !!window.isFeedbackMode
+        isFeedback: !!isFeedbackMode
     });
     logs.sort((a, b) => a.inSec - b.inSec);
     saveSession();
@@ -231,7 +231,7 @@ function saveEdit() {
         const reviewEl = document.getElementById('inputReview');
         const statusEl = document.getElementById('inputStatus');
         
-        if (window.isFeedbackMode) {
+        if (isFeedbackMode) {
             if (reviewEl) log.reviewNote = reviewEl.value.trim();
             if (statusEl) log.status = statusEl.value.toLowerCase().replace(' ', '_');
         } else {

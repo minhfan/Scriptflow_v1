@@ -159,14 +159,27 @@ function buildImportShortMenu() {
             if (activeInSec !== null) {
                 const actionName = selectedAction || 'OTHERS';
                 if (actionName === 'DELETE' && activeOutSec === null) { openMessageModal('Lỗi', 'Action DELETE bắt buộc phải có TC OUT.'); return; }
-                const st = document.getElementById('inputScript').value.trim();
-                const nt = document.getElementById('inputNote').value.trim();
+                let st = '', nt = '', rv = '', stt = 'pending';
+                if (isFeedbackMode) {
+                    const rvEl = document.getElementById('inputReview');
+                    const sttEl = document.getElementById('inputStatus');
+                    if (rvEl) rv = rvEl.value.trim();
+                    if (sttEl) stt = sttEl.value.toLowerCase().replace(' ', '_');
+                } else {
+                    const scEl = document.getElementById('inputScript');
+                    const ntEl = document.getElementById('inputNote');
+                    if (scEl) st = scEl.value.trim();
+                    if (ntEl) nt = ntEl.value.trim();
+                }
+
                 logDataToSend = {
                     action: actionName, inSec: activeInSec, outSec: activeOutSec, swapSec: activeSwapSec,
                     tcswap: activeSwapSec !== null ? formatTC(activeSwapSec) : '',
                     tcin: formatTC(activeInSec),
                     tcout: activeOutSec !== null ? formatTC(activeOutSec) : '',
-                    script: st, note: nt, timestamp: Date.now()
+                    script: st, note: nt, reviewNote: rv, status: stt,
+                    isFeedback: !!isFeedbackMode,
+                    timestamp: Date.now()
                 };
                 usedForm = true;
             } else if (clipboardLogData !== null) {
@@ -179,8 +192,17 @@ function buildImportShortMenu() {
             const ok = await sendLogToTargetTab(chip.dataset.tab, logDataToSend, chip);
             if (ok) {
                 if (usedForm) {
-                    document.getElementById('inputScript').value = '';
-                    document.getElementById('inputNote').value = '';
+                    if (isFeedbackMode) {
+                        const rvEl = document.getElementById('inputReview');
+                        const sttEl = document.getElementById('inputStatus');
+                        if (rvEl) rvEl.value = '';
+                        if (sttEl) sttEl.value = 'Pending';
+                    } else {
+                        const scEl = document.getElementById('inputScript');
+                        const ntEl = document.getElementById('inputNote');
+                        if (scEl) scEl.value = '';
+                        if (ntEl) ntEl.value = '';
+                    }
                     activeInSec = null; activeOutSec = null; activeSwapSec = null;
                     const valTcIn  = document.getElementById('valTcIn');
                     const valTcOut = document.getElementById('valTcOut');

@@ -117,6 +117,18 @@ if (!actionPresets) {
     }
 }
 
+// Ensure Feedback Preset exists
+if (!actionPresets['feedback_preset']) {
+    actionPresets['feedback_preset'] = {
+        id: 'feedback_preset',
+        name: 'Feedback Mode',
+        isDefault: false, // Allows custom edits without cloning
+        actionList: [...FEEDBACK_TAGS],
+        actionColors: { ...FEEDBACK_COLORS }
+    };
+    localStorage.setItem('autoscript_action_presets', JSON.stringify(actionPresets));
+}
+
 let currentPresetId = localStorage.getItem('autoscript_current_preset_id') || 'default';
 if (!actionPresets[currentPresetId]) currentPresetId = 'default';
 

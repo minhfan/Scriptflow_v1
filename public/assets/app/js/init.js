@@ -75,18 +75,16 @@ window.toggleFeedbackMode = function() {
 
     // Switch Tags Preset
     if (isFeedbackMode) {
-        // Save current user preset back to state just in case, then load feedback
-        if (typeof updateActionButtons === 'function') {
-            actionList = [...FEEDBACK_TAGS];
-            actionColors = { ...FEEDBACK_COLORS };
-            selectedAction = actionList[0];
-            updateActionButtons();
+        window.currentScriptPresetId = currentPresetId;
+        if (typeof loadActionPreset === 'function') {
+            loadActionPreset('feedback_preset');
+            if (typeof updateActionButtons === 'function') updateActionButtons();
         }
     } else {
         // Restore user's current preset
         if (typeof loadActionPreset === 'function') {
-            loadActionPreset(currentPresetId);
-            updateActionButtons();
+            loadActionPreset(window.currentScriptPresetId || 'default');
+            if (typeof updateActionButtons === 'function') updateActionButtons();
         }
     }
 

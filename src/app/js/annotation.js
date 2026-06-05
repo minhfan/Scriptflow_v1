@@ -165,6 +165,12 @@
 
     function startDrawing(e) {
         if (e.target !== canvas) return;
+        
+        // Prevent default mousedown behavior (which steals focus from our dynamic input)
+        if (e.type === 'mousedown') {
+            e.preventDefault();
+        }
+        
         const pos = getPointerPos(e);
         if (isTextTool) {
             addTextInput(pos.x, pos.y);

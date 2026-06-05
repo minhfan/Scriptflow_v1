@@ -182,7 +182,7 @@ async function syncToGoogleSheets() {
     try {
         const sheetId = currentSpreadsheetId || TEMPLATE_SPREADSHEET_ID;
         
-        const isFeedback = !!window.isFeedbackMode;
+        const isFeedback = !!isFeedbackMode;
         const targetTab = isFeedback ? 'Feedback' : (currentSheetTab || 'Full-show');
         
         const logsToSync = logs.filter(log => !!log.isFeedback === isFeedback);

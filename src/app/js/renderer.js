@@ -33,7 +33,7 @@ window.updateRowStatus = function(index, status) {
 
 // ── Render Log Table ─────────────────────────────────────────
 function renderTable() {
-    if (window.isFeedbackMode) {
+    if (isFeedbackMode) {
         if (typeof renderFeedbackFeed === 'function') {
             return renderFeedbackFeed();
         }
@@ -61,7 +61,7 @@ function renderTable() {
 
     // Add indexing to keep original indices, then filter by mode and current active action list
     const activeLogs = logs.map((log, index) => ({ log, index })).filter(item => {
-        if (!!item.log.isFeedback !== !!window.isFeedbackMode) return false;
+        if (!!item.log.isFeedback !== !!isFeedbackMode) return false;
         if (filterQuery !== 'ALL' && item.log.action !== filterQuery) return false;
         if (searchQuery) {
             const text = (item.log.script + ' ' + item.log.note + ' ' + item.log.tcin + ' ' + item.log.tcout + ' ' + (item.log.tcswap || '')).toLowerCase();
@@ -193,7 +193,7 @@ function drawMarkers() {
     // Sort by duration descending so longer items render behind shorter ones
     const sortedLogs = masterLogs
         .map((log, origIndex) => ({ log, origIndex }))
-        .filter(item => !!item.log.isFeedback === !!window.isFeedbackMode)
+        .filter(item => !!item.log.isFeedback === !!isFeedbackMode)
         .sort((a, b) => {
             const durA = (a.log.outSec && a.log.outSec > a.log.inSec) ? (a.log.outSec - a.log.inSec) : 0;
             const durB = (b.log.outSec && b.log.outSec > b.log.inSec) ? (b.log.outSec - b.log.inSec) : 0;

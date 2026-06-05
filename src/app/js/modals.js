@@ -235,12 +235,12 @@ window.openAnnotationModal = function(e, index) {
         
         // Reset zoom
         isImagePreviewZoomed = false;
-        img.style.width = '320px';
+        img.style.width = '480px';
         img.style.cursor = 'zoom-in';
         
         // Position at cursor
-        let x = e ? e.clientX + 10 : window.innerWidth / 2 - 160;
-        let y = e ? e.clientY + 10 : window.innerHeight / 2 - 120;
+        let x = e ? e.clientX + 10 : window.innerWidth / 2 - 240;
+        let y = e ? e.clientY + 10 : window.innerHeight / 2 - 160;
         
         // Initial positioning before we know true height
         content.style.left = x + 'px';
@@ -259,28 +259,43 @@ window.openAnnotationModal = function(e, index) {
         
         // Zoom functionality
         img.onclick = () => {
+            const oldWidth = img.offsetWidth;
+            const oldHeight = img.offsetHeight;
+            let curX = parseInt(content.style.left) || 0;
+            let curY = parseInt(content.style.top) || 0;
+            let targetWidth;
+
             if (!isImagePreviewZoomed) {
-                img.style.width = '800px';
+                targetWidth = 1000;
+                img.style.width = targetWidth + 'px';
                 img.style.cursor = 'zoom-out';
                 isImagePreviewZoomed = true;
-                
-                // Adjust position so it doesn't go off-screen when zoomed
-                setTimeout(() => {
-                    const rect = content.getBoundingClientRect();
-                    let curX = parseInt(content.style.left);
-                    let curY = parseInt(content.style.top);
-                    if (curX + rect.width > window.innerWidth) curX = window.innerWidth - rect.width - 20;
-                    if (curY + rect.height > window.innerHeight) curY = window.innerHeight - rect.height - 20;
-                    if (curX < 0) curX = 10;
-                    if (curY < 0) curY = 10;
-                    content.style.left = curX + 'px';
-                    content.style.top = curY + 'px';
-                }, 210); // Wait for transition
             } else {
-                img.style.width = '320px';
+                targetWidth = 480;
+                img.style.width = targetWidth + 'px';
                 img.style.cursor = 'zoom-in';
                 isImagePreviewZoomed = false;
             }
+
+            // Mathematically center the zoom
+            const scaleRatio = targetWidth / oldWidth;
+            const targetHeight = oldHeight * scaleRatio;
+            const dx = (targetWidth - oldWidth) / 2;
+            const dy = (targetHeight - oldHeight) / 2;
+            
+            curX -= dx;
+            curY -= dy;
+
+            // Keep within bounds
+            setTimeout(() => {
+                const rect = content.getBoundingClientRect();
+                if (curX + rect.width > window.innerWidth) curX = window.innerWidth - rect.width - 20;
+                if (curY + rect.height > window.innerHeight) curY = window.innerHeight - rect.height - 20;
+                if (curX < 0) curX = 10;
+                if (curY < 0) curY = 10;
+                content.style.left = curX + 'px';
+                content.style.top = curY + 'px';
+            }, 10);
         };
 
         // Drag functionality
