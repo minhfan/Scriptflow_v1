@@ -45,7 +45,7 @@
                         <button type="button" class="action-button" data-action="OTHERS" role="radio">OTHERS</button>
                     </div>
                 </div>
-                <div style="display: flex; gap: 10px; align-items: stretch; margin-top: 10px; flex: 1;">
+                <div style="display: flex; flex-direction: row; gap: 10px; align-items: stretch; margin-top: 10px; flex: 1;">
                     <div style="display: flex; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
                         <!-- Script Mode Inputs -->
                         <div class="script-mode-inputs" style="display: flex; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
@@ -75,14 +75,12 @@
                             </div>
                         </div>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 4px; height: 100%;">
-                        <label style="visibility: hidden; margin-bottom: 2px;">IMPORT</label>
-                        <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; width: 70px;">
-                            <button type="button" id="btnToolbarImport" title="Import action (Shift+Enter)" style="flex: 2; font-size: 24.00px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--bg-input); border: 1px solid var(--border-bright); color: var(--text-main); transition: all var(--t-fast); box-shadow: inset 0 1px 0 var(--border-highlight);" onmouseover="this.style.background='var(--primary)';this.style.borderColor='var(--primary)';" onmouseout="this.style.background='var(--bg-input)';this.style.borderColor='var(--border-bright)';">&#10140;</button>
-                            <div class="import-short-wrapper">
-                                <button type="button" id="btnToolbarImportShort" title="Import to specific Short tab" style="width:100%; font-size: 16px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--bg-input); border: 1px solid var(--border-bright); color: var(--text-main); transition: all var(--t-fast); box-shadow: inset 0 1px 0 var(--border-highlight);" onmouseover="this.style.background='var(--bg-hover)';this.style.borderColor='var(--accent)';" onmouseout="this.style.background='var(--bg-input)';this.style.borderColor='var(--border-bright)';">&#10140;<sub style="font-size: 9px; margin-left: 2px; font-weight: bold; position: relative; bottom: -2px;">S</sub></button>
-                                <div class="floating-tab-menu" id="importShortFloatingMenu"></div>
-                            </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 10px; width: 140px; flex-shrink: 0; padding-top: 18px;">
+                        <button type="button" id="btnToolbarImport" title="Import action (Shift+Enter)" style="flex: 1; flex-direction: column; font-size: 14px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; letter-spacing: 0.05em; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--primary); border: 1px solid var(--primary-hover); color: #fff; transition: all var(--t-spring); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);" onmouseover="this.style.background='var(--primary-hover)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='var(--primary)'; this.style.transform='none';">IMPORT</button>
+                        <div class="import-short-wrapper" style="width: 100%; height: 44px; flex-shrink: 0;">
+                            <button type="button" id="btnToolbarImportShort" title="Import to specific Short tab" style="width:100%; height: 100%; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--bg-raised); border: 1px solid var(--border-bright); color: var(--text-main); transition: all var(--t-spring); box-shadow: inset 0 1px 0 var(--border-highlight);" onmouseover="this.style.background='var(--bg-hover)';this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='var(--bg-raised)';this.style.borderColor='var(--border-bright)';this.style.transform='none';">SHORT <sub style="font-size: 9px; margin-left: 4px; font-weight: bold; position: relative; bottom: -1px; color: var(--accent);">➔</sub></button>
+                            <div class="floating-tab-menu" id="importShortFloatingMenu"></div>
                         </div>
                     </div>
                 </div>

@@ -25,6 +25,9 @@
         </div>
         <div class="header-controls">
             <span id="saveStatus" style="font-family: 'JetBrains Mono', monospace; background: var(--bg-input); box-shadow: inset 0 1px 0 var(--border-highlight); font-size: 9px; padding: 5px 12px; border-radius: var(--r-sm);">Saved</span>
+            
+            <button id="btnModeToggle" class="btn-header" style="font-weight: 700; width: auto; background: var(--accent); color: #fff; border-color: var(--accent); text-shadow: 0 1px 2px rgba(0,0,0,0.2);" onclick="window.toggleFeedbackMode()" title="Toggle Feedback Mode">Script Mode</button>
+            
             <select id="fpsSelect" class="btn-header" style="width: auto;">
                 <option value="23.976">23.976 fps</option>
                 <option value="24">24 fps</option>
@@ -35,15 +38,6 @@
                 <option value="59.94">59.94 fps</option>
                 <option value="60">60 fps</option>
             </select>
-            <select id="themeSelect" class="btn-header" style="width: auto;">
-                <option value="dark">Dark Tech</option>
-                <option value="light">Light</option>
-                <option value="blue">Blue</option>
-            </select>
-
-            <button id="btnLangToggle" class="btn-header" style="font-weight: 700; width: auto;" onclick="window.toggleLanguage()">ENG</button>
-            
-            <button id="btnModeToggle" class="btn-header" style="font-weight: 700; width: auto; background: var(--accent); color: #fff; border-color: var(--accent); text-shadow: 0 1px 2px rgba(0,0,0,0.2);" onclick="window.toggleFeedbackMode()" title="Toggle Feedback Mode">Script Mode</button>
             
             <select id="exportSelect" class="btn-header" style="width: auto; font-weight: 700;" title="Export Project">
                 <option value="" data-i18n="btn_export">&#10515; Export</option>
@@ -53,8 +47,22 @@
                 <option value="xml">Premiere XML</option>
                 <option value="edl">Resolve EDL</option>
             </select>
-            <button class="btn-header" id="btnShortcuts" data-i18n="btn_settings">Settings</button>
-            <button class="btn-header" id="btnHelp" data-i18n="btn_shortcuts">Shortcuts</button>
+
+            <div class="pref-dropdown">
+                <button class="btn-header pref-trigger" title="Preferences" style="display: flex; align-items: center; justify-content: center; padding: 6px 10px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
+                <div class="pref-menu">
+                    <select id="themeSelect" class="btn-header pref-item">
+                        <option value="dark">Dark Tech</option>
+                        <option value="light">Light</option>
+                        <option value="blue">Blue</option>
+                    </select>
+                    <button id="btnLangToggle" class="btn-header pref-item" onclick="window.toggleLanguage()">ENG</button>
+                    <button class="btn-header pref-item" id="btnShortcuts" data-i18n="btn_settings">Settings</button>
+                    <button class="btn-header pref-item" id="btnHelp" data-i18n="btn_shortcuts">Shortcuts</button>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -210,7 +218,7 @@
                         <button type="button" class="action-button" data-action="OTHERS" role="radio">OTHERS</button>
                     </div>
                 </div>
-                <div style="display: flex; gap: 10px; align-items: stretch; margin-top: 10px; flex: 1;">
+                <div style="display: flex; flex-direction: row; gap: 10px; align-items: stretch; margin-top: 10px; flex: 1;">
                     <div style="display: flex; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
                         <!-- Script Mode Inputs -->
                         <div class="script-mode-inputs" style="display: flex; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
@@ -240,14 +248,12 @@
                             </div>
                         </div>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 4px; height: 100%;">
-                        <label style="visibility: hidden; margin-bottom: 2px;">IMPORT</label>
-                        <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; width: 70px;">
-                            <button type="button" id="btnToolbarImport" title="Import action (Shift+Enter)" style="flex: 2; font-size: 24.00px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--bg-input); border: 1px solid var(--border-bright); color: var(--text-main); transition: all var(--t-fast); box-shadow: inset 0 1px 0 var(--border-highlight);" onmouseover="this.style.background='var(--primary)';this.style.borderColor='var(--primary)';" onmouseout="this.style.background='var(--bg-input)';this.style.borderColor='var(--border-bright)';">&#10140;</button>
-                            <div class="import-short-wrapper">
-                                <button type="button" id="btnToolbarImportShort" title="Import to specific Short tab" style="width:100%; font-size: 16px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--bg-input); border: 1px solid var(--border-bright); color: var(--text-main); transition: all var(--t-fast); box-shadow: inset 0 1px 0 var(--border-highlight);" onmouseover="this.style.background='var(--bg-hover)';this.style.borderColor='var(--accent)';" onmouseout="this.style.background='var(--bg-input)';this.style.borderColor='var(--border-bright)';">&#10140;<sub style="font-size: 9px; margin-left: 2px; font-weight: bold; position: relative; bottom: -2px;">S</sub></button>
-                                <div class="floating-tab-menu" id="importShortFloatingMenu"></div>
-                            </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 10px; width: 140px; flex-shrink: 0; padding-top: 18px;">
+                        <button type="button" id="btnToolbarImport" title="Import action (Shift+Enter)" style="flex: 1; flex-direction: column; font-size: 14px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; letter-spacing: 0.05em; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--primary); border: 1px solid var(--primary-hover); color: #fff; transition: all var(--t-spring); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);" onmouseover="this.style.background='var(--primary-hover)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='var(--primary)'; this.style.transform='none';">IMPORT</button>
+                        <div class="import-short-wrapper" style="width: 100%; height: 44px; flex-shrink: 0;">
+                            <button type="button" id="btnToolbarImportShort" title="Import to specific Short tab" style="width:100%; height: 100%; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--bg-raised); border: 1px solid var(--border-bright); color: var(--text-main); transition: all var(--t-spring); box-shadow: inset 0 1px 0 var(--border-highlight);" onmouseover="this.style.background='var(--bg-hover)';this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='var(--bg-raised)';this.style.borderColor='var(--border-bright)';this.style.transform='none';">SHORT <sub style="font-size: 9px; margin-left: 4px; font-weight: bold; position: relative; bottom: -1px; color: var(--accent);">➔</sub></button>
+                            <div class="floating-tab-menu" id="importShortFloatingMenu"></div>
                         </div>
                     </div>
                 </div>
@@ -267,7 +273,7 @@
                     <span class="log-count-badge" id="logCount" style="margin-left: 8px; font-size: 14px;">0</span>
                 </h2>
             </div>
-            <div class="action-btns" style="display: flex; align-items: center; width: 100%; margin-bottom: 16px; gap: 10px;">
+            <div class="action-btns" style="display: flex; flex-wrap: wrap; align-items: center; width: 100%; margin-bottom: 16px; gap: 10px;">
                 <div style="position: relative;">
                     <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; display: flex; align-items: center;">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
@@ -290,15 +296,15 @@
                     </span>
                     <input type="text" id="searchInput" placeholder="Search script, timecode..." style="background: var(--bg-input); border: 1px solid var(--border-bright); border-radius: var(--r-sm); color: var(--text-main); font-size: 11px; padding: 6px 12px 6px 28px; width: 240px; outline: none; font-family: 'Plus Jakarta Sans', sans-serif; box-shadow: inset 0 1px 0 var(--border-highlight); transition: all var(--t-fast);">
                 </div>
-                <div style="display: flex; gap: 6px; margin-left: auto; align-items: center;">
-                    <label class="btn-action btn-import btn-header" id="lblImport" style="cursor: pointer; margin: 0; background: var(--bg-input);">
+                <div style="display: flex; gap: 4px; margin-left: auto; align-items: center;">
+                    <label class="btn-action btn-header" id="lblImport" title="Import CSV" style="cursor: pointer; margin: 0; padding: 6px 10px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid transparent; box-shadow: none; color: var(--text-muted);" onmouseover="this.style.color='var(--text-main)';this.style.background='var(--bg-hover)';" onmouseout="this.style.color='var(--text-muted)';this.style.background='transparent';">
                         <input type="file" id="csvImport" accept=".csv, .xlsx, .xls" style="display: none;">
-                        Import
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                     </label>
-                    <button type="button" class="btn-action btn-header" id="btnToggleView" title="Toggle Grid/Table View" style="padding: 6px 10px; display: flex; align-items: center; justify-content: center;">
+                    <button type="button" class="btn-action btn-header" id="btnToggleView" title="Toggle Grid/Table View" style="padding: 6px 10px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid transparent; box-shadow: none; color: var(--text-muted);" onmouseover="this.style.color='var(--text-main)';this.style.background='var(--bg-hover)';" onmouseout="this.style.color='var(--text-muted)';this.style.background='transparent';">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                     </button>
-                    <button type="button" class="btn-action btn-sync-brand btn-header" id="btnSyncSheets" title="Sync current sheet" style="background: var(--accent); color: #fff; border-color: var(--accent);">Sync Sheet</button>
+                    <button type="button" class="btn-action btn-sync-brand btn-header" id="btnSyncSheets" title="Sync current sheet" style="background: var(--success); color: #000; border-color: var(--success); font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); text-transform: uppercase; letter-spacing: 0.05em; margin-left: 8px; padding: 6px 16px; transition: all var(--t-spring);" onmouseover="this.style.transform='translateY(-1px)';" onmouseout="this.style.transform='none';">Sync Sheet</button>
                 </div>
             </div>
             <div class="table-wrap">

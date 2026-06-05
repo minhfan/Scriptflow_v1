@@ -7,6 +7,9 @@
         </div>
         <div class="header-controls">
             <span id="saveStatus" style="font-family: 'JetBrains Mono', monospace; background: var(--bg-input); box-shadow: inset 0 1px 0 var(--border-highlight); font-size: 9px; padding: 5px 12px; border-radius: var(--r-sm);">Saved</span>
+            
+            <button id="btnModeToggle" class="btn-header" style="font-weight: 700; width: auto; background: var(--accent); color: #fff; border-color: var(--accent); text-shadow: 0 1px 2px rgba(0,0,0,0.2);" onclick="window.toggleFeedbackMode()" title="Toggle Feedback Mode">Script Mode</button>
+            
             <select id="fpsSelect" class="btn-header" style="width: auto;">
                 <option value="23.976">23.976 fps</option>
                 <option value="24">24 fps</option>
@@ -17,15 +20,6 @@
                 <option value="59.94">59.94 fps</option>
                 <option value="60">60 fps</option>
             </select>
-            <select id="themeSelect" class="btn-header" style="width: auto;">
-                <option value="dark">Dark Tech</option>
-                <option value="light">Light</option>
-                <option value="blue">Blue</option>
-            </select>
-
-            <button id="btnLangToggle" class="btn-header" style="font-weight: 700; width: auto;" onclick="window.toggleLanguage()">ENG</button>
-            
-            <button id="btnModeToggle" class="btn-header" style="font-weight: 700; width: auto; background: var(--accent); color: #fff; border-color: var(--accent); text-shadow: 0 1px 2px rgba(0,0,0,0.2);" onclick="window.toggleFeedbackMode()" title="Toggle Feedback Mode">Script Mode</button>
             
             <select id="exportSelect" class="btn-header" style="width: auto; font-weight: 700;" title="Export Project">
                 <option value="" data-i18n="btn_export">&#10515; Export</option>
@@ -35,7 +29,21 @@
                 <option value="xml">Premiere XML</option>
                 <option value="edl">Resolve EDL</option>
             </select>
-            <button class="btn-header" id="btnShortcuts" data-i18n="btn_settings">Settings</button>
-            <button class="btn-header" id="btnHelp" data-i18n="btn_shortcuts">Shortcuts</button>
+
+            <div class="pref-dropdown">
+                <button class="btn-header pref-trigger" title="Preferences" style="display: flex; align-items: center; justify-content: center; padding: 6px 10px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
+                <div class="pref-menu">
+                    <select id="themeSelect" class="btn-header pref-item">
+                        <option value="dark">Dark Tech</option>
+                        <option value="light">Light</option>
+                        <option value="blue">Blue</option>
+                    </select>
+                    <button id="btnLangToggle" class="btn-header pref-item" onclick="window.toggleLanguage()">ENG</button>
+                    <button class="btn-header pref-item" id="btnShortcuts" data-i18n="btn_settings">Settings</button>
+                    <button class="btn-header pref-item" id="btnHelp" data-i18n="btn_shortcuts">Shortcuts</button>
+                </div>
+            </div>
         </div>
     </header>
