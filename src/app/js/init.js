@@ -367,6 +367,17 @@ document.getElementById('tcJumpClose').addEventListener('click', hideTimecodeJum
 const btnToolbarImport = document.getElementById('btnToolbarImport');
 if (btnToolbarImport) btnToolbarImport.addEventListener('click', saveLog);
 
+const btnCaptureFrame = document.getElementById('btnCaptureFrame');
+if (btnCaptureFrame) btnCaptureFrame.addEventListener('click', () => { if(window.captureVideoFrame) window.captureVideoFrame(); });
+
+const btnToggleView = document.getElementById('btnToggleView');
+if (btnToggleView) {
+    btnToggleView.addEventListener('click', () => {
+        isStoryboardView = !isStoryboardView;
+        renderTable();
+    });
+}
+
 // ── Sync Sheets ───────────────────────────────────────────────
 const btnSyncSheets = document.getElementById('btnSyncSheets');
 if (btnSyncSheets) btnSyncSheets.addEventListener('click', syncToGoogleSheets);

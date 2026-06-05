@@ -1,5 +1,5 @@
             <div class="form-section" id="formSection">
-                <div class="tc-row">
+                <div class="tc-row" style="position: relative;">
                     <div class="tc-box" id="boxIn" title="Seek to IN (Q) / Mark if empty">
                         <span>TC IN</span>
                         <div class="time" id="valTcIn">00:00:00:00</div>
@@ -12,6 +12,9 @@
                         <span>TC SWAP (E)</span>
                         <div class="time" id="valTcSwap">00:00:00:00</div>
                     </div>
+                    <button type="button" id="btnCaptureFrame" title="Capture current frame" style="background: transparent; border: 1px solid var(--border-bright); color: var(--text-muted); border-radius: var(--r-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0 10px; margin-left: auto; transition: all 0.2s;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    </button>
                 </div>
                 <div class="input-group">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative;" id="tagPresetContainer">

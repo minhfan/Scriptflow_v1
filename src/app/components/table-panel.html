@@ -36,6 +36,9 @@
                         <input type="file" id="csvImport" accept=".csv, .xlsx, .xls" style="display: none;">
                         Import
                     </label>
+                    <button type="button" class="btn-action" id="btnToggleView" title="Toggle Grid/Table View">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    </button>
                     <button type="button" class="btn-action btn-sync-brand" id="btnSyncSheets" title="Sync current sheet">Sync Sheet</button>
                 </div>
             </div>
@@ -44,10 +47,13 @@
                     <colgroup>
                         <col class="col-stt">
                         <col class="col-play" style="width: 44px;">
+                        <col class="col-thumb" style="width: 60px;">
+                        <col class="col-status" style="width: 90px;">
                         <col class="col-action">
                         <col class="col-tc">
                         <col class="col-tc">
                         <col class="col-tc">
+                        <col>
                         <col>
                         <col>
                         <col class="col-delete">
@@ -56,16 +62,22 @@
                         <tr>
                             <th data-i18n="col_stt">STT</th>
                             <th></th>
+                            <th data-i18n="col_thumb">THUMB</th>
+                            <th data-i18n="col_status">STATUS</th>
                             <th data-i18n="col_tag">TAG</th>
                             <th data-i18n="col_in">TC IN</th>
                             <th data-i18n="col_out">TC OUT</th>
                             <th data-i18n="col_swap">TC SWAP</th>
                             <th data-i18n="col_script">SCRIPT</th>
                             <th data-i18n="col_note">NOTE</th>
+                            <th data-i18n="col_review">REVIEW</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody id="logBody"></tbody>
                 </table>
+            </div>
+            <div id="storyboardContainer" class="storyboard-wrap" style="display: none;">
+                <!-- Storyboard cards will be generated here -->
             </div>
         </div>

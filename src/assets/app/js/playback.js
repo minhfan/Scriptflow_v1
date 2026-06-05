@@ -593,3 +593,40 @@ window.renderTagPresetMenu = function() {
         }
     }
 })();
+
+// ── Capture Video Frame ──────────────────────────────────────
+window.captureVideoFrame = function() {
+    const video = document.getElementById('videoPlayer');
+    const btn = document.getElementById('btnCaptureFrame');
+    if (!video || video.readyState < 2) return;
+    
+    try {
+        const canvas = document.createElement('canvas');
+        // Calculate thumbnail size (e.g. max width 160px)
+        const maxWidth = 160;
+        const scale = maxWidth / video.videoWidth;
+        canvas.width = maxWidth;
+        canvas.height = video.videoHeight * scale;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Generate JPEG data URL to save space
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        activeThumbnail = dataUrl;
+        
+        // UI Feedback
+        if (btn) {
+            btn.style.color = 'var(--accent)';
+            btn.style.borderColor = 'var(--accent)';
+            setTimeout(() => {
+                btn.style.color = 'var(--text-muted)';
+                btn.style.borderColor = 'var(--border-bright)';
+            }, 500);
+        }
+        if (window.showToast) window.showToast('Đã chụp thumbnail!', 'success');
+    } catch (e) {
+        console.error('Lỗi khi chụp frame:', e);
+        if (window.showToast) window.showToast('Không thể chụp frame', 'error');
+    }
+};

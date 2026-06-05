@@ -13,10 +13,12 @@ let reverseInterval  = null;
 let activeInSec      = null;
 let activeOutSec     = null;
 let activeSwapSec    = null;
+let activeThumbnail  = null;
 
-// ── Edit Mode ────────────────────────────────────────────────
+// ── Edit Mode & View Mode ──────────────────────────────────────
 let editingRowIndex  = null;
 let menuTargetIndex  = null;
+let isStoryboardView = false;
 
 // ── Preview Cut ──────────────────────────────────────────────
 let isPreviewCut     = false;

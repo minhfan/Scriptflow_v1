@@ -29,6 +29,7 @@ export const APP_JS_MODULES = [
   "src/app/js/state.js",
   "src/app/js/shortcuts.js",
   "src/app/js/modals.js",
+  "src/app/js/annotation.js",
   "src/app/js/api.js",
   "src/app/js/storage.js",
   "src/app/js/export.js",
@@ -54,6 +55,7 @@ export const APP_HTML_COMPONENTS = {
   "<!-- INJECT_COMPONENT:MESSAGE_MODAL -->": "src/app/components/message-modal.html",
   "<!-- INJECT_COMPONENT:CONFIRM_MODAL -->": "src/app/components/confirm-modal.html",
   "<!-- INJECT_COMPONENT:CONTEXT_MENU -->": "src/app/components/context-menu.html",
+  "<!-- INJECT_COMPONENT:ANNOTATION_MODAL -->": "src/app/components/annotation-modal.html",
 };
 
 function resolveProjectPath(relativePath) {

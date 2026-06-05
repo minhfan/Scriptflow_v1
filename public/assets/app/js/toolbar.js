@@ -57,7 +57,10 @@ async function logAction(actionName) {
         tcswap: activeSwapSec !== null ? formatTC(activeSwapSec) : '',
         tcin:   formatTC(activeInSec),
         tcout:  activeOutSec !== null ? formatTC(activeOutSec) : '',
-        script: st, note: nt
+        script: st, note: nt,
+        thumb:  activeThumbnail,
+        status: 'pending',
+        reviewNote: ''
     });
     logs.sort((a, b) => a.inSec - b.inSec);
     saveSession();
@@ -81,7 +84,10 @@ async function logAction(actionName) {
         tcswap: activeSwapSec !== null ? formatTC(activeSwapSec) : '',
         tcin:   formatTC(activeInSec),
         tcout:  activeOutSec !== null ? formatTC(activeOutSec) : '',
-        script: st, note: nt
+        script: st, note: nt,
+        thumb:  activeThumbnail,
+        status: 'pending',
+        reviewNote: ''
     };
 
     // Clear workspace
@@ -92,6 +98,7 @@ async function logAction(actionName) {
     const boxOut = document.getElementById('boxOut');
     const boxSwap = document.getElementById('boxSwap');
     activeInSec = null; activeOutSec = null; activeSwapSec = null;
+    activeThumbnail = null;
     if (valTcIn)  valTcIn.innerText  = formatTC(video.currentTime);
     if (valTcOut) valTcOut.innerText = formatTC(video.currentTime);
     if (valTcSwap) valTcSwap.innerText = formatTC(video.currentTime);

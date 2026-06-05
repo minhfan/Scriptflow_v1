@@ -23,14 +23,33 @@ window.updateRowAction = function(index, action) {
     }
 };
 
+window.updateRowStatus = function(index, status) {
+    if (index >= 0 && index < logs.length) {
+        logs[index].status = status;
+        renderTable();
+        saveSession();
+    }
+};
+
 // ── Render Log Table ─────────────────────────────────────────
 function renderTable() {
     const tw = document.querySelector('.table-wrap');
+    const sb = document.getElementById('storyboardContainer');
     const oldScrollTop = tw ? tw.scrollTop : 0;
     const tbody = document.getElementById('logBody');
-    if (!tbody) return;
+    if (!tbody || !sb || !tw) return;
+    
     tbody.innerHTML = '';
+    sb.innerHTML = '';
     let count = 0;
+
+    if (isStoryboardView) {
+        tw.style.display = 'none';
+        sb.style.display = 'grid';
+    } else {
+        tw.style.display = 'block';
+        sb.style.display = 'none';
+    }
 
     logs.forEach((log, index) => {
         if (filterQuery !== 'ALL' && log.action !== filterQuery) return;
@@ -61,19 +80,76 @@ function renderTable() {
 
         const swapVal = log.tcswap || '';
         const outVal  = log.tcout === '00:00:00:00' ? '' : log.tcout;
+        
+        let thumbCell = '';
+        if (log.thumb) {
+            thumbCell = `<img src="${log.thumb}" alt="thumb" style="width: 50px; height: auto; border-radius: 4px; object-fit: cover; border: 1px solid var(--border-bright); cursor: pointer;" onclick="window.openAnnotationModal(${index})">`;
+        } else {
+            thumbCell = `<div style="width: 50px; height: 28px; background: rgba(255,255,255,0.05); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 10px;">-</div>`;
+        }
 
-        tbody.innerHTML += `
-            <tr id="row-${index}" class="log-row ${editClass}" oncontextmenu="showRowMenu(event, ${index})">
-                <td class="td-stt">${index + 1}</td>
-                <td class="td-play">${playButton}</td>
-                <td class="td-action">${actionCell}</td>
-                <td class="td-tc" ${editable} onclick="window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'tcin',this)">${escapeHtml(log.tcin)}</td>
-                <td class="td-tc" ${editable} onclick="window.jumpToTC(${index},'tcout')" onblur="inlineUpdate(${index},'tcout',this)">${outVal ? escapeHtml(outVal) : ''}</td>
-                <td class="td-tc" ${editable} onclick="window.jumpToTC(${index},'tcswap')" onblur="inlineUpdate(${index},'tcswap',this)">${swapVal ? escapeHtml(swapVal) : ''}</td>
-                <td class="td-text" ${editable} onclick="if(this.getAttribute('contenteditable')!=='true') window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'script',this)">${escapeHtml(log.script)}</td>
-                <td class="td-text" ${editable} onclick="if(this.getAttribute('contenteditable')!=='true') window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'note',this)">${escapeHtml(log.note)}</td>
-                <td class="td-delete"><span class="row-tools"><span class="send-tab-wrapper" onmouseenter="buildRowSendMenu(this, ${index})" onmouseleave="hideRowSendMenu(this)"><button class="btn-send" title="Send to Tab">SEND</button></span><button class="btn-delete" onclick="deleteLog(${index})" title="Delete">&#10006;</button></span></td>
-            </tr>`;
+        const currentStatus = log.status || 'pending';
+        let statusColor = 'var(--text-muted)';
+        if (currentStatus === 'approved') statusColor = '#22c55e'; // green
+        if (currentStatus === 'needs_fix') statusColor = '#ef4444'; // red
+
+        const statusSelect = `
+            <select onchange="window.updateRowStatus(${index}, this.value)" style="width:100%; padding:3px 4px; font-size:9px; font-weight:700; background:transparent; color:${statusColor}; border:1px solid var(--border); border-radius:4px; outline:none; cursor:pointer;">
+                <option value="pending" style="color:#000;" ${currentStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="approved" style="color:#000;" ${currentStatus === 'approved' ? 'selected' : ''}>Approved</option>
+                <option value="needs_fix" style="color:#000;" ${currentStatus === 'needs_fix' ? 'selected' : ''}>Needs Fix</option>
+            </select>
+        `;
+
+        if (isStoryboardView) {
+            let sbThumb = '';
+            if (log.thumb) {
+                sbThumb = `<img src="${log.thumb}" alt="thumb" onclick="window.openAnnotationModal(${index})">`;
+            } else {
+                sbThumb = `<div class="storyboard-card-thumb-placeholder">
+                               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M20.4 14.5L16 10 4 20"/></svg>
+                               <span>No Image</span>
+                           </div>`;
+            }
+            
+            sb.innerHTML += `
+                <div class="storyboard-card" id="card-${index}" oncontextmenu="showRowMenu(event, ${index})" style="${currentStatus === 'needs_fix' ? 'border: 1px solid #ef4444;' : currentStatus === 'approved' ? 'border: 1px solid #22c55e;' : ''}">
+                    <div class="storyboard-card-thumb">
+                        ${sbThumb}
+                        <div class="storyboard-card-action">${actionCell}</div>
+                    </div>
+                    <div class="storyboard-card-body">
+                        <div style="margin-bottom: 4px;">${statusSelect}</div>
+                        <div class="storyboard-card-tc">
+                            <span onclick="window.jumpToTC(${index},'tcin')" style="cursor: pointer;">IN: ${escapeHtml(log.tcin)}</span>
+                            ${outVal ? `<span onclick="window.jumpToTC(${index},'tcout')" style="cursor: pointer;">OUT: ${escapeHtml(outVal)}</span>` : ''}
+                        </div>
+                        <div class="storyboard-card-text">${escapeHtml(log.script) || '<em style="color:var(--text-muted);font-size:10px;">(Trống)</em>'}</div>
+                        ${log.note ? `<div class="storyboard-card-note">${escapeHtml(log.note)}</div>` : ''}
+                        ${log.reviewNote ? `<div class="storyboard-card-note" style="background:rgba(239, 68, 68, 0.1); border-left-color: #ef4444;"><strong>Review:</strong> ${escapeHtml(log.reviewNote)}</div>` : ''}
+                        <div class="storyboard-card-tools">
+                            ${playButton || '<span></span>'}
+                            <button class="btn-delete" onclick="deleteLog(${index})" title="Delete">&#10006;</button>
+                        </div>
+                    </div>
+                </div>`;
+        } else {
+            tbody.innerHTML += `
+                <tr id="row-${index}" class="log-row ${editClass}" oncontextmenu="showRowMenu(event, ${index})" style="${currentStatus === 'needs_fix' ? 'background: rgba(239, 68, 68, 0.05);' : currentStatus === 'approved' ? 'background: rgba(34, 197, 94, 0.05);' : ''}">
+                    <td class="td-stt">${index + 1}</td>
+                    <td class="td-play">${playButton}</td>
+                    <td class="td-thumb" style="text-align: center; padding: 4px;">${thumbCell}</td>
+                    <td class="td-status" style="padding: 4px;">${statusSelect}</td>
+                    <td class="td-action">${actionCell}</td>
+                    <td class="td-tc" ${editable} onclick="window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'tcin',this)">${escapeHtml(log.tcin)}</td>
+                    <td class="td-tc" ${editable} onclick="window.jumpToTC(${index},'tcout')" onblur="inlineUpdate(${index},'tcout',this)">${outVal ? escapeHtml(outVal) : ''}</td>
+                    <td class="td-tc" ${editable} onclick="window.jumpToTC(${index},'tcswap')" onblur="inlineUpdate(${index},'tcswap',this)">${swapVal ? escapeHtml(swapVal) : ''}</td>
+                    <td class="td-text" ${editable} onclick="if(this.getAttribute('contenteditable')!=='true') window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'script',this)">${escapeHtml(log.script)}</td>
+                    <td class="td-text" ${editable} onclick="if(this.getAttribute('contenteditable')!=='true') window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'note',this)">${escapeHtml(log.note)}</td>
+                    <td class="td-text" ${editable} onclick="if(this.getAttribute('contenteditable')!=='true') window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'reviewNote',this)">${escapeHtml(log.reviewNote || '')}</td>
+                    <td class="td-delete"><span class="row-tools"><span class="send-tab-wrapper" onmouseenter="buildRowSendMenu(this, ${index})" onmouseleave="hideRowSendMenu(this)"><button class="btn-send" title="Send to Tab">SEND</button></span><button class="btn-delete" onclick="deleteLog(${index})" title="Delete">&#10006;</button></span></td>
+                </tr>`;
+        }
     });
 
     const logCount = document.getElementById('logCount');
