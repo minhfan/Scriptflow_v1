@@ -31,6 +31,7 @@ export const APP_JS_MODULES = [
   "src/app/js/modals.js",
   "src/app/js/api.js",
   "src/app/js/storage.js",
+  "src/app/js/export.js",
   "src/app/js/renderer.js",
   "src/app/js/playback.js",
   "src/app/js/timeline.js",
