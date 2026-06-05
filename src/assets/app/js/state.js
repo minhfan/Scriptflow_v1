@@ -54,7 +54,7 @@ let logHistory  = [];
 let redoHistory = [];
 
 // ── Action Types & Colors (Dynamic) ────────────────────────────
-const defaultActionList = ['DELETE','SWAP','POP-UP','QUESTION','QUOTE','NOTE','OTHERS'];
+const defaultActionList = ['DELETE','SWAP','POP-UP','QUESTION','QUOTE','NOTE','B-ROLL','SFX','OTHERS'];
 const defaultActionColors = {
     'DELETE' : { bg:'#b91c1c', color:'#ffffff' },
     'SWAP'    : { bg:'#ea580c', color:'#ffffff' },
@@ -62,6 +62,8 @@ const defaultActionColors = {
     'QUESTION': { bg:'#1d4ed8', color:'#ffffff' },
     'QUOTE'   : { bg:'#a855f7', color:'#ffffff' },
     'NOTE'    : { bg:'#3f3f46', color:'#f8fafc' },
+    'B-ROLL'  : { bg:'#0891b2', color:'#ffffff' },
+    'SFX'     : { bg:'#f59e0b', color:'#ffffff' },
     'OTHERS'  : { bg:'#1e293b', color:'#e2e8f0' }
 };
 
@@ -114,6 +116,12 @@ if (!actionPresets) {
     // Migration: fix Standard name if it still has (Default)
     if (actionPresets['default'] && actionPresets['default'].name.includes('(Default)')) {
         actionPresets['default'].name = 'Standard';
+    }
+    // Migration: upgrade default preset to 9 items
+    if (actionPresets['default'] && actionPresets['default'].actionList && actionPresets['default'].actionList.length === 7) {
+        actionPresets['default'].actionList = [...defaultActionList];
+        actionPresets['default'].actionColors = { ...defaultActionColors };
+        localStorage.setItem('autoscript_action_presets', JSON.stringify(actionPresets));
     }
 }
 

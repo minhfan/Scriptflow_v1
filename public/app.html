@@ -79,13 +79,6 @@
             </div>
         </div>
     </header>
-
-            <div class="sheet-tabs-container" id="sheetTabsContainer">
-        <button class="sheet-tab active" data-tab="Full-show">Full-show</button>
-        <!-- Dynamic tabs will be added here -->
-    </div>
-
-
     <div class="layout-container" id="mainContainer">
         <div class="left-col" id="leftCol">
             <div class="video-section" id="videoSection">
@@ -115,21 +108,24 @@
             <div class="big-timecode" id="bigTimecode" title="Click to Copy" style="margin: 0; padding: 0;">00:00:00:00</div>
             
             <!-- Inline Annotation Toolbar -->
-            <div class="annotation-toolbar" id="inlineAnnotationToolbar" style="display: flex; gap: 6px; align-items: center; margin-left: 10px; opacity: 0.5; transition: opacity 0.2s;">
-                <button class="color-btn active" data-color="#ef4444" style="width: 18px; height: 18px; border-radius: 50%; background: #ef4444; border: 2px solid white; cursor: pointer; padding: 0;" title="Red"></button>
-                <button class="color-btn" data-color="#eab308" style="width: 18px; height: 18px; border-radius: 50%; background: #eab308; border: 2px solid transparent; cursor: pointer; padding: 0;" title="Yellow"></button>
-                <button class="color-btn" data-color="#22c55e" style="width: 18px; height: 18px; border-radius: 50%; background: #22c55e; border: 2px solid transparent; cursor: pointer; padding: 0;" title="Green"></button>
-                <input type="color" id="customColorPicker" class="color-btn custom-color" value="#ffffff" style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; background: none;" title="Custom Color">
-                <div style="width: 1px; height: 16px; background: var(--border); margin: 0 4px;"></div>
-                <button id="btnAnnotationText" class="btn-fs" style="padding: 2px 6px; font-size: 10px; font-weight: bold;" title="Text Tool">T</button>
-                <button id="btnAnnotationUndo" class="btn-fs" style="padding: 2px 6px; font-size: 10px;" title="Undo (Ctrl+Z)">Undo</button>
-                <button id="btnAnnotationClear" class="btn-delete" style="padding: 2px 6px; font-size: 10px;" title="Clear">Clear</button>
+            <div class="annotation-toolbar" id="inlineAnnotationToolbar" style="display: flex; gap: 6px; align-items: center; margin-left: 10px; opacity: 1; transition: opacity 0.2s; position: relative;">
+                <button id="btnToggleAnnotation" class="btn-fs" style="padding: 2px 6px; font-size: 10px; font-weight: bold; border-radius: 4px;" title="Toggle Annotations" onclick="const tools = document.getElementById('annotationToolsWrapper'); tools.style.display = tools.style.display === 'none' ? 'flex' : 'none';">🖌️ Annotate</button>
+                <div id="annotationToolsWrapper" style="display: none; gap: 6px; align-items: center; background: var(--bg-input); padding: 4px; border-radius: var(--r-md); border: 1px solid var(--border-bright);">
+                    <button class="color-btn active" data-color="#ef4444" style="width: 18px; height: 18px; border-radius: 50%; background: #ef4444; border: 2px solid white; cursor: pointer; padding: 0;" title="Red"></button>
+                    <button class="color-btn" data-color="#eab308" style="width: 18px; height: 18px; border-radius: 50%; background: #eab308; border: 2px solid transparent; cursor: pointer; padding: 0;" title="Yellow"></button>
+                    <button class="color-btn" data-color="#22c55e" style="width: 18px; height: 18px; border-radius: 50%; background: #22c55e; border: 2px solid transparent; cursor: pointer; padding: 0;" title="Green"></button>
+                    <input type="color" id="customColorPicker" class="color-btn custom-color" value="#ffffff" style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; background: none;" title="Custom Color">
+                    <div style="width: 1px; height: 16px; background: var(--border); margin: 0 4px;"></div>
+                    <button id="btnAnnotationText" class="btn-fs" style="padding: 2px 6px; font-size: 10px; font-weight: bold;" title="Text Tool">T</button>
+                    <button id="btnAnnotationUndo" class="btn-fs" style="padding: 2px 6px; font-size: 10px;" title="Undo (Ctrl+Z)">Undo</button>
+                    <button id="btnAnnotationClear" class="btn-delete" style="padding: 2px 6px; font-size: 10px;" title="Clear">Clear</button>
+                </div>
             </div>
         </div>
 
         <div class="control-group" style="display: flex; gap: 10px; align-items: center;">
             <span class="control-label" style="font-size: 8px;">VOL</span>
-            <input type="range" class="slider" id="volumeSlider" min="0" max="1" step="0.01" value="1" style="width: 50px;">
+            <input type="range" class="slider" id="volumeSlider" min="0" max="1" step="0.01" value="1" style="width: 100px;">
             <button type="button" class="preview-cut-btn" id="btnPreviewCut" title="Preview Cut: OFF (P)" aria-label="Toggle Preview Cut"></button>
             <div style="width: 1px; height: 14px; background: var(--border); margin: 0 4px;"></div>
             <button type="button" class="tool-btn icon" title="Change Video (V)" aria-label="Change Video" onclick="document.getElementById('videoUpload').click()" style="width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; padding: 0;">
@@ -137,11 +133,6 @@
             </button>
         </div>
     </div>
-</div>
-
-
-            <div class="resizer-h" id="resizerH1"></div>
-
                         <div class="timeline-section" id="timelineSection" style="position: relative;">
                 <div class="timeline-zoom-controls" style="position: absolute; top: 12px; right: 12px; z-index: 10;">
                     <div style="position: relative; display: inline-block;">
@@ -187,25 +178,25 @@
                     <span class="tc-bound" id="tcEnd" title="Jump to End" style="margin-left: 10px;">00:00:00:00</span>
                 </div>
             </div>
-
+</div>
 
             <div class="resizer-h" id="resizerH2"></div>
 
                         <div class="form-section" id="formSection">
                 <div class="tc-row" style="position: relative;">
-                    <div class="tc-box" id="boxIn" title="Seek to IN (Q) / Mark if empty">
+                    <div class="tc-box" id="boxIn" title="Seek to IN (Q) / Mark if empty" style="flex: 1;">
                         <span>TC IN</span>
                         <div class="time" id="valTcIn">00:00:00:00</div>
                     </div>
-                    <div class="tc-box" id="boxOut" title="Seek to OUT (W) / Mark if empty">
+                    <div class="tc-box" id="boxOut" title="Seek to OUT (W) / Mark if empty" style="flex: 1;">
                         <span>TC OUT</span>
                         <div class="time" id="valTcOut">00:00:00:00</div>
                     </div>
-                    <div class="tc-box" id="boxSwap" title="Seek to SWAP (E) / Mark if empty" style="display: none;">
+                    <div class="tc-box" id="boxSwap" title="Seek to SWAP (E) / Mark if empty" style="display: none; flex: 1;">
                         <span>TC SWAP (E)</span>
                         <div class="time" id="valTcSwap">00:00:00:00</div>
                     </div>
-                    <button type="button" id="btnCaptureFrame" title="Capture current frame" style="background: transparent; border: 1px solid var(--border-bright); color: var(--text-muted); border-radius: var(--r-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0 10px; margin-left: auto; transition: all 0.2s;">
+                    <button type="button" id="btnCaptureFrame" title="Capture current frame" style="display: none; background: transparent; border: 1px solid var(--border-bright); color: var(--text-muted); border-radius: var(--r-sm); cursor: pointer; align-items: center; justify-content: center; padding: 0 10px; margin-left: auto; transition: all 0.2s;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                     </button>
                 </div>
@@ -377,6 +368,10 @@
             </div>
         </div>
 
+            <div class="sheet-tabs-container" id="sheetTabsContainer">
+                <button class="sheet-tab active" data-tab="Full-show">Full-show</button>
+                <!-- Dynamic tabs will be added here -->
+            </div>
     </div>
 
         <div id="floatHelpPanel" class="float-panel">

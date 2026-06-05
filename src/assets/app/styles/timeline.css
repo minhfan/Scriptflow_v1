@@ -41,12 +41,14 @@
 /* ── Timeline Track ─────────────────────────────────────────── */
 .custom-timeline {
     position: relative;
-    height: 24px;
-    background: #52525b;
-    border: 1px solid #71717a;
-    border-radius: 4px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--r-md);
     cursor: pointer;
     transition: height var(--t-fast);
+}
+.custom-timeline:hover {
+    height: 10px;
 }
 
 .timeline-progress {

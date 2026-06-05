@@ -218,11 +218,10 @@ function drawMarkers() {
         }
         placed.push({ start: startSec, end: endSec, level });
 
-        let hideText = false;
+        let hideText = true; // Force hide text per new UI requirements
         if (hasDuration) {
             const timelineWidthPx = timelineWrapper.clientWidth || 1;
             const markerWidthPx   = ((endSec - startSec) / video.duration) * timelineWidthPx;
-            if (markerWidthPx < 50) hideText = true;
         }
 
         const marker = document.createElement('div');
@@ -233,22 +232,27 @@ function drawMarkers() {
         } else {
             marker.style.width = '0%';
         }
-        marker.style.backgroundColor = colorHex + '50';
+        marker.style.backgroundColor = colorHex + 'CC'; // Increase opacity
 
-        const topOffsetDur   = 24 + (level * 22);
-        const topOffsetNoDur = 36 + (level * 22);
-        const lineOffsetNoDur = 16 + (level * 22);
+        const topOffset = 14 + (level * 20);
 
         let pillHTML = '';
+        const firstLetter = escapeHtml(log.action).charAt(0).toUpperCase();
         if (hasDuration) {
             pillHTML = `
-                <div class="action-pill" style="position:absolute; top:-${topOffsetDur}px; left:0; width:100%; height:18px; display:flex; align-items:center; justify-content:center; background:${colorHex}; color:${colorSet.color}; font-size:10px; font-weight:bold; border-radius:6px; pointer-events:auto; cursor:pointer; border:1px solid rgba(255,255,255,0.3); z-index:5; box-shadow:0 2px 4px rgba(0,0,0,0.3); overflow:hidden; text-overflow:ellipsis;">
-                    <span class="action-pill-text" style="display: ${hideText ? 'none' : 'inline'}">${escapeHtml(log.action)}</span>
+                <div class="action-pill" style="position:absolute; top:-${topOffset}px; left:0; width:100%; display:flex; align-items:center; z-index:5; pointer-events:auto; cursor:pointer;">
+                    <div style="width:16px; height:16px; border-radius:50%; background:${colorHex}; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow: 0 1px 3px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.3);">
+                       <span style="font-size:8px; font-weight:bold; color:white; line-height:1; display:flex; align-items:center; justify-content:center; margin-bottom: 0px;">${firstLetter}</span>
+                    </div>
+                    <div style="height:2px; background:${colorHex}; flex-grow:1; box-shadow: 0 1px 2px rgba(0,0,0,0.5);"></div>
                 </div>`;
         } else {
             pillHTML = `
-                <div class="action-pill" style="position:absolute; top:-${topOffsetNoDur}px; left:0; transform:translateX(-50%); background:${colorHex}; width:6px; height:18px; border-radius:3px; pointer-events:auto; cursor:pointer; border:1px solid rgba(255,255,255,0.5); z-index:5; box-shadow:0 2px 4px rgba(0,0,0,0.5);"></div>
-                <div style="position:absolute; top:-${lineOffsetNoDur}px; left:0; transform:translateX(-50%); width:2px; height:${lineOffsetNoDur}px; background:rgba(255,255,255,0.3); z-index:4;"></div>`;
+                <div class="action-pill" style="position:absolute; top:-${topOffset}px; left:0; transform:translateX(-50%); z-index:5; pointer-events:auto; cursor:pointer;">
+                    <div style="width:16px; height:16px; border-radius:50%; background:${colorHex}; display:flex; align-items:center; justify-content:center; box-shadow: 0 1px 3px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.3);">
+                       <span style="font-size:8px; font-weight:bold; color:white; line-height:1; display:flex; align-items:center; justify-content:center; margin-bottom: 0px;">${firstLetter}</span>
+                    </div>
+                </div>`;
         }
 
         let tooltipContent = '';
@@ -331,20 +335,6 @@ function renderTimelineTicks() {
         const tick = document.createElement('div');
         tick.style.cssText = `position:absolute; left:${pct}%; top:0; height:100%; border-left:1px solid rgba(255,255,255,0.1);`;
 
-        const label = document.createElement('div');
-        let labelText = '';
-        if (t > 0) {
-            const h = Math.floor(t / 3600);
-            const m = Math.floor((t % 3600) / 60);
-            const s = Math.floor(t % 60);
-            if (h > 0) labelText += h + 'h';
-            if (m > 0 || (h > 0 && s > 0)) labelText += m + 'm';
-            if (s > 0) labelText += s + 's';
-        }
-        label.innerText = labelText;
-        label.style.cssText = `position:absolute; top:28px; left:-10px; font-size:9px; color:var(--text-muted); pointer-events:none;`;
-
-        tick.appendChild(label);
         ticksContainer.appendChild(tick);
     }
 }

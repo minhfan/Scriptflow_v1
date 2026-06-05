@@ -177,7 +177,7 @@ function initTimelineScrub() {
         const video   = document.getElementById('videoPlayer');
         const tooltip = document.getElementById('hoverTooltip');
         if (!video || !video.duration || !tooltip) { if (tooltip) tooltip.style.display = 'none'; return; }
-        const rect = wrapper.getBoundingClientRect();
+        const rect = timeline.getBoundingClientRect();
         const xPos = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
         tooltip.style.display = 'block';
         tooltip.style.left    = xPos + 'px';

@@ -218,11 +218,10 @@ function drawMarkers() {
         }
         placed.push({ start: startSec, end: endSec, level });
 
-        let hideText = false;
+        let hideText = true; // Force hide text per new UI requirements
         if (hasDuration) {
             const timelineWidthPx = timelineWrapper.clientWidth || 1;
             const markerWidthPx   = ((endSec - startSec) / video.duration) * timelineWidthPx;
-            if (markerWidthPx < 50) hideText = true;
         }
 
         const marker = document.createElement('div');
@@ -233,7 +232,7 @@ function drawMarkers() {
         } else {
             marker.style.width = '0%';
         }
-        marker.style.backgroundColor = colorHex + '50';
+        marker.style.backgroundColor = colorHex + 'CC'; // Increase opacity
 
         const topOffsetDur   = 24 + (level * 22);
         const topOffsetNoDur = 36 + (level * 22);
