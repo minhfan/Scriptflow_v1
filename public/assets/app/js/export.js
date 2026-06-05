@@ -5,7 +5,7 @@
 
 window.handleExport = function(format) {
     if (!logs || logs.length === 0) {
-        alert("No logs to export!");
+        showToast(window.t ? window.t('err_no_logs_export') : "No logs to export!", "error");
         return;
     }
     
