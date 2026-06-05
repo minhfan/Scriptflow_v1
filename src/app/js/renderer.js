@@ -33,12 +33,20 @@ window.updateRowStatus = function(index, status) {
 
 // ── Render Log Table ─────────────────────────────────────────
 function renderTable() {
+    if (window.isFeedbackMode) {
+        if (typeof renderFeedbackFeed === 'function') {
+            return renderFeedbackFeed();
+        }
+    }
+
     const tw = document.querySelector('.table-wrap');
     const sb = document.getElementById('storyboardContainer');
+    const fb = document.getElementById('feedbackContainer');
     const oldScrollTop = tw ? tw.scrollTop : 0;
     const tbody = document.getElementById('logBody');
     if (!tbody || !sb || !tw) return;
     
+    if (fb) fb.style.display = 'none';
     tbody.innerHTML = '';
     sb.innerHTML = '';
     let count = 0;
@@ -524,3 +532,87 @@ function renderSettings() {
         }
     }
 }
+
+// ── Render Feedback Feed ──────────────────────────────────────
+window.renderFeedbackFeed = function() {
+    const fb = document.getElementById('feedbackContainer');
+    const tw = document.querySelector('.table-wrap');
+    const sb = document.getElementById('storyboardContainer');
+    if (!fb) return;
+    
+    // Hide table and storyboard
+    if (tw) tw.style.display = 'none';
+    if (sb) sb.style.display = 'none';
+    fb.style.display = 'flex';
+    
+    // Reset contents
+    fb.innerHTML = '';
+    let count = 0;
+    const currentFilter = document.getElementById('filterAction') ? document.getElementById('filterAction').value : 'ALL';
+    const searchQuery = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : '';
+
+    logs.forEach((log, index) => {
+        // Apply filters
+        if (currentFilter !== 'ALL' && log.action !== currentFilter) return;
+        
+        let searchableStr = `${log.script || ''} ${log.note || ''} ${log.reviewNote || ''} ${log.tcin || ''} ${log.tcout || ''}`.toLowerCase();
+        if (searchQuery && !searchableStr.includes(searchQuery)) return;
+        
+        count++;
+        
+        const outVal  = log.tcout === '00:00:00:00' ? '' : log.tcout;
+        
+        let thumbCell = '';
+        if (log.thumb) {
+            thumbCell = `<div class="feedback-card-thumb"><img src="${log.thumb}" alt="thumb"></div>`;
+        }
+        
+        const currentStatus = log.status || 'pending';
+        let statusColor = 'var(--text-muted)';
+        let statusBorderColor = 'var(--border)';
+        if (currentStatus === 'approved') { statusColor = '#22c55e'; statusBorderColor = '#22c55e'; }
+        if (currentStatus === 'needs_fix') { statusColor = '#ef4444'; statusBorderColor = '#ef4444'; }
+
+        const statusSelect = `
+            <select onchange="window.updateRowStatus(${index}, this.value); event.stopPropagation();" style="padding:2px 8px; font-size:10px; font-weight:700; background:transparent; color:${statusColor}; border:1px solid ${statusBorderColor}; border-radius:4px; outline:none; cursor:pointer;">
+                <option value="pending" style="color:#000;" ${currentStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="approved" style="color:#000;" ${currentStatus === 'approved' ? 'selected' : ''}>Approved</option>
+                <option value="needs_fix" style="color:#000;" ${currentStatus === 'needs_fix' ? 'selected' : ''}>Needs Fix</option>
+            </select>
+        `;
+
+        const actionBadge = `<span style="font-size:10px; font-weight:bold; padding:2px 6px; border-radius:4px; background:var(--bg-input); border:1px solid var(--border-bright); color:var(--text-main);">${escapeHtml(log.action)}</span>`;
+
+        const scriptRef = log.script ? `<div class="feedback-card-script-ref">${escapeHtml(log.script)}</div>` : '';
+
+        const card = document.createElement('div');
+        card.className = 'feedback-card';
+        card.onclick = () => window.jumpToTC(index, 'tcin');
+        
+        card.innerHTML = `
+            <div class="feedback-card-header">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:600; color:var(--accent);">${escapeHtml(log.tcin)} ${outVal ? ` - ${escapeHtml(outVal)}` : ''}</span>
+                    ${actionBadge}
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    ${statusSelect}
+                    <button class="btn-delete" onclick="event.stopPropagation(); deleteLog(${index});" title="Delete" style="padding:2px 6px; font-size:10px;">&#10006;</button>
+                </div>
+            </div>
+            <div class="feedback-card-body">
+                ${thumbCell}
+                <div class="feedback-card-content">
+                    <div class="feedback-card-text">${escapeHtml(log.reviewNote) || '<em style="color:var(--text-muted);font-size:12px;">(No review comment)</em>'}</div>
+                    ${scriptRef}
+                </div>
+            </div>
+        `;
+        
+        fb.appendChild(card);
+    });
+    
+    // Update count display
+    const countBadge = document.getElementById('logCount');
+    if (countBadge) countBadge.textContent = count;
+};

@@ -592,6 +592,41 @@ window.renderTagPresetMenu = function() {
             });
         }
     }
+    // Global timeupdate listener is bound in init.js or we can bind it here
+    const video = document.getElementById('videoPlayer');
+    if (video) {
+        video.addEventListener('timeupdate', () => {
+            if (!logs || logs.length === 0) return;
+            const overlay = document.getElementById('playbackAnnotationOverlay');
+            if (!overlay) return;
+            
+            // Find a log with a drawing where current time is between inSec and outSec
+            const t = video.currentTime;
+            let activeLog = null;
+            
+            for (let i = 0; i < logs.length; i++) {
+                const log = logs[i];
+                if (log.drawing && typeof log.inSec === 'number') {
+                    // Default duration to 3 seconds if no outSec is defined
+                    const out = (typeof log.outSec === 'number' && log.outSec > log.inSec) ? log.outSec : log.inSec + 3;
+                    if (t >= log.inSec && t <= out) {
+                        activeLog = log;
+                        break;
+                    }
+                }
+            }
+            
+            if (activeLog && !window.isDrawingOccurred) { // Don't show playback overlay if actively drawing
+                if (overlay.src !== activeLog.drawing) {
+                    overlay.src = activeLog.drawing;
+                }
+                overlay.style.display = 'block';
+            } else {
+                overlay.style.display = 'none';
+                overlay.src = '';
+            }
+        });
+    }
 })();
 
 // ── Capture Video Frame ──────────────────────────────────────
@@ -611,9 +646,24 @@ window.captureVideoFrame = function() {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         
+        // Also draw annotation canvas if it's visible or has content
+        const annotCanvas = document.getElementById('videoAnnotationCanvas');
+        if (annotCanvas && (annotCanvas.style.display !== 'none' || window.isDrawingOccurred)) {
+            if (annotCanvas.width > 0 && annotCanvas.height > 0) {
+                ctx.drawImage(annotCanvas, 0, 0, canvas.width, canvas.height);
+            }
+        }
+        
         // Generate JPEG data URL to save space
         const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
         activeThumbnail = dataUrl;
+        
+        // If editing an existing row, auto-update it
+        if (typeof editingRowIndex !== 'undefined' && editingRowIndex !== null && logs[editingRowIndex]) {
+            logs[editingRowIndex].thumb = dataUrl;
+            if (typeof renderTable === 'function') renderTable();
+            if (typeof saveSession === 'function') saveSession();
+        }
         
         // UI Feedback
         if (btn) {

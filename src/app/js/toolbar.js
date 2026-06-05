@@ -49,8 +49,23 @@ async function logAction(actionName) {
     }
 
     saveState();
-    const st = document.getElementById('inputScript').value.trim();
-    const nt = document.getElementById('inputNote').value.trim();
+    let st = '';
+    let nt = '';
+    let rv = '';
+    let stt = 'pending';
+    
+    if (window.isFeedbackMode) {
+        const rvEl = document.getElementById('inputReview');
+        const sttEl = document.getElementById('inputStatus');
+        if (rvEl) rv = rvEl.value.trim();
+        if (sttEl) stt = sttEl.value.toLowerCase().replace(' ', '_'); // handle 'NEEDS FIX' -> 'needs_fix'
+    } else {
+        const scEl = document.getElementById('inputScript');
+        const ntEl = document.getElementById('inputNote');
+        if (scEl) st = scEl.value.trim();
+        if (ntEl) nt = ntEl.value.trim();
+    }
+    
     logs.push({
         action: actionName,
         inSec: activeInSec, outSec: activeOutSec, swapSec: activeSwapSec,
@@ -59,8 +74,9 @@ async function logAction(actionName) {
         tcout:  activeOutSec !== null ? formatTC(activeOutSec) : '',
         script: st, note: nt,
         thumb:  activeThumbnail,
-        status: 'pending',
-        reviewNote: ''
+        drawing: window.activeDrawing || null,
+        status: stt,
+        reviewNote: rv
     });
     logs.sort((a, b) => a.inSec - b.inSec);
     saveSession();
@@ -86,6 +102,7 @@ async function logAction(actionName) {
         tcout:  activeOutSec !== null ? formatTC(activeOutSec) : '',
         script: st, note: nt,
         thumb:  activeThumbnail,
+        drawing: window.activeDrawing || logs[editingRowIndex].drawing || null,
         status: 'pending',
         reviewNote: ''
     };
@@ -95,15 +112,23 @@ async function logAction(actionName) {
     const valTcOut = document.getElementById('valTcOut');
     const valTcSwap = document.getElementById('valTcSwap');
     const boxIn  = document.getElementById('boxIn');
-    const boxOut = document.getElementById('boxOut');
+    const boxOut  = document.getElementById('boxOut');
     const boxSwap = document.getElementById('boxSwap');
-    activeInSec = null; activeOutSec = null; activeSwapSec = null;
+    activeInSec = null;
+    activeOutSec = null;
+    activeSwapSec = null;
     activeThumbnail = null;
+    window.activeDrawing = null;
+    if (window.isDrawingOccurred && document.getElementById('btnAnnotationClear')) {
+        document.getElementById('btnAnnotationClear').click();
+    }
     if (valTcIn)  valTcIn.innerText  = formatTC(video.currentTime);
     if (valTcOut) valTcOut.innerText = formatTC(video.currentTime);
     if (valTcSwap) valTcSwap.innerText = formatTC(video.currentTime);
-    document.getElementById('inputScript').value = '';
-    document.getElementById('inputNote').value   = '';
+    if (document.getElementById('inputScript')) document.getElementById('inputScript').value = '';
+    if (document.getElementById('inputNote')) document.getElementById('inputNote').value   = '';
+    if (document.getElementById('inputReview')) document.getElementById('inputReview').value = '';
+    if (document.getElementById('inputStatus')) document.getElementById('inputStatus').value = 'PENDING';
     updateActiveRange();
     if (boxIn)  boxIn.classList.remove('active');
     if (boxOut) boxOut.classList.remove('active');
@@ -146,8 +171,15 @@ window.jumpToTC = function(index, field, useMaster = false) {
         if (boxSwap) boxSwap.classList.add('active');
     }
 
-    document.getElementById('inputScript').value = log.script || '';
-    document.getElementById('inputNote').value   = log.note   || '';
+    if (document.getElementById('inputScript')) document.getElementById('inputScript').value = log.script || '';
+    if (document.getElementById('inputNote')) document.getElementById('inputNote').value   = log.note   || '';
+    if (document.getElementById('inputReview')) document.getElementById('inputReview').value = log.reviewNote || '';
+    if (document.getElementById('inputStatus')) {
+        let val = 'PENDING';
+        if (log.status === 'approved') val = 'APPROVED';
+        if (log.status === 'needs_fix') val = 'NEEDS FIX';
+        document.getElementById('inputStatus').value = val;
+    }
     if (log.action) { selectedAction = log.action; updateActionButtons(); }
     updateActiveRange();
 
@@ -195,8 +227,17 @@ function saveEdit() {
         const log    = logs[editingRowIndex];
         const scriptEl = document.getElementById('inputScript');
         const noteEl   = document.getElementById('inputNote');
-        if (scriptEl) log.script = scriptEl.value.trim();
-        if (noteEl)   log.note   = noteEl.value.trim();
+        const reviewEl = document.getElementById('inputReview');
+        const statusEl = document.getElementById('inputStatus');
+        
+        if (window.isFeedbackMode) {
+            if (reviewEl) log.reviewNote = reviewEl.value.trim();
+            if (statusEl) log.status = statusEl.value.toLowerCase().replace(' ', '_');
+        } else {
+            if (scriptEl) log.script = scriptEl.value.trim();
+            if (noteEl)   log.note   = noteEl.value.trim();
+        }
+        
         log.tcin  = formatTC(log.inSec);
         log.tcout = log.outSec ? formatTC(log.outSec) : '00:00:00:00';
         log.tcswap = log.swapSec ? formatTC(log.swapSec) : '';
@@ -206,8 +247,10 @@ function saveEdit() {
     if (valTcIn)  valTcIn.innerText  = '00:00:00:00';
     if (valTcOut) valTcOut.innerText = '00:00:00:00';
     if (valTcSwap) valTcSwap.innerText = '00:00:00:00';
-    document.getElementById('inputScript').value = '';
-    document.getElementById('inputNote').value   = '';
+    if (document.getElementById('inputScript')) document.getElementById('inputScript').value = '';
+    if (document.getElementById('inputNote')) document.getElementById('inputNote').value   = '';
+    if (document.getElementById('inputReview')) document.getElementById('inputReview').value = '';
+    if (document.getElementById('inputStatus')) document.getElementById('inputStatus').value = 'PENDING';
     updateActiveRange();
     if (boxIn)  boxIn.classList.remove('active');
     if (boxOut) boxOut.classList.remove('active');

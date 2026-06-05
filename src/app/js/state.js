@@ -9,6 +9,16 @@
 let playbackSpeed    = 1.0;
 let reverseInterval  = null;
 
+// ── FEEDBACK TAGS ─────────────────────────────────────────────
+const FEEDBACK_TAGS = ['COLOR', 'AUDIO', 'CUT', 'VFX', 'TEXT'];
+const FEEDBACK_COLORS = {
+    'COLOR': { bg: '#8b5cf6', color: '#ffffff' },
+    'AUDIO': { bg: '#06b6d4', color: '#ffffff' },
+    'CUT':   { bg: '#ef4444', color: '#ffffff' },
+    'VFX':   { bg: '#f59e0b', color: '#ffffff' },
+    'TEXT':  { bg: '#10b981', color: '#ffffff' }
+};
+
 // ── Active TC Points ─────────────────────────────────────────
 let activeInSec      = null;
 let activeOutSec     = null;
@@ -19,6 +29,7 @@ let activeThumbnail  = null;
 let editingRowIndex  = null;
 let menuTargetIndex  = null;
 let isStoryboardView = false;
+let isFeedbackMode   = false;
 
 // ── Preview Cut ──────────────────────────────────────────────
 let isPreviewCut     = false;

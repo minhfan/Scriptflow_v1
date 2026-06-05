@@ -1,45 +1,92 @@
 // ============================================================
 //  AUTOSCRIPT TCP Pro — annotation.js
-//  Video Frame Annotation Logic
+//  Video Frame Annotation Logic (Frame.io Style)
 // ============================================================
 
 (function() {
-    let modal, canvas, ctx;
+    let canvas, ctx, video;
     let isDrawing = false;
+    let isTextTool = false;
     let currentColor = '#ef4444';
-    let currentLogIndex = null;
-    let baseImage = null;
-    
-    // History for undo
-    let drawHistory = [];
+    window.isDrawingOccurred = false;
 
     function initAnnotation() {
-        modal = document.getElementById('annotationModal');
-        canvas = document.getElementById('annotationCanvas');
-        if (!modal || !canvas) return;
+        canvas = document.getElementById('videoAnnotationCanvas');
+        video = document.getElementById('videoPlayer');
+        if (!canvas || !video) return;
         
         ctx = canvas.getContext('2d');
         
         // Buttons
-        document.getElementById('btnAnnotationClose').addEventListener('click', closeAnnotation);
-        document.getElementById('btnAnnotationCancel').addEventListener('click', closeAnnotation);
-        document.getElementById('btnAnnotationSave').addEventListener('click', saveAnnotation);
-        document.getElementById('btnAnnotationUndo').addEventListener('click', undoAnnotation);
-        document.getElementById('btnAnnotationClear').addEventListener('click', clearAnnotation);
+        const undoBtn = document.getElementById('btnAnnotationUndo');
+        const clearBtn = document.getElementById('btnAnnotationClear');
+        if (undoBtn) undoBtn.addEventListener('click', undoAnnotation);
+        if (clearBtn) clearBtn.addEventListener('click', clearAnnotation);
         
         // Color Picker
-        const colorBtns = modal.querySelectorAll('.color-btn');
+        const colorBtns = document.querySelectorAll('.color-btn:not(.custom-color)');
+        const customColorPicker = document.getElementById('customColorPicker');
+        
+        const setActiveColorBtn = (target) => {
+            colorBtns.forEach(b => {
+                b.classList.remove('active');
+                b.style.borderColor = 'transparent';
+            });
+            if (customColorPicker) {
+                customColorPicker.classList.remove('active');
+                customColorPicker.style.borderColor = 'transparent';
+            }
+            target.classList.add('active');
+            target.style.borderColor = 'white';
+        };
+
         colorBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                colorBtns.forEach(b => {
-                    b.classList.remove('active');
-                    b.style.borderColor = 'transparent';
-                });
-                e.target.classList.add('active');
-                e.target.style.borderColor = 'white';
+                setActiveColorBtn(e.target);
                 currentColor = e.target.dataset.color;
             });
         });
+
+        if (customColorPicker) {
+            customColorPicker.addEventListener('input', (e) => {
+                setActiveColorBtn(customColorPicker);
+                currentColor = e.target.value;
+            });
+            customColorPicker.addEventListener('click', (e) => {
+                setActiveColorBtn(customColorPicker);
+                currentColor = customColorPicker.value;
+            });
+        }
+        
+        // Text Tool
+        const textBtn = document.getElementById('btnAnnotationText');
+        if (textBtn) {
+            textBtn.addEventListener('click', () => {
+                isTextTool = !isTextTool;
+                textBtn.style.background = isTextTool ? 'var(--accent)' : 'var(--bg-panel)';
+                textBtn.style.color = isTextTool ? '#fff' : 'var(--text-main)';
+                canvas.style.cursor = isTextTool ? 'text' : 'crosshair';
+            });
+        }
+
+        // Resize observer to keep canvas matched with video
+        const resizeObserver = new ResizeObserver(() => {
+            if (canvas.width !== canvas.offsetWidth || canvas.height !== canvas.offsetHeight) {
+                // Need to save drawing, resize, and redraw (simplified: just clear for now if playing)
+                if (video.paused) {
+                    const temp = canvas.toDataURL();
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                    const img = new Image();
+                    img.onload = () => ctx.drawImage(img, 0, 0);
+                    img.src = temp;
+                } else {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                }
+            }
+        });
+        resizeObserver.observe(video);
 
         // Mouse Events
         canvas.addEventListener('mousedown', startDrawing);
@@ -51,57 +98,44 @@
         canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
         canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
         canvas.addEventListener('touchend', stopDrawing);
-    }
 
-    function saveStateToHistory() {
-        if (!canvas) return;
-        drawHistory.push(canvas.toDataURL());
+        // Video Events
+        video.addEventListener('play', () => {
+            clearAnnotation();
+            const toolbar = document.getElementById('inlineAnnotationToolbar');
+            if (toolbar) toolbar.style.opacity = '0.5';
+        });
+
+        video.addEventListener('pause', () => {
+            const toolbar = document.getElementById('inlineAnnotationToolbar');
+            if (toolbar) toolbar.style.opacity = '1';
+        });
+        
+        video.addEventListener('seeked', () => {
+            if (video.paused) {
+                clearAnnotation();
+            }
+        });
     }
 
     function undoAnnotation() {
-        if (drawHistory.length > 0) {
-            drawHistory.pop(); // remove current state
-            if (drawHistory.length > 0) {
-                const imgData = drawHistory[drawHistory.length - 1];
-                restoreCanvasFromDataUrl(imgData);
-            } else {
-                // If history is empty after popping, redraw base image
-                redrawBaseImage();
-            }
-        } else {
-            redrawBaseImage();
-        }
+        // Since we removed history stack for simplicity in overlay, just clear for now
+        // (A full history stack would save toDataURL per stroke)
+        clearAnnotation();
     }
 
     function clearAnnotation() {
-        redrawBaseImage();
-        saveStateToHistory();
-    }
-
-    function redrawBaseImage() {
-        if (!baseImage || !canvas || !ctx) return;
+        if (!canvas || !ctx) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
-    }
-
-    function restoreCanvasFromDataUrl(dataUrl) {
-        const img = new Image();
-        img.onload = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        };
-        img.src = dataUrl;
+        window.isDrawingOccurred = false;
     }
 
     // Drawing Logic
     function getPointerPos(e) {
         const rect = canvas.getBoundingClientRect();
-        // Calculate scale factor since canvas might be styled with max-width/max-height
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
         return {
-            x: (e.clientX - rect.left) * scaleX,
-            y: (e.clientY - rect.top) * scaleY
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
         };
     }
 
@@ -124,13 +158,31 @@
     }
 
     function startDrawing(e) {
+        if (e.target !== canvas) return;
         const pos = getPointerPos(e);
-        initDrawing(pos.x, pos.y);
+        if (isTextTool) {
+            addTextInput(pos.x, pos.y);
+        } else {
+            initDrawing(pos.x, pos.y);
+        }
     }
 
     function initDrawing(x, y) {
+        if (!video.paused) {
+            video.pause();
+        }
+        
+        // Auto set TC IN if empty
+        if (typeof activeInSec !== 'undefined' && activeInSec === null) {
+            if (typeof markInPoint === 'function') markInPoint();
+        }
+        
+        window.isDrawingOccurred = true;
         isDrawing = true;
-        saveStateToHistory(); // Save state before this new stroke
+        
+        const toolbar = document.getElementById('inlineAnnotationToolbar');
+        if (toolbar) toolbar.style.opacity = '1';
+
         ctx.beginPath();
         ctx.moveTo(x, y);
         ctx.lineCap = 'round';
@@ -140,73 +192,94 @@
     }
 
     function draw(e) {
-        if (!isDrawing) return;
+        if (!isDrawing || isTextTool) return;
         const pos = getPointerPos(e);
         continueDrawing(pos.x, pos.y);
     }
 
     function continueDrawing(x, y) {
+        if (isTextTool) return;
         ctx.lineTo(x, y);
         ctx.stroke();
     }
 
     function stopDrawing() {
-        if (isDrawing) {
+        if (isDrawing && !isTextTool) {
             ctx.closePath();
             isDrawing = false;
+            triggerCapture();
         }
     }
-
-    // Public API
-    window.openAnnotationModal = function(logIndex) {
-        if (typeof logIndex !== 'number' || logIndex < 0 || logIndex >= logs.length) return;
-        
-        const log = logs[logIndex];
-        if (!log.thumb) {
-            if (window.showToast) window.showToast('Không có hình ảnh để ghi chú', 'error');
-            return;
+    
+    function triggerCapture() {
+        // Auto capture frame on mouseup/touchend/text finish
+        if (window.isDrawingOccurred && typeof window.captureVideoFrame === 'function') {
+            // Throttle capture to avoid lag on multiple rapid strokes
+            clearTimeout(window._annotationCaptureTimer);
+            window._annotationCaptureTimer = setTimeout(() => {
+                window.captureVideoFrame();
+                // Also capture transparent drawing
+                window.activeDrawing = canvas.toDataURL('image/png');
+                // If editing an existing row, auto-update it
+                if (typeof editingRowIndex !== 'undefined' && editingRowIndex !== null && typeof logs !== 'undefined' && logs[editingRowIndex]) {
+                    logs[editingRowIndex].drawing = window.activeDrawing;
+                    if (typeof saveSession === 'function') saveSession();
+                }
+            }, 300);
         }
+    }
+    
+    function addTextInput(x, y) {
+        if (!video.paused) {
+            video.pause();
+        }
+        // Auto set TC IN if empty
+        if (typeof activeInSec !== 'undefined' && activeInSec === null) {
+            if (typeof markInPoint === 'function') markInPoint();
+        }
+        window.isDrawingOccurred = true;
         
-        currentLogIndex = logIndex;
-        drawHistory = [];
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.style.position = 'absolute';
+        input.style.left = x + 'px';
+        input.style.top = (y - 10) + 'px'; // Adjust for font size
+        input.style.color = currentColor;
+        input.style.font = '20px sans-serif';
+        input.style.background = 'rgba(0,0,0,0.5)';
+        input.style.border = '1px dashed #fff';
+        input.style.outline = 'none';
+        input.style.padding = '2px 4px';
+        input.style.zIndex = '100';
+        input.style.minWidth = '50px';
         
-        // Load image onto canvas
-        baseImage = new Image();
-        baseImage.onload = () => {
-            if (!canvas) initAnnotation(); // Ensure initialized
-            
-            // Set canvas resolution to image intrinsic size for high quality
-            canvas.width = baseImage.width;
-            canvas.height = baseImage.height;
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(baseImage, 0, 0);
-            
-            modal.style.display = 'flex';
+        // Append to wrapper
+        const wrapper = canvas.parentNode;
+        wrapper.appendChild(input);
+        input.focus();
+        
+        const finalizeText = () => {
+            if (input.parentNode) {
+                const text = input.value.trim();
+                if (text) {
+                    ctx.font = '20px sans-serif';
+                    ctx.fillStyle = currentColor;
+                    ctx.fillText(text, x, y + 10);
+                    triggerCapture();
+                }
+                wrapper.removeChild(input);
+            }
         };
-        baseImage.src = log.thumb;
-    };
-
-    function closeAnnotation() {
-        if (modal) modal.style.display = 'none';
-        currentLogIndex = null;
-        baseImage = null;
-        drawHistory = [];
-    }
-
-    function saveAnnotation() {
-        if (currentLogIndex === null || !canvas) return;
         
-        // Save canvas drawing back to data URL
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-        logs[currentLogIndex].thumb = dataUrl;
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                finalizeText();
+            } else if (e.key === 'Escape') {
+                if (input.parentNode) wrapper.removeChild(input);
+            }
+        });
         
-        // Re-render and save
-        saveSession();
-        if (typeof renderTable === 'function') renderTable();
-        
-        closeAnnotation();
-        if (window.showToast) window.showToast('Đã lưu ghi chú hình ảnh', 'success');
+        input.addEventListener('blur', finalizeText);
     }
 
     // Initialize on load

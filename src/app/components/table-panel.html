@@ -48,14 +48,14 @@
                         <col class="col-stt">
                         <col class="col-play" style="width: 44px;">
                         <col class="col-thumb" style="width: 60px;">
-                        <col class="col-status" style="width: 90px;">
+                        <col class="col-status feedback-only" style="width: 90px;">
                         <col class="col-action">
                         <col class="col-tc">
                         <col class="col-tc">
                         <col class="col-tc">
                         <col>
                         <col>
-                        <col>
+                        <col class="feedback-only">
                         <col class="col-delete">
                     </colgroup>
                     <thead>
@@ -63,14 +63,14 @@
                             <th data-i18n="col_stt">STT</th>
                             <th></th>
                             <th data-i18n="col_thumb">THUMB</th>
-                            <th data-i18n="col_status">STATUS</th>
+                            <th data-i18n="col_status" class="feedback-only">STATUS</th>
                             <th data-i18n="col_tag">TAG</th>
                             <th data-i18n="col_in">TC IN</th>
                             <th data-i18n="col_out">TC OUT</th>
                             <th data-i18n="col_swap">TC SWAP</th>
                             <th data-i18n="col_script">SCRIPT</th>
                             <th data-i18n="col_note">NOTE</th>
-                            <th data-i18n="col_review">REVIEW</th>
+                            <th data-i18n="col_review" class="feedback-only">REVIEW</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -79,5 +79,9 @@
             </div>
             <div id="storyboardContainer" class="storyboard-wrap" style="display: none;">
                 <!-- Storyboard cards will be generated here -->
+            </div>
+            
+            <div id="feedbackContainer" class="feedback-feed" style="display: none;">
+                <!-- Feedback mode cards will be generated here -->
             </div>
         </div>

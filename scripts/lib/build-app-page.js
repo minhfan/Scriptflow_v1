@@ -55,7 +55,7 @@ export const APP_HTML_COMPONENTS = {
   "<!-- INJECT_COMPONENT:MESSAGE_MODAL -->": "src/app/components/message-modal.html",
   "<!-- INJECT_COMPONENT:CONFIRM_MODAL -->": "src/app/components/confirm-modal.html",
   "<!-- INJECT_COMPONENT:CONTEXT_MENU -->": "src/app/components/context-menu.html",
-  "<!-- INJECT_COMPONENT:ANNOTATION_MODAL -->": "src/app/components/annotation-modal.html",
+  "<!-- INJECT_COMPONENT:IMAGE_PREVIEW_MODAL -->": "src/app/components/image-preview-modal.html",
 };
 
 function resolveProjectPath(relativePath) {

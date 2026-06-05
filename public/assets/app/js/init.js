@@ -33,6 +33,74 @@ window.onerror = function(msg, src, line) {
 // ── Legacy OAuth stubs ────────────────────────────────────────
 function isTokenValid() { return true; }
 function updateGoogleUI() {} // legacy stub – overridden below
+window.toggleLanguage = function() {
+    const nextLang = currentLang === 'vi' ? 'en' : 'vi';
+    setLanguage(nextLang);
+};
+
+window.toggleFeedbackMode = function() {
+    isFeedbackMode = !isFeedbackMode;
+    
+    // Update button text
+    const btn = document.getElementById('btnModeToggle');
+    if (btn) {
+        btn.innerText = isFeedbackMode ? 'Feedback Mode' : 'Script Mode';
+        btn.style.background = isFeedbackMode ? 'var(--accent)' : 'var(--border-bright)';
+        btn.style.color = isFeedbackMode ? '#fff' : 'var(--text-main)';
+    }
+
+    // Toggle CSS class on body
+    if (isFeedbackMode) {
+        document.body.classList.add('mode-feedback');
+        document.body.classList.add('feedback-mode-active');
+    } else {
+        document.body.classList.remove('mode-feedback');
+        document.body.classList.remove('feedback-mode-active');
+    }
+
+    // Toggle Input Forms
+    const scriptInputs = document.querySelector('.script-mode-inputs');
+    const feedbackInputs = document.querySelector('.feedback-mode-inputs');
+    const boxSwap = document.getElementById('boxSwap');
+    
+    if (isFeedbackMode) {
+        if (scriptInputs) scriptInputs.style.display = 'none';
+        if (feedbackInputs) feedbackInputs.style.display = 'flex';
+        if (boxSwap) boxSwap.style.display = 'none'; // hide TC SWAP
+    } else {
+        if (scriptInputs) scriptInputs.style.display = 'flex';
+        if (feedbackInputs) feedbackInputs.style.display = 'none';
+        if (boxSwap && selectedAction === 'SWAP') boxSwap.style.display = 'block';
+    }
+
+    // Switch Tags Preset
+    if (isFeedbackMode) {
+        // Save current user preset back to state just in case, then load feedback
+        if (typeof updateActionButtons === 'function') {
+            actionList = [...FEEDBACK_TAGS];
+            actionColors = { ...FEEDBACK_COLORS };
+            selectedAction = actionList[0];
+            updateActionButtons();
+        }
+    } else {
+        // Restore user's current preset
+        if (typeof loadActionPreset === 'function') {
+            loadActionPreset(currentPresetId);
+            updateActionButtons();
+        }
+    }
+
+    // Re-render Table and Storyboard
+    if (typeof renderTable === 'function') {
+        renderTable();
+    }
+    
+    if (window.showToast) {
+        window.showToast(isFeedbackMode ? 'Đã chuyển sang Feedback Mode' : 'Đã chuyển sang Script Mode', 'info');
+    }
+};
+
+window.toggleShortcuts = function() {};
 window.initGoogleOAuth = function() {};
 function handleGoogleAuthClick() {}
 
@@ -414,21 +482,43 @@ document.addEventListener('contextmenu', e => {
     if (!e.target.closest('.log-row') && !e.target.closest('.context-menu')) hideContextMenu();
 });
 
-// ── Script/Note sync while in edit mode ───────────────────────
-document.getElementById('inputScript').addEventListener('input', function(e) {
-    if (editingRowIndex !== null && editingRowIndex >= 0 && editingRowIndex < logs.length) {
-        logs[editingRowIndex].script = e.target.value;
-        const row = document.getElementById(`row-${editingRowIndex}`);
-        if (row) { const cells = row.querySelectorAll('td'); if (cells[6]) cells[6].innerText = e.target.value; }
-    }
-});
-document.getElementById('inputNote').addEventListener('input', function(e) {
-    if (editingRowIndex !== null && editingRowIndex >= 0 && editingRowIndex < logs.length) {
-        logs[editingRowIndex].note = e.target.value;
-        const row = document.getElementById(`row-${editingRowIndex}`);
-        if (row) { const cells = row.querySelectorAll('td'); if (cells[7]) cells[7].innerText = e.target.value; }
-    }
-});
+// ── Script/Note/Review sync while in edit mode ────────────────
+const inputScript = document.getElementById('inputScript');
+if (inputScript) {
+    inputScript.addEventListener('input', function(e) {
+        if (editingRowIndex !== null && editingRowIndex >= 0 && editingRowIndex < logs.length) {
+            logs[editingRowIndex].script = e.target.value;
+            const row = document.getElementById(`row-${editingRowIndex}`);
+            if (row) { const cells = row.querySelectorAll('td'); if (cells[6]) cells[6].innerText = e.target.value; }
+        }
+    });
+}
+const inputNote = document.getElementById('inputNote');
+if (inputNote) {
+    inputNote.addEventListener('input', function(e) {
+        if (editingRowIndex !== null && editingRowIndex >= 0 && editingRowIndex < logs.length) {
+            logs[editingRowIndex].note = e.target.value;
+            const row = document.getElementById(`row-${editingRowIndex}`);
+            if (row) { const cells = row.querySelectorAll('td'); if (cells[7]) cells[7].innerText = e.target.value; }
+        }
+    });
+}
+const inputReview = document.getElementById('inputReview');
+if (inputReview) {
+    inputReview.addEventListener('input', function(e) {
+        if (editingRowIndex !== null && editingRowIndex >= 0 && editingRowIndex < logs.length) {
+            logs[editingRowIndex].reviewNote = e.target.value;
+        }
+    });
+}
+const inputStatus = document.getElementById('inputStatus');
+if (inputStatus) {
+    inputStatus.addEventListener('change', function(e) {
+        if (editingRowIndex !== null && editingRowIndex >= 0 && editingRowIndex < logs.length) {
+            logs[editingRowIndex].status = e.target.value.toLowerCase().replace(' ', '_');
+        }
+    });
+}
 
 // ── Table Filters ─────────────────────────────────────────────
 const searchInput = document.getElementById('searchInput');

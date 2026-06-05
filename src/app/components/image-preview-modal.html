@@ -1,0 +1,10 @@
+<!-- Image Preview Modal -->
+<div id="imagePreviewModal" class="modal-overlay" style="display: none; align-items: center; justify-content: center; z-index: 1000;" onclick="this.style.display='none'">
+    <div class="modal-content" style="max-width: 90vw; background: transparent; box-shadow: none; padding: 0; position: relative;" onclick="event.stopPropagation()">
+        <img id="imagePreviewImg" src="" style="width: 100%; height: auto; max-height: 80vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <button class="btn-close" onclick="document.getElementById('imagePreviewModal').style.display='none'" style="position: absolute; top: -30px; right: -30px; color: white; background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+        <div style="text-align: center; margin-top: 15px;">
+            <button id="btnJumpFromPreview" class="btn primary" style="padding: 8px 16px;">Jump to Timecode</button>
+        </div>
+    </div>
+</div>

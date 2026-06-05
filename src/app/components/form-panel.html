@@ -46,14 +46,33 @@
                     </div>
                 </div>
                 <div style="display: flex; gap: 10px; align-items: stretch; margin-top: 10px; flex: 1;">
-                    <div style="display: flex; flex-direction: column; flex: 1; gap: 10px;">
-                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
-                            <label id="labelScript" data-i18n="lbl_script">SCRIPT (S):</label>
-                            <textarea id="inputScript" style="flex: 1; resize: none; overflow-y: hidden;" data-i18n="col_script"></textarea>
+                    <div style="display: flex; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
+                        <!-- Script Mode Inputs -->
+                        <div class="script-mode-inputs" style="display: flex; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
+                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                <label id="labelScript" data-i18n="lbl_script">SCRIPT (S):</label>
+                                <textarea id="inputScript" style="flex: 1; resize: none; overflow-y: hidden;" data-i18n="col_script"></textarea>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                <label id="labelNote" data-i18n="lbl_note">NOTE (N):</label>
+                                <textarea id="inputNote" style="flex: 1; resize: none; overflow-y: hidden;" data-i18n="col_note"></textarea>
+                            </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
-                            <label id="labelNote" data-i18n="lbl_note">NOTE (N):</label>
-                            <textarea id="inputNote" style="flex: 1; resize: none; overflow-y: hidden;" data-i18n="col_note"></textarea>
+                        
+                        <!-- Feedback Mode Inputs -->
+                        <div class="feedback-mode-inputs" style="display: none; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
+                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                <label data-i18n="lbl_review">REVIEW NOTE:</label>
+                                <textarea id="inputReview" style="flex: 1; resize: none; overflow-y: hidden;" placeholder="Nhập comment feedback..."></textarea>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label data-i18n="lbl_status">STATUS:</label>
+                                <select id="inputStatus" style="padding: 8px; border-radius: 4px; background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-bright);">
+                                    <option value="PENDING">Pending</option>
+                                    <option value="NEEDS FIX">Needs Fix</option>
+                                    <option value="APPROVED">Approved</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 4px; height: 100%;">
