@@ -5,6 +5,18 @@
                 <span class="logo-title" style="letter-spacing: -0.03em;">TCP <span>ScriptFlow</span> <em>v2.0</em></span>
             </a>
         </div>
+        <div class="header-center">
+            <div class="layout-toggles" style="display: flex; gap: 6px; background: var(--bg-input); padding: 4px; border-radius: var(--r-md); border: 1px solid var(--border-bright);">
+                <button id="btnLayout1" title="Classic: Default Sidebar" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border: none; border-radius: 6px; background: var(--bg-panel); color: var(--text-main); cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 700; transition: all 0.2s;" onclick="window.switchLayout(1)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="14" y1="3" x2="14" y2="21"></line></svg>
+                    Classic
+                </button>
+                <button id="btnLayout2" title="Full media" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border: none; border-radius: 6px; background: transparent; color: var(--text-muted); cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 700; transition: all 0.2s;" onclick="window.switchLayout(2)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="11" x2="21" y2="11"></line></svg>
+                    Full media
+                </button>
+            </div>
+        </div>
         <div class="header-controls">
             <span id="saveStatus" style="font-family: 'JetBrains Mono', monospace; background: var(--bg-input); box-shadow: inset 0 1px 0 var(--border-highlight); font-size: 9px; padding: 5px 12px; border-radius: var(--r-sm);">Saved</span>
             
@@ -29,6 +41,8 @@
                 <option value="xml">Premiere XML</option>
                 <option value="edl">Resolve EDL</option>
             </select>
+
+
 
             <div class="pref-dropdown">
                 <button class="btn-header pref-trigger" title="Preferences" style="display: flex; align-items: center; justify-content: center; padding: 6px 10px;">

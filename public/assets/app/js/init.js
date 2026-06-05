@@ -122,18 +122,32 @@ function handleGoogleAuthClick() {}
     window.addEventListener('mousemove', e => {
         if (isResizingV) {
             const rect = mainContainer.getBoundingClientRect();
-            const pct  = ((e.clientX - rect.left) / rect.width) * 100;
-            if (pct > 20 && pct < 80) { leftCol.style.width = pct + '%'; rightCol.style.width = (100 - pct) + '%'; }
+            let pct = ((e.clientX - rect.left) / rect.width) * 100;
+            if (pct > 20 && pct < 80) { 
+                const isLayout2 = mainContainer.getAttribute('data-layout') === '2';
+                if (isLayout2) {
+                    mainContainer.style.setProperty('--left-col-width-2', pct + '%');
+                } else {
+                    leftCol.style.width = pct + '%'; 
+                    rightCol.style.width = (100 - pct) + '%'; 
+                    mainContainer.style.setProperty('--left-col-width', pct + '%');
+                    mainContainer.style.setProperty('--right-col-width', (100 - pct) + '%');
+                }
+            }
         }
         if (isResizingH1) {
-            const rect = leftCol.getBoundingClientRect();
+            const rect = mainContainer.getBoundingClientRect();
             const topH = e.clientY - rect.top;
-            if (topH > 100 && topH < rect.height - 250) { videoSection.style.height = topH + 'px'; videoSection.style.flex = 'none'; }
+            if (topH > 100 && topH < rect.height - 250) { 
+                videoSection.style.height = topH + 'px'; 
+                videoSection.style.flex = 'none'; 
+                mainContainer.style.setProperty('--video-height', topH + 'px');
+            }
         }
         if (isResizingH2) {
-            const rect = leftCol.getBoundingClientRect();
+            const rect = mainContainer.getBoundingClientRect();
             const formH = rect.bottom - e.clientY;
-            if (formH > 100 && formH < rect.height - 250) { formSection.style.height = formH + 'px'; formSection.style.flex = 'none'; }
+            if (formH >= 260 && formH < rect.height - 250) { formSection.style.height = formH + 'px'; formSection.style.flex = 'none'; }
         }
         if (isDraggingFloat && floatPanel) {
             floatPanel.style.left = (e.clientX - floatOffsetX) + 'px';
@@ -666,3 +680,28 @@ resolveCurrentSpreadsheetMeta().finally(() => {
         console.log('[AUTOSCRIPT] ✓ Initialized successfully');
     });
 });
+
+// ── Layout Switching ──────────────────────────────────────────
+window.switchLayout = function(mode) {
+    const container = document.getElementById('mainContainer');
+    const btn1 = document.getElementById('btnLayout1');
+    const btn2 = document.getElementById('btnLayout2');
+    if (!container || !btn1 || !btn2) return;
+    
+    if (mode === 1) {
+        container.removeAttribute('data-layout');
+        btn1.style.background = 'var(--bg-panel)';
+        btn1.style.color = 'var(--text-main)';
+        btn2.style.background = 'transparent';
+        btn2.style.color = 'var(--text-muted)';
+    } else {
+        container.setAttribute('data-layout', '2');
+        btn2.style.background = 'var(--bg-panel)';
+        btn2.style.color = 'var(--text-main)';
+        btn1.style.background = 'transparent';
+        btn1.style.color = 'var(--text-muted)';
+        
+        // Trigger resize event to ensure sheets redraw correctly
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+    }
+};

@@ -8,9 +8,18 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
     margin-bottom: 10px;
     flex-shrink: 0;
     padding: 6px 4px;
+}
+
+.header-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
 }
 
 .header-logo {
@@ -229,6 +238,105 @@ select.btn-header {
     padding-bottom: 10px;
 }
 
+/* ── Layout 2 (Full Media) ──────────────────────────────────── */
+.layout-container[data-layout="2"] {
+    display: grid;
+    grid-template-columns: var(--left-col-width-2, 37.5%) 12px 1fr;
+    grid-template-rows: 1fr auto 240px;
+    width: 100%;
+}
+
+.layout-container[data-layout="2"] .left-col {
+    display: contents;
+}
+
+.layout-container[data-layout="2"] .video-section {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    height: 100% !important;
+    min-height: 200px;
+    margin: 0 0 12px 0;
+}
+
+.layout-container[data-layout="2"] #resizerH1,
+.layout-container[data-layout="2"] #resizerH2 {
+    display: none;
+}
+
+.layout-container[data-layout="2"] .timeline-section {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    margin: 0 0 12px 0;
+}
+
+.layout-container[data-layout="2"] .form-section {
+    grid-column: 1;
+    grid-row: 3;
+    height: 100% !important;
+    width: 100% !important;
+    margin: 0;
+    padding: 10px !important;
+}
+
+/* Native Scale-Down for Layout 2 */
+.layout-container[data-layout="2"] .form-layout-grid {
+    gap: 8px !important;
+    margin-top: 6px !important;
+}
+.layout-container[data-layout="2"] .input-group {
+    gap: 6px !important;
+}
+.layout-container[data-layout="2"] .action-button-group {
+    gap: 4px !important;
+}
+.layout-container[data-layout="2"] .action-button {
+    min-height: 28px !important;
+    font-size: 10px !important;
+    padding: 0 4px !important;
+}
+.layout-container[data-layout="2"] .script-mode-inputs {
+    gap: 6px !important;
+}
+.layout-container[data-layout="2"] #inputScript,
+.layout-container[data-layout="2"] #inputNote {
+    padding: 6px !important;
+    font-size: 12px !important;
+}
+.layout-container[data-layout="2"] .tc-box {
+    padding: 6px 12px !important;
+}
+.layout-container[data-layout="2"] .tc-box span {
+    font-size: 9px !important;
+}
+.layout-container[data-layout="2"] .tc-box .time {
+    font-size: 18px !important;
+}
+.layout-container[data-layout="2"] #btnToolbarImport {
+    font-size: 12px !important;
+}
+.layout-container[data-layout="2"] .import-short-wrapper {
+    height: 36px !important;
+}
+.layout-container[data-layout="2"] #btnToolbarImportShort {
+    font-size: 11px !important;
+}
+
+.layout-container[data-layout="2"] #resizerV {
+    grid-column: 2;
+    grid-row: 3;
+    height: 100%;
+}
+
+.layout-container[data-layout="2"] .right-col {
+    grid-column: 3;
+    grid-row: 3;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 10px !important;
+}
+
+
 .right-col {
     display: flex;
     flex-direction: column;
@@ -256,8 +364,8 @@ select.btn-header {
 
 /* ── Panel Sections ─────────────────────────────────────────── */
 .video-section {
-    height: 40%;
-    flex: none;
+    height: auto;
+    flex: 1;
     min-height: 200px;
     /* Double-Bezel */
     background: var(--bg-panel);
@@ -271,8 +379,9 @@ select.btn-header {
 }
 
 .timeline-section {
-    flex: 1;
-    min-height: 120px;
+    flex: none;
+    height: 160px;
+    min-height: 160px;
     /* Double-Bezel */
     background: var(--bg-panel);
     border-radius: var(--r-lg);
@@ -285,8 +394,9 @@ select.btn-header {
 }
 
 .form-section {
-    height: 28%;
-    min-height: 150px;
+    height: auto;
+    flex: none;
+    min-height: 260px;
     /* Double-Bezel */
     background: var(--bg-panel);
     border-radius: var(--r-lg);
@@ -294,7 +404,7 @@ select.btn-header {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    overflow-y: auto;
+    overflow: visible;
     border: 1px solid var(--border);
     box-shadow: inset 0 1px 0 var(--border-highlight), 0 2px 8px rgba(0,0,0,0.2);
 }
@@ -906,8 +1016,22 @@ select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-g
     animation: menuFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+.custom-preset-menu.dropup {
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: 8px;
+    transform-origin: bottom left;
+    animation: menuFadeInUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @keyframes menuFadeIn {
     0% { opacity: 0; transform: scale(0.95) translateY(-5px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes menuFadeInUp {
+    0% { opacity: 0; transform: scale(0.95) translateY(5px); }
     100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 

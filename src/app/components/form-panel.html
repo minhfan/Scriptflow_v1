@@ -16,71 +16,77 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                     </button>
                 </div>
-                <div class="input-group">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative;" id="tagPresetContainer">
-                        <!-- Custom Dropdown Trigger -->
-                        <button id="btnTagPreset" class="btn-tag-preset" aria-haspopup="true" aria-expanded="false">
-                            <span class="preset-label" data-i18n="lbl_tag">TAG (T):</span>
-                            <span class="preset-name" id="currentPresetName">Standard</span>
-                            <span class="preset-arrow">▾</span>
-                        </button>
+                <div class="form-layout-grid" style="display: flex; gap: 15px; align-items: stretch; margin-top: 10px; flex: 1;">
+                    <!-- LEFT COLUMN: TAGS -->
+                    <div class="input-group" style="flex: 0 0 30%; min-width: 200px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; position: relative;" id="tagPresetContainer">
+                            <!-- Custom Dropdown Trigger -->
+                            <button id="btnTagPreset" class="btn-tag-preset" aria-haspopup="true" aria-expanded="false">
+                                <span class="preset-label" data-i18n="lbl_tag">TAG (T):</span>
+                                <span class="preset-name" id="currentPresetName">Standard</span>
+                                <span class="preset-arrow">▾</span>
+                            </button>
+                            
+                            <!-- Custom Dropdown Menu -->
+                            <div id="tagPresetMenu" class="custom-preset-menu" style="display: none;">
+                                <div class="custom-preset-list" id="customPresetList">
+                                    <!-- Populated dynamically by playback.js -->
+                                </div>
+                                <div class="custom-preset-footer">
+                                    <button id="btnCreatePreset" class="btn-create-preset" data-i18n="btn_add_preset">+ Thêm Preset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="action-button-group" id="actionButtonGroup" role="radiogroup" aria-label="Chọn tag" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;">
+                            <button type="button" class="action-button" data-action="DELETE" role="radio">DELETE</button>
+                            <button type="button" class="action-button" data-action="POP-UP" role="radio">POP-UP</button>
+                            <button type="button" class="action-button" data-action="SWAP" role="radio">SWAP</button>
+                            <button type="button" class="action-button" data-action="QUESTION" role="radio">QUESTION</button>
+                            <button type="button" class="action-button" data-action="QUOTE" role="radio">QUOTE</button>
+                            <button type="button" class="action-button" data-action="NOTE" role="radio">NOTE</button>
+                            <button type="button" class="action-button" data-action="OTHERS" role="radio">OTHERS</button>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: INPUTS & IMPORT -->
+                    <div style="display: flex; flex-direction: row; gap: 10px; align-items: stretch; flex: 1;">
+                        <div style="display: flex; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
+                            <!-- Script Mode Inputs -->
+                            <div class="script-mode-inputs" style="display: flex; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
+                                <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                    <label id="labelScript" data-i18n="lbl_script">SCRIPT (S):</label>
+                                    <textarea id="inputScript" style="flex: 1; resize: none; overflow-y: hidden;" data-i18n="col_script"></textarea>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                    <label id="labelNote" data-i18n="lbl_note">NOTE (N):</label>
+                                    <textarea id="inputNote" style="flex: 1; resize: none; overflow-y: hidden;" data-i18n="col_note"></textarea>
+                                </div>
+                            </div>
+                            
+                            <!-- Feedback Mode Inputs -->
+                            <div class="feedback-mode-inputs" style="display: none; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
+                                <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                    <label data-i18n="lbl_review">REVIEW NOTE:</label>
+                                    <textarea id="inputReview" style="flex: 1; resize: none; overflow-y: hidden;" placeholder="Nhập comment feedback..."></textarea>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                                    <label data-i18n="lbl_status">STATUS:</label>
+                                    <select id="inputStatus" style="padding: 8px; border-radius: 4px; background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-bright);">
+                                        <option value="PENDING">Pending</option>
+                                        <option value="NEEDS FIX">Needs Fix</option>
+                                        <option value="APPROVED">Approved</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                         
-                        <!-- Custom Dropdown Menu -->
-                        <div id="tagPresetMenu" class="custom-preset-menu" style="display: none;">
-                            <div class="custom-preset-list" id="customPresetList">
-                                <!-- Populated dynamically by playback.js -->
+                        <!-- Import Buttons -->
+                        <div style="display: flex; flex-direction: column; gap: 10px; width: 100px; flex-shrink: 0; padding-top: 14px;">
+                            <button type="button" id="btnToolbarImport" title="Import action (Shift+Enter)" style="flex: 1; flex-direction: column; font-size: 14px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; letter-spacing: 0.05em; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--primary); border: 1px solid var(--primary-hover); color: #fff; transition: all var(--t-spring); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);" onmouseover="this.style.background='var(--primary-hover)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='var(--primary)'; this.style.transform='none';">IMPORT</button>
+                            <div class="import-short-wrapper" style="width: 100%; height: 44px; flex-shrink: 0;">
+                                <button type="button" id="btnToolbarImportShort" title="Import to specific Short tab" style="width:100%; height: 100%; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--bg-raised); border: 1px solid var(--border-bright); color: var(--text-main); transition: all var(--t-spring); box-shadow: inset 0 1px 0 var(--border-highlight);" onmouseover="this.style.background='var(--bg-hover)';this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='var(--bg-raised)';this.style.borderColor='var(--border-bright)';this.style.transform='none';">SHORT <sub style="font-size: 9px; margin-left: 4px; font-weight: bold; position: relative; bottom: -1px; color: var(--accent);">➔</sub></button>
+                                <div class="floating-tab-menu" id="importShortFloatingMenu"></div>
                             </div>
-                            <div class="custom-preset-footer">
-                                <button id="btnCreatePreset" class="btn-create-preset" data-i18n="btn_add_preset">+ Thêm Preset</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="action-button-group" id="actionButtonGroup" role="radiogroup" aria-label="Chọn tag">
-                        <button type="button" class="action-button" data-action="DELETE" role="radio">DELETE</button>
-                        <button type="button" class="action-button" data-action="POP-UP" role="radio">POP-UP</button>
-                        <button type="button" class="action-button" data-action="SWAP" role="radio">SWAP</button>
-                        <button type="button" class="action-button" data-action="QUESTION" role="radio">QUESTION</button>
-                        <button type="button" class="action-button" data-action="QUOTE" role="radio">QUOTE</button>
-                        <button type="button" class="action-button" data-action="NOTE" role="radio">NOTE</button>
-                        <button type="button" class="action-button" data-action="OTHERS" role="radio">OTHERS</button>
-                    </div>
-                </div>
-                <div style="display: flex; flex-direction: row; gap: 10px; align-items: stretch; margin-top: 10px; flex: 1;">
-                    <div style="display: flex; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
-                        <!-- Script Mode Inputs -->
-                        <div class="script-mode-inputs" style="display: flex; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
-                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
-                                <label id="labelScript" data-i18n="lbl_script">SCRIPT (S):</label>
-                                <textarea id="inputScript" style="flex: 1; resize: none; overflow-y: hidden;" data-i18n="col_script"></textarea>
-                            </div>
-                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
-                                <label id="labelNote" data-i18n="lbl_note">NOTE (N):</label>
-                                <textarea id="inputNote" style="flex: 1; resize: none; overflow-y: hidden;" data-i18n="col_note"></textarea>
-                            </div>
-                        </div>
-                        
-                        <!-- Feedback Mode Inputs -->
-                        <div class="feedback-mode-inputs" style="display: none; flex-direction: column; flex: 1; gap: 10px; height: 100%;">
-                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
-                                <label data-i18n="lbl_review">REVIEW NOTE:</label>
-                                <textarea id="inputReview" style="flex: 1; resize: none; overflow-y: hidden;" placeholder="Nhập comment feedback..."></textarea>
-                            </div>
-                            <div style="display: flex; flex-direction: column; gap: 4px;">
-                                <label data-i18n="lbl_status">STATUS:</label>
-                                <select id="inputStatus" style="padding: 8px; border-radius: 4px; background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-bright);">
-                                    <option value="PENDING">Pending</option>
-                                    <option value="NEEDS FIX">Needs Fix</option>
-                                    <option value="APPROVED">Approved</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; flex-direction: column; gap: 10px; width: 140px; flex-shrink: 0; padding-top: 18px;">
-                        <button type="button" id="btnToolbarImport" title="Import action (Shift+Enter)" style="flex: 1; flex-direction: column; font-size: 14px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; letter-spacing: 0.05em; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--primary); border: 1px solid var(--primary-hover); color: #fff; transition: all var(--t-spring); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);" onmouseover="this.style.background='var(--primary-hover)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='var(--primary)'; this.style.transform='none';">IMPORT</button>
-                        <div class="import-short-wrapper" style="width: 100%; height: 44px; flex-shrink: 0;">
-                            <button type="button" id="btnToolbarImportShort" title="Import to specific Short tab" style="width:100%; height: 100%; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; background: var(--bg-raised); border: 1px solid var(--border-bright); color: var(--text-main); transition: all var(--t-spring); box-shadow: inset 0 1px 0 var(--border-highlight);" onmouseover="this.style.background='var(--bg-hover)';this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='var(--bg-raised)';this.style.borderColor='var(--border-bright)';this.style.transform='none';">SHORT <sub style="font-size: 9px; margin-left: 4px; font-weight: bold; position: relative; bottom: -1px; color: var(--accent);">➔</sub></button>
-                            <div class="floating-tab-menu" id="importShortFloatingMenu"></div>
                         </div>
                     </div>
                 </div>

@@ -534,8 +534,25 @@ window.renderTagPresetMenu = function() {
             e.stopPropagation();
             const expanded = btnTagPreset.getAttribute('aria-expanded') === 'true';
             btnTagPreset.setAttribute('aria-expanded', String(!expanded));
-            tagMenu.style.display = expanded ? 'none' : 'block';
-            if (!expanded) window.renderTagPresetMenu();
+            
+            if (expanded) {
+                tagMenu.style.display = 'none';
+                tagMenu.classList.remove('dropup');
+            } else {
+                tagMenu.style.display = 'block';
+                window.renderTagPresetMenu();
+                
+                // Smart dropup vs dropdown based on available screen space
+                const rect = btnTagPreset.getBoundingClientRect();
+                const spaceBelow = window.innerHeight - rect.bottom;
+                const menuHeight = tagMenu.offsetHeight || 250;
+                
+                if (spaceBelow < menuHeight + 20 && rect.top > spaceBelow) {
+                    tagMenu.classList.add('dropup');
+                } else {
+                    tagMenu.classList.remove('dropup');
+                }
+            }
         });
         
         // Close when clicking outside

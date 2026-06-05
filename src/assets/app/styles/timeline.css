@@ -9,7 +9,7 @@
     flex-direction: row;
     height: 100%;
     align-items: flex-end;
-    padding-bottom: 25px;
+    padding-bottom: 10px;
 }
 
 .tc-bound {
@@ -20,7 +20,7 @@
     cursor: pointer;
     transition: color var(--t-fast);
     white-space: nowrap;
-    margin-bottom: 43px;
+    margin-bottom: 20px;
 }
 .tc-bound:hover { color: var(--accent); }
 
@@ -34,7 +34,7 @@
     overflow-x: scroll;
     display: flex;
     align-items: flex-end;
-    padding-bottom: 45px;
+    padding-bottom: 15px;
 }
 .custom-timeline-wrapper::-webkit-scrollbar { display: none; }
 
