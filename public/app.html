@@ -306,7 +306,7 @@
                     <colgroup>
                         <col class="col-stt">
                         <col class="col-play" style="width: 44px;">
-                        <col class="col-thumb" style="width: 60px;">
+                        <col class="col-thumb feedback-only" style="width: 60px;">
                         <col class="col-status feedback-only" style="width: 90px;">
                         <col class="col-action">
                         <col class="col-tc">
@@ -321,7 +321,7 @@
                         <tr>
                             <th data-i18n="col_stt">STT</th>
                             <th></th>
-                            <th data-i18n="col_thumb">THUMB</th>
+                            <th data-i18n="col_thumb" class="feedback-only">THUMB</th>
                             <th data-i18n="col_status" class="feedback-only">STATUS</th>
                             <th data-i18n="col_tag">TAG</th>
                             <th data-i18n="col_in">TC IN</th>
@@ -398,12 +398,15 @@
     <!-- INJECT_COMPONENT:CONFIRM_MODAL -->
     <!-- INJECT_COMPONENT:CONTEXT_MENU -->
     <!-- Image Preview Modal -->
-<div id="imagePreviewModal" class="modal-overlay" style="display: none; align-items: center; justify-content: center; z-index: 1000;" onclick="this.style.display='none'">
-    <div class="modal-content" style="max-width: 90vw; background: transparent; box-shadow: none; padding: 0; position: relative;" onclick="event.stopPropagation()">
-        <img id="imagePreviewImg" src="" style="width: 100%; height: auto; max-height: 80vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-        <button class="btn-close" onclick="document.getElementById('imagePreviewModal').style.display='none'" style="position: absolute; top: -30px; right: -30px; color: white; background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
-        <div style="text-align: center; margin-top: 15px;">
-            <button id="btnJumpFromPreview" class="btn primary" style="padding: 8px 16px;">Jump to Timecode</button>
+<div id="imagePreviewModal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; pointer-events: none;">
+    <div id="imagePreviewContent" class="modal-content" style="background: var(--bg-panel); border: 1px solid var(--border-bright); border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 4px; pointer-events: auto; position: absolute; transition: transform 0.2s ease; transform-origin: top left;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px; cursor: move;" id="imagePreviewDragHandle">
+            <span style="font-size: 11px; font-weight: 700; color: var(--text-sub);">Preview</span>
+            <button class="btn-close" onclick="document.getElementById('imagePreviewModal').style.display='none'" style="color: var(--text-sub); background: none; border: none; font-size: 16px; cursor: pointer;">&times;</button>
+        </div>
+        <img id="imagePreviewImg" src="" style="width: 320px; height: auto; object-fit: contain; border-radius: 4px; cursor: zoom-in; transition: width 0.2s ease;">
+        <div style="text-align: center; margin-top: 8px; padding-bottom: 4px;">
+            <button id="btnJumpFromPreview" class="btn primary" style="padding: 4px 12px; font-size: 10px;">Jump to Timecode</button>
         </div>
     </div>
 </div>

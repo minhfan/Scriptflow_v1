@@ -311,16 +311,25 @@ function updateActionButtons() {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                const message = window.t ? window.t('msg_del_tag_body') : `Bạn có chắc muốn xóa tag "${action}" khỏi preset hiện tại không?`;
-                const confirmed = await openFloatingConfirm(e, message);
+                const currentColor = actionColors[action] ? actionColors[action].bg : '#1e293b';
+                const result = await window.openActionTagMenu(e, action, currentColor);
                 
-                if (confirmed) {
-                    const newActionList = actionList.filter(a => a !== action);
-                    const newColors = { ...actionColors };
-                    delete newColors[action];
-                    if (window.updateCurrentPreset) {
-                        window.updateCurrentPreset(newActionList, newColors);
-                        updateActionButtons();
+                if (result) {
+                    if (result.type === 'delete') {
+                        const newActionList = actionList.filter(a => a !== action);
+                        const newColors = { ...actionColors };
+                        delete newColors[action];
+                        if (window.updateCurrentPreset) {
+                            window.updateCurrentPreset(newActionList, newColors);
+                            updateActionButtons();
+                        }
+                    } else if (result.type === 'color') {
+                        const newColors = { ...actionColors };
+                        newColors[action] = { bg: result.color, color: '#ffffff' };
+                        if (window.updateCurrentPreset) {
+                            window.updateCurrentPreset(actionList, newColors);
+                            updateActionButtons();
+                        }
                     }
                 }
             });
@@ -630,15 +639,15 @@ window.renderTagPresetMenu = function() {
 })();
 
 // ── Capture Video Frame ──────────────────────────────────────
-window.captureVideoFrame = function() {
+window.captureVideoFrame = function(silent = false) {
     const video = document.getElementById('videoPlayer');
     const btn = document.getElementById('btnCaptureFrame');
     if (!video || video.readyState < 2) return;
     
     try {
         const canvas = document.createElement('canvas');
-        // Calculate thumbnail size (e.g. max width 160px)
-        const maxWidth = 160;
+        // Calculate thumbnail size
+        const maxWidth = 960;
         const scale = maxWidth / video.videoWidth;
         canvas.width = maxWidth;
         canvas.height = video.videoHeight * scale;
@@ -666,7 +675,7 @@ window.captureVideoFrame = function() {
         }
         
         // UI Feedback
-        if (btn) {
+        if (btn && !silent) {
             btn.style.color = 'var(--accent)';
             btn.style.borderColor = 'var(--accent)';
             setTimeout(() => {
@@ -674,9 +683,9 @@ window.captureVideoFrame = function() {
                 btn.style.borderColor = 'var(--border-bright)';
             }, 500);
         }
-        if (window.showToast) window.showToast('Đã chụp thumbnail!', 'success');
+        if (!silent && window.showToast) window.showToast('Đã chụp thumbnail!', 'success');
     } catch (e) {
         console.error('Lỗi khi chụp frame:', e);
-        if (window.showToast) window.showToast('Không thể chụp frame', 'error');
+        if (!silent && window.showToast) window.showToast('Không thể chụp frame', 'error');
     }
 };

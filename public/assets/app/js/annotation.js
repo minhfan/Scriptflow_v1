@@ -70,23 +70,27 @@
         }
 
         // Resize observer to keep canvas matched with video
-        const resizeObserver = new ResizeObserver(() => {
-            if (canvas.width !== canvas.offsetWidth || canvas.height !== canvas.offsetHeight) {
-                // Need to save drawing, resize, and redraw (simplified: just clear for now if playing)
-                if (video.paused) {
-                    const temp = canvas.toDataURL();
-                    canvas.width = canvas.offsetWidth;
-                    canvas.height = canvas.offsetHeight;
-                    const img = new Image();
-                    img.onload = () => ctx.drawImage(img, 0, 0);
-                    img.src = temp;
-                } else {
-                    canvas.width = canvas.offsetWidth;
-                    canvas.height = canvas.offsetHeight;
+        const syncCanvasSize = () => {
+            const rect = video.getBoundingClientRect();
+            if (rect.width > 0 && rect.height > 0) {
+                if (canvas.width !== Math.floor(rect.width) || canvas.height !== Math.floor(rect.height)) {
+                    let temp = null;
+                    if (window.isDrawingOccurred) temp = canvas.toDataURL();
+                    canvas.width = Math.floor(rect.width);
+                    canvas.height = Math.floor(rect.height);
+                    if (temp) {
+                        const img = new Image();
+                        img.onload = () => ctx.drawImage(img, 0, 0);
+                        img.src = temp;
+                    }
                 }
             }
-        });
+        };
+        const resizeObserver = new ResizeObserver(syncCanvasSize);
         resizeObserver.observe(video);
+        
+        // Initial sync
+        setTimeout(syncCanvasSize, 100);
 
         // Mouse Events
         canvas.addEventListener('mousedown', startDrawing);
@@ -133,9 +137,11 @@
     // Drawing Logic
     function getPointerPos(e) {
         const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width || 1;
+        const scaleY = canvas.height / rect.height || 1;
         return {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
         };
     }
 
@@ -217,7 +223,7 @@
             // Throttle capture to avoid lag on multiple rapid strokes
             clearTimeout(window._annotationCaptureTimer);
             window._annotationCaptureTimer = setTimeout(() => {
-                window.captureVideoFrame();
+                window.captureVideoFrame(true);
                 // Also capture transparent drawing
                 window.activeDrawing = canvas.toDataURL('image/png');
                 // If editing an existing row, auto-update it

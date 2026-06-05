@@ -59,13 +59,21 @@ function renderTable() {
         sb.style.display = 'none';
     }
 
-    logs.forEach((log, index) => {
-        if (filterQuery !== 'ALL' && log.action !== filterQuery) return;
+    // Add indexing to keep original indices, then filter by mode and current active action list
+    const activeLogs = logs.map((log, index) => ({ log, index })).filter(item => {
+        if (!!item.log.isFeedback !== !!window.isFeedbackMode) return false;
+        if (filterQuery !== 'ALL' && item.log.action !== filterQuery) return false;
         if (searchQuery) {
-            const text = (log.script + ' ' + log.note + ' ' + log.tcin + ' ' + log.tcout + ' ' + (log.tcswap || '')).toLowerCase();
-            if (!text.includes(searchQuery)) return;
+            const text = (item.log.script + ' ' + item.log.note + ' ' + item.log.tcin + ' ' + item.log.tcout + ' ' + (item.log.tcswap || '')).toLowerCase();
+            if (!text.includes(searchQuery)) return false;
         }
         count++;
+        return true;
+    });
+
+    activeLogs.forEach(item => {
+        const log = item.log;
+        const index = item.index;
         const colorSet = actionColors[log.action] || { bg: '#1e293b', color: '#e2e8f0' };
         const bg = colorSet.bg, txt = colorSet.color;
         const showPreview = (log.action === 'DELETE' || log.action === 'SWAP');
@@ -77,13 +85,18 @@ function renderTable() {
         const editClass = isEditing ? 'row-editing' : '';
 
         let actionCell;
+        let annotIcon = '';
+        if (log.drawing) {
+            annotIcon = `<span style="margin-left: 6px; font-size: 11px; cursor: pointer; filter: grayscale(100%); transition: all 0.2s;" title="Has Annotation" onclick="window.openAnnotationModal(event, ${index}); event.stopPropagation();" onmouseover="this.style.filter='grayscale(0)'" onmouseout="this.style.filter='grayscale(100%)'">🖌️</span>`;
+        }
+
         if (isEditing) {
             const opts = actionList.map(a =>
                 `<option value="${a}" ${a === log.action ? 'selected' : ''}>${escapeHtml(a)}</option>`
             ).join('');
-            actionCell = `<select onchange="window.updateRowAction(${index}, this.value)" style="width:auto; padding:3px 8px; font-size:7.92px; font-weight:700; background:${bg}; color:${txt}; border:1px solid rgba(255,255,255,0.2); border-radius:var(--r-sm); outline:none; text-align:center; cursor:pointer; font-family:'Outfit',sans-serif; min-width:68px; letter-spacing:0.05em;">${opts}</select>`;
+            actionCell = `<div style="display: flex; align-items: center;"><select onchange="window.updateRowAction(${index}, this.value)" style="width:auto; padding:3px 8px; font-size:7.92px; font-weight:700; background:${bg}; color:${txt}; border:1px solid rgba(255,255,255,0.2); border-radius:var(--r-sm); outline:none; text-align:center; cursor:pointer; font-family:'Outfit',sans-serif; min-width:68px; letter-spacing:0.05em;">${opts}</select>${annotIcon}</div>`;
         } else {
-            actionCell = `<span class="action-tag" style="background:${bg};color:${txt}">${escapeHtml(log.action)}</span>`;
+            actionCell = `<div style="display: flex; align-items: center;"><span class="action-tag" style="background:${bg};color:${txt}">${escapeHtml(log.action)}</span>${annotIcon}</div>`;
         }
 
         const swapVal = log.tcswap || '';
@@ -91,7 +104,7 @@ function renderTable() {
         
         let thumbCell = '';
         if (log.thumb) {
-            thumbCell = `<img src="${log.thumb}" alt="thumb" style="width: 50px; height: auto; border-radius: 4px; object-fit: cover; border: 1px solid var(--border-bright); cursor: pointer;" onclick="window.openAnnotationModal(${index})">`;
+            thumbCell = `<img src="${log.thumb}" alt="thumb" style="width: 50px; height: auto; border-radius: 4px; object-fit: cover; border: 1px solid var(--border-bright); cursor: pointer;" onclick="window.openAnnotationModal(event, ${index})">`;
         } else {
             thumbCell = `<div style="width: 50px; height: 28px; background: rgba(255,255,255,0.05); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 10px;">-</div>`;
         }
@@ -146,15 +159,15 @@ function renderTable() {
                 <tr id="row-${index}" class="log-row ${editClass}" oncontextmenu="showRowMenu(event, ${index})" style="${currentStatus === 'needs_fix' ? 'background: rgba(239, 68, 68, 0.05);' : currentStatus === 'approved' ? 'background: rgba(34, 197, 94, 0.05);' : ''}">
                     <td class="td-stt">${index + 1}</td>
                     <td class="td-play">${playButton}</td>
-                    <td class="td-thumb" style="text-align: center; padding: 4px;">${thumbCell}</td>
-                    <td class="td-status" style="padding: 4px;">${statusSelect}</td>
+                    <td class="td-thumb feedback-only" style="text-align: center; padding: 4px;">${thumbCell}</td>
+                    <td class="td-status feedback-only" style="padding: 4px;">${statusSelect}</td>
                     <td class="td-action">${actionCell}</td>
                     <td class="td-tc" ${editable} onclick="window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'tcin',this)">${escapeHtml(log.tcin)}</td>
                     <td class="td-tc" ${editable} onclick="window.jumpToTC(${index},'tcout')" onblur="inlineUpdate(${index},'tcout',this)">${outVal ? escapeHtml(outVal) : ''}</td>
                     <td class="td-tc" ${editable} onclick="window.jumpToTC(${index},'tcswap')" onblur="inlineUpdate(${index},'tcswap',this)">${swapVal ? escapeHtml(swapVal) : ''}</td>
                     <td class="td-text" ${editable} onclick="if(this.getAttribute('contenteditable')!=='true') window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'script',this)">${escapeHtml(log.script)}</td>
                     <td class="td-text" ${editable} onclick="if(this.getAttribute('contenteditable')!=='true') window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'note',this)">${escapeHtml(log.note)}</td>
-                    <td class="td-text" ${editable} onclick="if(this.getAttribute('contenteditable')!=='true') window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'reviewNote',this)">${escapeHtml(log.reviewNote || '')}</td>
+                    <td class="td-text feedback-only" ${editable} onclick="if(this.getAttribute('contenteditable')!=='true') window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'reviewNote',this)">${escapeHtml(log.reviewNote || '')}</td>
                     <td class="td-delete"><span class="row-tools"><span class="send-tab-wrapper" onmouseenter="buildRowSendMenu(this, ${index})" onmouseleave="hideRowSendMenu(this)"><button class="btn-send" title="Send to Tab">SEND</button></span><button class="btn-delete" onclick="deleteLog(${index})" title="Delete">&#10006;</button></span></td>
                 </tr>`;
         }
@@ -180,6 +193,7 @@ function drawMarkers() {
     // Sort by duration descending so longer items render behind shorter ones
     const sortedLogs = masterLogs
         .map((log, origIndex) => ({ log, origIndex }))
+        .filter(item => !!item.log.isFeedback === !!window.isFeedbackMode)
         .sort((a, b) => {
             const durA = (a.log.outSec && a.log.outSec > a.log.inSec) ? (a.log.outSec - a.log.inSec) : 0;
             const durB = (b.log.outSec && b.log.outSec > b.log.inSec) ? (b.log.outSec - b.log.inSec) : 0;
@@ -553,6 +567,7 @@ window.renderFeedbackFeed = function() {
 
     logs.forEach((log, index) => {
         // Apply filters
+        if (!log.isFeedback) return;
         if (currentFilter !== 'ALL' && log.action !== currentFilter) return;
         
         let searchableStr = `${log.script || ''} ${log.note || ''} ${log.reviewNote || ''} ${log.tcin || ''} ${log.tcout || ''}`.toLowerCase();
@@ -564,7 +579,7 @@ window.renderFeedbackFeed = function() {
         
         let thumbCell = '';
         if (log.thumb) {
-            thumbCell = `<div class="feedback-card-thumb"><img src="${log.thumb}" alt="thumb"></div>`;
+            thumbCell = `<div class="feedback-card-thumb"><img src="${log.thumb}" alt="thumb" onclick="window.openAnnotationModal(event, ${index})" style="cursor:pointer;"></div>`;
         }
         
         const currentStatus = log.status || 'pending';

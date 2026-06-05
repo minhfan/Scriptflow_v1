@@ -140,6 +140,186 @@ window.openFloatingConfirm = function(e, message) {
     });
 };
 
+// ── Action Tag Context Menu ───────────────────────────────────
+window.openActionTagMenu = function(e, actionName, currentColorHex) {
+    return new Promise((resolve) => {
+        let menu = document.getElementById('actionTagMenu');
+        if (!menu) {
+            menu = document.createElement('div');
+            menu.id = 'actionTagMenu';
+            menu.className = 'floating-confirm-popover';
+            menu.style.flexDirection = 'column';
+            menu.style.gap = '10px';
+            menu.style.padding = '12px';
+            menu.style.minWidth = '200px';
+            document.body.appendChild(menu);
+        }
+
+        const presetColors = [
+            '#ef4444', '#f97316', '#eab308', '#22c55e', 
+            '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899', '#64748b'
+        ];
+
+        let colorsHtml = presetColors.map(hex => `
+            <div class="color-swatch" data-color="${hex}" style="width: 24px; height: 24px; border-radius: 4px; background: ${hex}; cursor: pointer; border: 2px solid ${hex === currentColorHex ? '#fff' : 'transparent'};"></div>
+        `).join('');
+
+        menu.innerHTML = `
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-main); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 4px;">
+                Cài đặt Tag: <span style="color: var(--accent);">${actionName}</span>
+            </div>
+            <div style="font-size: 10px; color: var(--text-sub); margin-bottom: 4px;">Chọn màu:</div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
+                ${colorsHtml}
+            </div>
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 10px;">
+                <button id="btnActionTagDelete" class="fc-btn" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">Xóa Tag</button>
+                <button id="btnActionTagCancel" class="fc-btn fc-cancel">Đóng</button>
+            </div>
+        `;
+
+        menu.style.display = 'flex';
+        
+        let x = e.clientX + 10;
+        let y = e.clientY + 10;
+        const rect = menu.getBoundingClientRect();
+        if (x + rect.width > window.innerWidth) x = window.innerWidth - rect.width - 10;
+        if (y + rect.height > window.innerHeight) y = window.innerHeight - rect.height - 10;
+        menu.style.left = x + 'px';
+        menu.style.top = y + 'px';
+        menu.classList.add('menu-animated');
+
+        function cleanup() {
+            menu.style.display = 'none';
+            document.removeEventListener('click', onOutsideClick);
+        }
+
+        function onOutsideClick(evt) {
+            if (!menu.contains(evt.target)) {
+                cleanup();
+                resolve(null);
+            }
+        }
+
+        menu.querySelectorAll('.color-swatch').forEach(swatch => {
+            swatch.onclick = () => {
+                cleanup();
+                resolve({ type: 'color', color: swatch.getAttribute('data-color') });
+            };
+        });
+
+        document.getElementById('btnActionTagDelete').onclick = () => { cleanup(); resolve({ type: 'delete' }); };
+        document.getElementById('btnActionTagCancel').onclick = () => { cleanup(); resolve(null); };
+        
+        setTimeout(() => document.addEventListener('click', onOutsideClick), 10);
+    });
+};
+
+// ── Image Preview Modal ───────────────────────────────────────
+let isImagePreviewZoomed = false;
+
+window.openAnnotationModal = function(e, index) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    const log = logs[index];
+    if (!log || (!log.thumb && !log.drawing)) return;
+    
+    const modal = document.getElementById('imagePreviewModal');
+    const content = document.getElementById('imagePreviewContent');
+    const img = document.getElementById('imagePreviewImg');
+    const btn = document.getElementById('btnJumpFromPreview');
+    const dragHandle = document.getElementById('imagePreviewDragHandle');
+    
+    if (modal && img && content) {
+        img.src = log.thumb || log.drawing;
+        modal.style.display = 'block';
+        
+        // Reset zoom
+        isImagePreviewZoomed = false;
+        img.style.width = '320px';
+        img.style.cursor = 'zoom-in';
+        
+        // Position at cursor
+        let x = e ? e.clientX + 10 : window.innerWidth / 2 - 160;
+        let y = e ? e.clientY + 10 : window.innerHeight / 2 - 120;
+        
+        // Initial positioning before we know true height
+        content.style.left = x + 'px';
+        content.style.top = y + 'px';
+        
+        // Adjust if off-screen
+        setTimeout(() => {
+            const rect = content.getBoundingClientRect();
+            if (x + rect.width > window.innerWidth) x = window.innerWidth - rect.width - 20;
+            if (y + rect.height > window.innerHeight) y = window.innerHeight - rect.height - 20;
+            if (x < 0) x = 10;
+            if (y < 0) y = 10;
+            content.style.left = x + 'px';
+            content.style.top = y + 'px';
+        }, 10);
+        
+        // Zoom functionality
+        img.onclick = () => {
+            if (!isImagePreviewZoomed) {
+                img.style.width = '800px';
+                img.style.cursor = 'zoom-out';
+                isImagePreviewZoomed = true;
+                
+                // Adjust position so it doesn't go off-screen when zoomed
+                setTimeout(() => {
+                    const rect = content.getBoundingClientRect();
+                    let curX = parseInt(content.style.left);
+                    let curY = parseInt(content.style.top);
+                    if (curX + rect.width > window.innerWidth) curX = window.innerWidth - rect.width - 20;
+                    if (curY + rect.height > window.innerHeight) curY = window.innerHeight - rect.height - 20;
+                    if (curX < 0) curX = 10;
+                    if (curY < 0) curY = 10;
+                    content.style.left = curX + 'px';
+                    content.style.top = curY + 'px';
+                }, 210); // Wait for transition
+            } else {
+                img.style.width = '320px';
+                img.style.cursor = 'zoom-in';
+                isImagePreviewZoomed = false;
+            }
+        };
+
+        // Drag functionality
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+        
+        const onMouseMove = (moveEvent) => {
+            if (!isDragging) return;
+            const dx = moveEvent.clientX - startX;
+            const dy = moveEvent.clientY - startY;
+            content.style.left = (initialLeft + dx) + 'px';
+            content.style.top = (initialTop + dy) + 'px';
+        };
+        
+        const onMouseUp = () => {
+            isDragging = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        };
+        
+        dragHandle.onmousedown = (downEvent) => {
+            isDragging = true;
+            startX = downEvent.clientX;
+            startY = downEvent.clientY;
+            initialLeft = parseInt(content.style.left) || 0;
+            initialTop = parseInt(content.style.top) || 0;
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        };
+        
+        if (btn) {
+            btn.onclick = () => {
+                modal.style.display = 'none';
+                if (window.jumpToTC) window.jumpToTC(index, 'tcin');
+            };
+        }
+    }
+};
+
 // ── Row Context Menu ──────────────────────────────────────────
 function hideContextMenu() {
     const menu = document.getElementById('rowContextMenu');

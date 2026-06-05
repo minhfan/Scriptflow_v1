@@ -6,23 +6,58 @@
 
 // ── Undo / Redo ──────────────────────────────────────────────
 function saveState(clearRedo = true) {
-    logHistory.push(JSON.parse(JSON.stringify(logs)));
+    logHistory.push({
+        logs: JSON.parse(JSON.stringify(logs)),
+        actionList: [...actionList],
+        actionColors: JSON.parse(JSON.stringify(actionColors))
+    });
     if (logHistory.length > 50) logHistory.shift();
     if (clearRedo) redoHistory = [];
 }
 
 function undo() {
     if (logHistory.length > 0) {
-        redoHistory.push(JSON.parse(JSON.stringify(logs)));
-        logs = logHistory.pop();
+        redoHistory.push({
+            logs: JSON.parse(JSON.stringify(logs)),
+            actionList: [...actionList],
+            actionColors: JSON.parse(JSON.stringify(actionColors))
+        });
+        const state = logHistory.pop();
+        
+        // Backward compatibility for old simple array states
+        if (Array.isArray(state)) {
+            logs = state;
+        } else {
+            logs = state.logs;
+            if (state.actionList && window.updateCurrentPreset) {
+                window.updateCurrentPreset(state.actionList, state.actionColors);
+                if (window.updateActionButtons) window.updateActionButtons();
+            }
+        }
+        
         renderTable(); drawMarkers(); saveSession();
     }
 }
 
 function redo() {
     if (redoHistory.length > 0) {
-        logHistory.push(JSON.parse(JSON.stringify(logs)));
-        logs = redoHistory.pop();
+        logHistory.push({
+            logs: JSON.parse(JSON.stringify(logs)),
+            actionList: [...actionList],
+            actionColors: JSON.parse(JSON.stringify(actionColors))
+        });
+        const state = redoHistory.pop();
+        
+        if (Array.isArray(state)) {
+            logs = state;
+        } else {
+            logs = state.logs;
+            if (state.actionList && window.updateCurrentPreset) {
+                window.updateCurrentPreset(state.actionList, state.actionColors);
+                if (window.updateActionButtons) window.updateActionButtons();
+            }
+        }
+        
         renderTable(); drawMarkers(); saveSession();
     }
 }

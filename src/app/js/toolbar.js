@@ -76,7 +76,8 @@ async function logAction(actionName) {
         thumb:  activeThumbnail,
         drawing: window.activeDrawing || null,
         status: stt,
-        reviewNote: rv
+        reviewNote: rv,
+        isFeedback: !!window.isFeedbackMode
     });
     logs.sort((a, b) => a.inSec - b.inSec);
     saveSession();

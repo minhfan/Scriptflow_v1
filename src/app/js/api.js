@@ -181,7 +181,19 @@ async function syncToGoogleSheets() {
 
     try {
         const sheetId = currentSpreadsheetId || TEMPLATE_SPREADSHEET_ID;
-        const values  = logs.map(log => ["", log.action, log.tcin, log.tcout, log.tcswap, log.script, log.note]);
+        
+        const isFeedback = !!window.isFeedbackMode;
+        const targetTab = isFeedback ? 'Feedback' : (currentSheetTab || 'Full-show');
+        
+        const logsToSync = logs.filter(log => !!log.isFeedback === isFeedback);
+        
+        // Include reviewNote and status if it's feedback mode
+        const values = logsToSync.map(log => {
+            if (isFeedback) {
+                return ["", log.action, log.tcin, log.tcout, log.tcswap, log.script, log.note, log.reviewNote || '', log.status || 'pending'];
+            }
+            return ["", log.action, log.tcin, log.tcout, log.tcswap, log.script, log.note];
+        });
 
         const writeRes = await fetch('/tcpscript/api/google-sheets', {
             method: 'POST',
@@ -192,7 +204,7 @@ async function syncToGoogleSheets() {
             body: JSON.stringify({
                 action: 'syncLogs',
                 sheetId,
-                tab: currentSheetTab || 'Full-show',
+                tab: targetTab,
                 values
             })
         });
@@ -206,9 +218,9 @@ async function syncToGoogleSheets() {
         if (writeData.status === 'error') throw new Error(writeData.message || 'Lỗi từ Google Apps Script');
 
         if (window.showToast) {
-            window.showToast('Đồng bộ thành công! Kiểm tra Sheets của bạn.', 'success');
+            window.showToast(`Đồng bộ thành công! (Lưu ý: Nếu lỗi, hãy chắc chắn file Sheets có tab '${targetTab}')`, 'success');
         } else {
-            openMessageModal('Đồng bộ Google Sheets', 'Đồng bộ thành công.');
+            openMessageModal('Đồng bộ Google Sheets', `Đồng bộ thành công vào tab '${targetTab}'.`);
         }
     } catch (error) {
         console.error('[API SYNC ERROR]', error);
