@@ -1,12 +1,12 @@
     <header>
         <div class="header-logo">
-            <a href="/tcpscript/project" title="Back to Projects" style="display: inline-flex; align-items: center; gap: 4px; color: var(--text-muted); text-decoration: none; font-size: 10px; font-weight: 500; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border, #334155); margin-right: 10px; transition: all 0.2s;" onmouseover="this.style.color='var(--accent, #10b981)';this.style.borderColor='var(--accent, #10b981)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border, #334155)'">&larr; Projects</a>
+            <a href="/tcpscript/project" title="Back to Projects" style="display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: var(--r-sm); border: 1px solid var(--border-bright); background: var(--bg-input); margin-right: 12px; transition: all var(--t-fast); box-shadow: inset 0 1px 0 var(--border-highlight);" onmouseover="this.style.color='var(--text-main)';this.style.borderColor='var(--accent)';this.style.background='var(--bg-hover)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border-bright)';this.style.background='var(--bg-input)'">&larr; Projects</a>
             <a href="/tcpscript/project" class="app-topbar-logo" aria-label="Back to project list">
-                <span class="logo-title">TCP <span>ScriptFlow</span> <em>v2.0</em></span>
+                <span class="logo-title" style="letter-spacing: -0.03em;">TCP <span>ScriptFlow</span> <em>v2.0</em></span>
             </a>
         </div>
         <div class="header-controls">
-            <span id="saveStatus">Saved</span>
+            <span id="saveStatus" style="font-family: 'JetBrains Mono', monospace; background: var(--bg-input); box-shadow: inset 0 1px 0 var(--border-highlight); font-size: 9px; padding: 5px 12px; border-radius: var(--r-sm);">Saved</span>
             <select id="fpsSelect" class="btn-header" style="width: auto;">
                 <option value="23.976">23.976 fps</option>
                 <option value="24">24 fps</option>
@@ -18,16 +18,16 @@
                 <option value="60">60 fps</option>
             </select>
             <select id="themeSelect" class="btn-header" style="width: auto;">
-                <option value="dark">Dark</option>
+                <option value="dark">Dark Tech</option>
                 <option value="light">Light</option>
                 <option value="blue">Blue</option>
             </select>
 
-            <button id="btnLangToggle" class="btn-header" style="font-weight: bold; width: auto;" onclick="window.toggleLanguage()">ENG</button>
+            <button id="btnLangToggle" class="btn-header" style="font-weight: 700; width: auto;" onclick="window.toggleLanguage()">ENG</button>
             
-            <button id="btnModeToggle" class="btn-header" style="font-weight: bold; width: auto; background: var(--border-bright); color: var(--text-main);" onclick="window.toggleFeedbackMode()" title="Toggle Feedback Mode">Script Mode</button>
+            <button id="btnModeToggle" class="btn-header" style="font-weight: 700; width: auto; background: var(--accent); color: #fff; border-color: var(--accent); text-shadow: 0 1px 2px rgba(0,0,0,0.2);" onclick="window.toggleFeedbackMode()" title="Toggle Feedback Mode">Script Mode</button>
             
-            <select id="exportSelect" class="btn-header" style="width: auto; font-weight: 600; color: var(--accent);" title="Export Project">
+            <select id="exportSelect" class="btn-header" style="width: auto; font-weight: 700;" title="Export Project">
                 <option value="" data-i18n="btn_export">&#10515; Export</option>
                 <option value="docx">Word (.docx)</option>
                 <option value="srt">Subtitles (.srt)</option>

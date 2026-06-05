@@ -11,8 +11,9 @@
     z-index: 1000;
     left: 0; top: 0;
     width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     justify-content: center;
     align-items: center;
 }
@@ -26,7 +27,7 @@
     color: var(--text-main);
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+    box-shadow: inset 0 1px 0 var(--border-highlight), 0 24px 60px rgba(0,0,0,0.6);
 }
 
 .modal-content h2 {
@@ -58,8 +59,8 @@
     padding: 10px 24px;
     border-radius: var(--r-sm);
     cursor: pointer;
-    font-weight: 600;
-    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 13px;
     transition: all var(--t-fast);
     border: 1px solid transparent;
@@ -174,8 +175,9 @@
     cursor: pointer;
     transition: all var(--t-fast);
     white-space: nowrap;
+    box-shadow: inset 0 1px 0 var(--border-highlight);
 }
-.sc-btn:hover { border-color: var(--accent); background: var(--accent-dim); }
+.sc-btn:hover { border-color: var(--accent); background: var(--bg-hover); color: var(--text-main); }
 .sc-btn.listening {
     background: var(--accent);
     color: #000;
@@ -196,16 +198,17 @@
     width: 100%;
     border-radius: var(--r-sm);
     cursor: pointer;
-    font-weight: 600;
-    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 10px;
     margin-top: 18px;
     transition: all var(--t-fast);
+    box-shadow: inset 0 1px 0 var(--border-highlight);
 }
 .close-btn:hover {
     background: var(--accent);
     border-color: var(--accent);
-    color: #000;
+    color: #fff;
 }
 
 /* ── Context Menu ───────────────────────────────────────────── */
@@ -262,16 +265,16 @@
     animation: floatMenuIn 0.12s ease;
 }
 .floating-tab-menu .tab-chip {
-    padding: 3px 8px;
+    padding: 4px 10px;
     font-size: 9px;
-    font-weight: 600;
-    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     color: var(--text-sub);
-    background: var(--bg-hover);
-    border: 1px solid var(--border);
+    background: var(--bg-input);
+    border: 1px solid var(--border-bright);
     border-radius: var(--r-sm);
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all var(--t-fast);
     white-space: nowrap;
 }
 .floating-tab-menu .tab-chip:hover {
@@ -279,12 +282,14 @@
     color: #fff;
     border-color: var(--accent);
     transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 .floating-tab-menu .tab-chip.sending { opacity: 0.5; pointer-events: none; }
 .floating-tab-menu .tab-chip.sent {
     background: var(--accent) !important;
     color: #fff !important;
     border-color: var(--accent) !important;
+    box-shadow: 0 4px 8px var(--accent-glow) !important;
 }
 @keyframes floatMenuIn {
     from { opacity: 0; transform: translateY(4px); }

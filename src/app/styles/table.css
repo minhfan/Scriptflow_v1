@@ -37,9 +37,9 @@
 .table-wrap {
     overflow: auto;
     flex: 1;
-    border: 1px solid var(--border);
-    border-radius: var(--r-md);
-    background: var(--bg-main);
+    background: transparent;
+    margin-top: 8px;
+    border-radius: 8px;
 }
 
 /* ── Table Base ─────────────────────────────────────────────── */
@@ -49,7 +49,7 @@ table {
     border-collapse: collapse;
     table-layout: fixed;
     text-align: left;
-    font-size: 9.58px;
+    font-size: 10px;
 }
 
 #logTable .col-stt    { width: 36px; }
@@ -60,21 +60,23 @@ table {
 #logTable .col-delete { width: 76px; }
 
 th {
-    background: var(--bg-input);
-    color: var(--text-sub);
+    background: rgba(13, 13, 13, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--text-muted);
     font-weight: 700;
-    font-size: 8.33px;
+    font-size: 9px;
     text-transform: uppercase;
-    letter-spacing: 0.07em;
+    letter-spacing: 0.1em;
     position: sticky;
     top: 0;
     z-index: 5;
     border-bottom: 1px solid var(--border-bright);
 }
 th, td {
-    padding: 7px 9px;
+    padding: 8px 10px;
     border-bottom: 1px solid var(--border);
-    height: 32px;
+    height: 36px;
     vertical-align: middle;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -94,7 +96,7 @@ td[contenteditable="true"] {
     transition: background var(--t-fast);
 }
 td[contenteditable="true"]:focus {
-    background: var(--accent-dim);
+    background: var(--bg-input);
     box-shadow: inset 0 0 0 1px var(--accent);
     border-radius: 4px;
 }
@@ -142,47 +144,46 @@ tr.selected-row { background: var(--bg-hover); box-shadow: inset 3px 0 0 var(--a
 
 /* ── Action Tag ─────────────────────────────────────────────── */
 .action-tag {
-    padding: 3px 8px;
-    border-radius: var(--r-sm);
+    padding: 4px 8px;
+    border-radius: 4px;
     font-weight: 700;
-    font-size: 7.92px;
-    font-family: 'Outfit', sans-serif;
+    font-size: 8px;
     display: inline-block;
     min-width: 68px;
     text-align: center;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 /* ── Row Buttons ────────────────────────────────────────────── */
 .btn-delete {
-    background: var(--danger-dim);
-    color: var(--danger);
+    background: var(--bg-input);
+    color: var(--text-muted);
     border: 1px solid transparent;
-    padding: 3px 8px;
-    border-radius: var(--r-sm);
+    padding: 4px 8px;
+    border-radius: 4px;
     cursor: pointer;
     font-weight: 700;
-    font-size: 8.33px;
-    font-family: 'Outfit', sans-serif;
+    font-size: 9px;
     transition: all var(--t-fast);
     display: inline-block;
 }
-.btn-delete:hover { background: var(--danger); color: #fff; }
+.btn-delete:hover { background: var(--danger); color: #fff; box-shadow: 0 0 10px rgba(225, 29, 72, 0.4); }
 
 .btn-play-delete {
-    background: var(--accent-dim);
-    color: var(--accent);
+    background: var(--bg-input);
+    color: var(--text-main);
     border: 1px solid transparent;
-    padding: 3px 8px;
-    border-radius: var(--r-sm);
+    padding: 4px 8px;
+    border-radius: 4px;
     cursor: pointer;
     font-weight: 700;
-    font-size: 8.33px;
-    font-family: 'Outfit', sans-serif;
+    font-size: 9px;
     transition: all var(--t-fast);
     display: inline-block;
 }
-.btn-play-delete:hover { background: var(--accent); color: #000; }
+.btn-play-delete:hover { background: var(--accent); color: #fff; box-shadow: 0 0 10px rgba(59, 130, 246, 0.4); }
 
 /* ── Send Tab Buttons ───────────────────────────────────────── */
 .btn-send {

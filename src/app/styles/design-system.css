@@ -1,84 +1,97 @@
 /* ============================================================
    AUTOSCRIPT TCP Pro — Design System
-   CSS Variables, Themes, Base Reset, Typography
+   Premium Dark Tech / Linear Aesthetic
    ============================================================ */
 
 /* ── Color Tokens & Themes ─────────────────────────────────── */
 :root {
-    --bg-main: #0a0a0a;
-    --bg-panel: #171717;
-    --bg-raised: #262626;
-    --bg-input: #262626;
-    --bg-hover: #404040;
-    --border-color: #404040;
+    /* Base Surfaces */
+    --bg-main: #050505;          /* OLED Black */
+    --bg-panel: #0d0d0d;         /* Deep Charcoal */
+    --bg-raised: #161616;        /* Raised Element */
+    --bg-input: #111111;         /* Input Background */
+    --bg-hover: #1f1f1f;         /* Subtle Hover */
+    
+    /* Accents (Cold Cobalt / Electric Blue) */
+    --primary: #2563eb;
+    --primary-hover: #3b82f6;
+    --accent: #3b82f6;           /* Main interactive accent */
+    --accent-dim: rgba(59, 130, 246, 0.1);
+    --accent-glow: rgba(59, 130, 246, 0.25);
+    
+    /* Active States (Amber) */
+    --active-range: rgba(245, 158, 11, 0.15);
+    --active-border: #f59e0b;
+    --active-glow: rgba(245, 158, 11, 0.3);
 
-    --primary: #3b82f6;
-    --primary-hover: #2563eb;
-    --accent: #60a5fa;
-    --accent-dim: rgba(96, 165, 250, 0.12);
-    --accent-glow: rgba(96, 165, 250, 0.4);
+    /* Semantic */
+    --success: #10b981;
+    --danger: #e11d48;
+    --danger-hover: #be123c;
+    --danger-dim: rgba(225, 29, 72, 0.12);
 
-    --active-range:  rgba(59, 130, 246, 0.18);
-    --active-border: #3b82f6;
+    /* Typography */
+    --text-main: #ededed;
+    --text-sub:  #a1a1aa;
+    --text-muted: #71717a;
 
-    --success: #22c55e;
-    --danger: #ef4444;
-    --danger-hover: #dc2626;
-    --danger-dim: rgba(239, 68, 68, 0.12);
-
-    --text-main: #ffffff;
-    --text-sub:  #c3c2d4;
-    --text-muted: #e2e8f0;
-
+    /* Borders & Lines */
     --border: #262626;
-    --border-bright: #52525b;
+    --border-bright: #3f3f46;
+    --border-highlight: rgba(255, 255, 255, 0.06);
 
+    /* Radii */
     --r-sm: 6px;
     --r-md: 10px;
-    --r-lg: 14px;
+    --r-lg: 16px;   /* Exaggerated squircles */
 
-    --t-fast: 0.15s ease;
-    --t-mid: 0.25s ease;
+    /* Premium Motion (Cubic Beziers) */
+    --t-fast: 0.15s cubic-bezier(0.32, 0.72, 0, 1);
+    --t-mid: 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+    --t-spring: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* Fallback themes for legacy switcher (overridden to match premium standard) */
 [data-theme="light"] {
-    --bg-main:    #f4f4f7;
-    --bg-panel:   #ffffff;
-    --bg-raised:  #f0f0f5;
-    --bg-input:   #e8e8ef;
-    --bg-hover:   #dedee8;
-    --accent:        #d97706;
-    --accent-dim:    rgba(217, 119, 6, 0.10);
-    --accent-glow:   rgba(217, 119, 6, 0.20);
-    --active-range:  rgba(217, 119, 6, 0.15);
-    --active-border: #d97706;
-    --text-main: #111118;
-    --text-sub:  #6b6a7a;
-    --text-muted: #aaaabb;
-    --border:       #e0e0eb;
-    --border-bright: #c8c8d8;
+    --bg-main: #fcfcfc;
+    --bg-panel: #ffffff;
+    --bg-raised: #f4f4f5;
+    --bg-input: #f4f4f5;
+    --bg-hover: #e4e4e7;
+    --accent: #09090b;
+    --accent-dim: rgba(9, 9, 11, 0.05);
+    --accent-glow: rgba(9, 9, 11, 0.1);
+    --active-range: rgba(245, 158, 11, 0.1);
+    --active-border: #f59e0b;
+    --text-main: #09090b;
+    --text-sub: #52525b;
+    --text-muted: #a1a1aa;
+    --border: #e4e4e7;
+    --border-bright: #d4d4d8;
+    --border-highlight: rgba(0, 0, 0, 0.03);
 }
 
 [data-theme="blue"] {
-    --bg-main:    #08101e;
-    --bg-panel:   #0e1a2f;
-    --bg-raised:  #142034;
-    --bg-input:   #192840;
-    --bg-hover:   #1e3050;
-    --accent:        #3b82f6;
-    --accent-dim:    rgba(59, 130, 246, 0.12);
-    --accent-glow:   rgba(59, 130, 246, 0.25);
-    --active-range:  rgba(251, 191, 36, 0.18);
-    --active-border: #fbbf24;
-    --text-main: #ffffff;
-    --text-sub:  #c0cbd6;
-    --text-muted: #8c9eb2;
-    --border:       #1e2d45;
-    --border-bright: #2a3f5a;
+    --bg-main: #030712;
+    --bg-panel: #0b1120;
+    --bg-raised: #111827;
+    --bg-input: #0f172a;
+    --bg-hover: #1e293b;
+    --accent: #38bdf8;
+    --accent-dim: rgba(56, 189, 248, 0.1);
+    --accent-glow: rgba(56, 189, 248, 0.2);
+    --active-range: rgba(250, 204, 21, 0.15);
+    --active-border: #facc15;
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+    --text-muted: #64748b;
+    --border: #1e293b;
+    --border-bright: #334155;
+    --border-highlight: rgba(255, 255, 255, 0.04);
 }
 
 /* ── Scrollbars ─────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
     background: var(--border-bright);
@@ -90,7 +103,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background-color: var(--bg-main);
     color: var(--text-main);
     padding: 12px 16px;
@@ -105,7 +118,21 @@ body {
     -webkit-user-select: none;
 }
 
+input, textarea, select {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
 input, textarea {
     user-select: text;
     -webkit-user-select: text;
 }
+
+/* ── Double-Bezel Utilities ────────────────────────────────── */
+.panel-bezel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: inset 0 1px 0 var(--border-highlight), 0 2px 8px rgba(0,0,0,0.2);
+    padding: 16px;
+}
+
