@@ -1,0 +1,129 @@
+/* ============================================================
+   AUTOSCRIPT TCP Pro — Timeline
+   Custom timeline, markers, playhead, zoom controls
+   ============================================================ */
+
+/* ── Timeline Full Container ────────────────────────────────── */
+.timeline-full-container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    align-items: flex-end;
+    padding-bottom: 25px;
+}
+
+.tc-bound {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: color var(--t-fast);
+    white-space: nowrap;
+    margin-bottom: 43px;
+}
+.tc-bound:hover { color: var(--accent); }
+
+/* ── Scrollable Wrapper ─────────────────────────────────────── */
+.custom-timeline-wrapper {
+    position: relative;
+    height: 100%;
+    flex: 1;
+    min-width: 0;
+    overflow-y: visible;
+    overflow-x: scroll;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 45px;
+}
+.custom-timeline-wrapper::-webkit-scrollbar { display: none; }
+
+/* ── Timeline Track ─────────────────────────────────────────── */
+.custom-timeline {
+    position: relative;
+    height: 24px;
+    background: #52525b;
+    border: 1px solid #71717a;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: height var(--t-fast);
+}
+
+.timeline-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: rgba(59, 130, 246, 0.3);
+    display: none;
+}
+
+/* ── Active Range ───────────────────────────────────────────── */
+.timeline-active-range {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: rgba(239, 68, 68, 0.4);
+    border-radius: 4px;
+    pointer-events: none;
+    display: none;
+    z-index: 3;
+}
+
+/* ── Draft Marker ───────────────────────────────────────────── */
+#draftMarker {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 15;
+}
+
+/* ── Action Markers / SmartTags ─────────────────────────────── */
+.marker-range {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 2px;
+    cursor: pointer;
+    z-index: 10;
+    transition: filter var(--t-fast);
+    container-type: inline-size;
+    container-name: marker;
+}
+
+.action-pill-text { display: none; }
+@container marker (min-width: 30px) {
+    .action-pill-text { display: inline; }
+}
+
+.marker-range:hover { z-index: 20; filter: brightness(1.4); }
+.marker-range .tooltip {
+    visibility: hidden;
+    width: max-content;
+    background-color: var(--bg-raised);
+    color: var(--text-main);
+    text-align: center;
+    border-radius: var(--r-md);
+    padding: 7px 12px;
+    position: absolute;
+    z-index: 30;
+    bottom: 160%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    font-size: 9.17px;
+    border: 1px solid var(--border-bright);
+    pointer-events: none;
+    white-space: pre-wrap;
+    font-family: 'Outfit', sans-serif;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    transition: opacity var(--t-fast);
+}
+.marker-range:hover .tooltip { visibility: visible; opacity: 1; }
+
+/* ── Zoom Controls ──────────────────────────────────────────── */
+.zoom-item { padding: 6px 12px; font-size: 9.17px; cursor: pointer; color: white; transition: background 0.2s; }
+.zoom-item:hover { background: var(--accent); }

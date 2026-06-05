@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoscript TCP Pro â€” Video Logging Tool</title>
+    <meta name="description" content="Professional video timecode logging and script automation tool for editors.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/tcpscript/assets/app/styles/design-system.css">
+    <link rel="stylesheet" href="/tcpscript/assets/app/styles/layout.css">
+    <link rel="stylesheet" href="/tcpscript/assets/app/styles/timeline.css">
+    <link rel="stylesheet" href="/tcpscript/assets/app/styles/table.css">
+    <link rel="stylesheet" href="/tcpscript/assets/app/styles/modals.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="/tcpscript/assets/app/js/api.js"></script>
+    <script src="/tcpscript/assets/app/js/storage.js"></script>
+    <script src="/tcpscript/assets/app/js/export.js"></script>
+    <script src="/tcpscript/assets/app/js/renderer.js"></script>
+    <script src="/tcpscript/assets/app/js/playback.js"></script>
+</head>
+<body>
+        <header>
+        <div class="header-logo">
+            <a href="/tcpscript/project" title="Back to Projects" style="display: inline-flex; align-items: center; gap: 4px; color: var(--text-muted); text-decoration: none; font-size: 10px; font-weight: 500; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border, #334155); margin-right: 10px; transition: all 0.2s;" onmouseover="this.style.color='var(--accent, #10b981)';this.style.borderColor='var(--accent, #10b981)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border, #334155)'">&larr; Projects</a>
+            <a href="/tcpscript/project" class="app-topbar-logo" aria-label="Back to project list">
+                <span class="logo-title">TCP <span>ScriptFlow</span> <em>v2.0</em></span>
+            </a>
+        </div>
+        <div class="header-controls">
+            <span id="saveStatus">Saved</span>
+            <select id="fpsSelect" class="btn-header" style="width: auto;">
+                <option value="23.976">23.976 fps</option>
+                <option value="24">24 fps</option>
+                <option value="25">25 fps</option>
+                <option value="29.97" selected>29.97 fps</option>
+                <option value="30">30 fps</option>
+                <option value="50">50 fps</option>
+                <option value="59.94">59.94 fps</option>
+                <option value="60">60 fps</option>
+            </select>
+            <select id="themeSelect" class="btn-header" style="width: auto;">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="blue">Blue</option>
+            </select>
+
+            <button id="btnLangToggle" class="btn-header" style="font-weight: bold; width: auto;" onclick="window.toggleLanguage()">ENG</button>
+            
+            <select id="exportSelect" class="btn-header" style="width: auto; font-weight: 600; color: var(--accent);" title="Export Project">
+                <option value="" data-i18n="btn_export">&#10515; Export</option>
+                <option value="xml">Premiere XML</option>
+                <option value="edl">Resolve EDL</option>
+                <option value="csv">CSV File</option>
+            </select>
+            <button class="btn-header" id="btnShortcuts" data-i18n="btn_settings">Settings</button>
+            <button class="btn-header" id="btnHelp" data-i18n="btn_shortcuts">Shortcuts</button>
+        </div>
+    </header>
+
+            <div class="sheet-tabs-container" id="sheetTabsContainer">
+        <button class="sheet-tab active" data-tab="Full-show">Full-show</button>
+        <!-- Dynamic tabs will be added here -->
+    </div>
+
+
+    <div class="layout-container" id="mainContainer">
+        <div class="left-col" id="leftCol">
+                        <div class="video-section" id="videoSection">
+                <label class="file-upload" id="uploadLabel">
+                    <input type="file" id="videoUpload" accept="video/*" style="display: none;">
+                    <span id="uploadText">Click or press 'V' to upload a video file</span>
+                </label>
+                <div id="videoMetaSummary" class="video-meta-summary"></div>
+                <div class="video-wrapper">
+                    <video id="videoPlayer" disablePictureInPicture></video>
+                </div>
+
+                <div class="video-controls">
+                    <div class="control-group">
+                        <span class="control-label">Speed</span>
+                        <div class="speed-control" id="speedDisplay" title="Drag L/R or Click">1.00x</div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <button type="button" class="tool-btn icon primary" id="btnPlayVideo" title="Phát video" aria-label="Phát video" style="font-size: 20px; min-width: 48px; height: 32px; display: flex; justify-content: center; align-items: center; padding: 0;">&#9658;</button>
+                        <div class="big-timecode" id="bigTimecode" title="Click to Copy" style="margin: 0; padding: 0;">00:00:00:00</div>
+                    </div>
+
+                    <div class="control-group" style="display: flex; gap: 15px;">
+                        <div class="control-group" style="margin: 0;">
+                            <span class="control-label">Vol</span>
+                            <input type="range" id="volumeSlider" class="vol-slider" min="0" max="1" step="0.05" value="1">
+                        </div>
+                        <button type="button" class="preview-cut-btn" id="btnPreviewCut" title="Preview Cut: OFF (P)" aria-label="Toggle Preview Cut"></button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="resizer-h" id="resizerH1"></div>
+
+                        <div class="timeline-section" id="timelineSection" style="position: relative;">
+                <div class="timeline-zoom-controls" style="position: absolute; top: 12px; right: 12px; z-index: 10;">
+                    <div style="position: relative; display: inline-block;">
+                        <div class="control-group" style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <span class="control-label" style="margin: 0; font-size: 8.33px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Zoom (Z)</span>
+                            <div id="btnZoomDrag" class="speed-control" style="cursor: ew-resize; user-select: none; width: 64px; text-align: center; margin: 0; padding: 4px 12px; height: auto;" title="Drag L/R or Click">
+                                <span id="zoomText">1.00x</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-full-container">
+                    <div id="tcJumpOverlay" class="tc-jump-overlay">
+                        <input type="text" id="tcJumpInput" class="tc-jump-input" placeholder="00:00:00:00" />
+                        <div class="tc-jump-actions">
+                            <button id="tcJumpGo" class="btn-fs" style="padding: 2px 8px;">GO</button>
+                            <button id="tcJumpClose" class="btn-delete" style="padding: 2px 8px;">X</button>
+                        </div>
+                    </div>
+                    <span class="tc-bound" id="tcStart" title="Jump to Start" style="margin-right: 10px;">00:00:00:00</span>
+                    <div class="custom-timeline-wrapper" style="overflow-x: auto;">
+                        <div class="custom-timeline" id="customTimeline" style="width: 100%; min-width: 100%;">
+                            <div id="draftMarker" class="timeline-marker" style="display: none; z-index: 15;"></div>
+                            <div id="timelineTicks" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none;"></div>
+                            <div class="timeline-progress" id="timelineProgress"></div>
+                            <div class="timeline-active-range" id="activeRange"></div>
+                            <div id="activeSwapIndicator" style="display: none; position: absolute; top: -14px; transform: translateX(-50%); width: 14px; height: 14px; z-index: 25; pointer-events: auto; cursor: pointer;" onmousedown="if(activeSwapSec !== null) { document.getElementById('videoPlayer').currentTime = activeSwapSec; } event.stopPropagation();">
+                                <div style="position: absolute; top: -5px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #ea580c;"></div>
+                            </div>
+                            <div id="activeInIndicator" style="display: none; position: absolute; top: -14px; transform: translateX(-50%); width: 14px; height: 14px; z-index: 25; pointer-events: auto; cursor: pointer;" onmousedown="if(activeInSec !== null) { document.getElementById('videoPlayer').currentTime = activeInSec; } event.stopPropagation();">
+                                <div style="position: absolute; top: -5px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #3b82f6;"></div>
+                            </div>
+                            <div id="activeOutIndicator" style="display: none; position: absolute; top: -14px; transform: translateX(-50%); width: 14px; height: 14px; z-index: 25; pointer-events: auto; cursor: pointer;" onmousedown="if(activeOutSec !== null) { document.getElementById('videoPlayer').currentTime = activeOutSec; } event.stopPropagation();">
+                                <div style="position: absolute; top: -5px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #ef4444;"></div>
+                            </div>
+                            <div id="playheadIndicator" style="position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--text-main); z-index: 20; pointer-events: none; left: 0%;">
+                                <div style="position: absolute; top: -6px; left: -4px; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--text-main);"></div>
+                            </div>
+                            <div class="hover-tooltip" id="hoverTooltip"></div>
+                        </div>
+                    </div>
+                    <span class="tc-bound" id="tcEnd" title="Jump to End" style="margin-left: 10px;">00:00:00:00</span>
+                </div>
+            </div>
+
+
+            <div class="resizer-h" id="resizerH2"></div>
+
+                        <div class="form-section" id="formSection">
+                <div class="tc-row">
+                    <div class="tc-box" id="boxIn" title="Seek to IN (Q) / Mark if empty">
+                        <span>TC IN</span>
+                        <div class="time" id="valTcIn">00:00:00:00</div>
+                    </div>
+                    <div class="tc-box" id="boxOut" title="Seek to OUT (W) / Mark if empty">
+                        <span>TC OUT</span>
+                        <div class="time" id="valTcOut">00:00:00:00</div>
+                    </div>
+                    <div class="tc-box" id="boxSwap" title="Seek to SWAP (E) / Mark if empty" style="display: none;">
+                        <span>TC SWAP (E)</span>
+                        <div class="time" id="valTcSwap">00:00:00:00</div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative;" id="tagPresetContainer">
+                        <!-- Custom Dropdown Trigger -->
+                        <button id="btnTagPreset" class="btn-tag-preset" aria-haspopup="true" aria-expanded="false">
+                            <span class="preset-label" data-i18n="lbl_tag">TAG (T):</span>
+                            <span class="preset-name" id="currentPresetName">Standard</span>
+                            <span class="preset-arrow">▾</span>
+                        </button>
+                        
+                        <!-- Custom Dropdown Menu -->
+                        <div id="tagPresetMenu" class="custom-preset-menu" style="display: none;">
+                            <div class="custom-preset-list" id="customPresetList">
+                                <!-- Populated dynamically by playback.js -->
+                            </div>
+                            <div class="custom-preset-footer">
+                                <button id="btnCreatePreset" class="btn-create-preset" data-i18n="btn_add_preset">+ Thêm Preset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-button-group" id="actionButtonGroup" role="radiogroup" aria-label="Chọn tag">
+                        <button type="button" class="action-button" data-action="DELETE" role="radio">DELETE</button>
+                        <button type="button" class="action-button" data-action="POP-UP" role="radio">POP-UP</button>
+                        <button type="button" class="action-button" data-action="SWAP" role="radio">SWAP</button>
+                        <button type="button" class="action-button" data-action="QUESTION" role="radio">QUESTION</button>
+                        <button type="button" class="action-button" data-action="QUOTE" role="radio">QUOTE</button>
+                        <button type="button" class="action-button" data-action="NOTE" role="radio">NOTE</button>
+                        <button type="button" class="action-button" data-action="OTHERS" role="radio">OTHERS</button>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: stretch; margin-top: 10px; flex: 1;">
+                    <div style="display: flex; flex-direction: column; flex: 1; gap: 10px;">
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                            <label id="labelScript" data-i18n="lbl_script">SCRIPT (S):</label>
+                            <textarea id="inputScript" style="flex: 1; resize: none; overflow-y: hidden;" data-i18n="col_script"></textarea>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                            <label id="labelNote" data-i18n="lbl_note">NOTE (N):</label>
+                            <textarea id="inputNote" style="flex: 1; resize: none; overflow-y: hidden;" data-i18n="col_note"></textarea>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px; height: 100%;">
+                        <label style="visibility: hidden; margin-bottom: 2px;">IMPORT</label>
+                        <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; width: 70px;">
+                            <button type="button" id="btnToolbarImport" title="Import action (Shift+Enter)" style="flex: 2; font-size: 24.00px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center;">&#10140;</button>
+                            <div class="import-short-wrapper">
+                                <button type="button" id="btnToolbarImportShort" title="Import to specific Short tab" style="width:100%; font-size: 16px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center;">&#10140;<sub style="font-size: 9px; margin-left: 2px; font-weight: bold; position: relative; bottom: -2px;">S</sub></button>
+                                <div class="floating-tab-menu" id="importShortFloatingMenu"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="resizer-v" id="resizerV"></div>
+
+                <div class="right-col" id="tablePanel">
+            <div class="table-header" style="align-items: center;">
+                <h2 class="section-title" style="display: flex; align-items: center; gap: 12px; margin: 0; font-size: 24px;">
+                    <span id="defaultScriptTitle" style="font-weight: 700;">Script</span>
+                    <a id="activeSheetLink" href="#" target="_blank" style="display: none; color: var(--text-main); text-decoration: none; align-items: center; gap: 8px; font-weight: 700; transition: color var(--t-fast);">
+                        <span id="activeSheetName">Sheet</span>
+                    </a>
+                    <span class="log-count-badge" id="logCount" style="margin-left: 8px; font-size: 14px;">0</span>
+                </h2>
+            </div>
+            <div class="action-btns" style="display: flex; align-items: center; width: 100%; margin-bottom: 12px; gap: 10px;">
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; display: flex; align-items: center;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                    </span>
+                    <select id="filterAction" style="background: var(--bg-input); border: 1px solid var(--border-bright); border-radius: var(--r-sm); color: var(--text-main); font-size: 9.17px; padding: 6px 24px 6px 26px; outline: none; font-family: 'Outfit', sans-serif; cursor: pointer; appearance: none; width: auto;">
+                        <option value="ALL" data-i18n="opt_all_actions">All actions</option>
+                        <option value="DELETE">DELETE</option>
+                        <option value="SWAP">SWAP</option>
+                        <option value="POP-UP">POP-UP</option>
+                        <option value="QUESTION">QUESTION</option>
+                        <option value="QUOTE">QUOTE</option>
+                        <option value="NOTE">NOTE</option>
+                        <option value="OTHERS">OTHERS</option>
+                    </select>
+                    <span style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; font-size: 7.5px;">▼</span>
+                </div>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; display: flex; align-items: center;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Search script, timecode..." style="background: var(--bg-input); border: 1px solid var(--border-bright); border-radius: var(--r-sm); color: var(--text-main); font-size: 9.17px; padding: 6px 10px 6px 26px; width: 220px; outline: none; font-family: 'Outfit', sans-serif;">
+                </div>
+                <div style="display: flex; gap: 5px; margin-left: auto; align-items: center;">
+                    <label class="btn-action btn-import" id="lblImport" style="cursor: pointer; margin: 0;">
+                        <input type="file" id="csvImport" accept=".csv, .xlsx, .xls" style="display: none;">
+                        Import
+                    </label>
+                    <button type="button" class="btn-action btn-sync-brand" id="btnSyncSheets" title="Sync current sheet">Sync Sheet</button>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table id="logTable">
+                    <colgroup>
+                        <col class="col-stt">
+                        <col class="col-play" style="width: 44px;">
+                        <col class="col-action">
+                        <col class="col-tc">
+                        <col class="col-tc">
+                        <col class="col-tc">
+                        <col>
+                        <col>
+                        <col class="col-delete">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th data-i18n="col_stt">STT</th>
+                            <th></th>
+                            <th data-i18n="col_tag">TAG</th>
+                            <th data-i18n="col_in">TC IN</th>
+                            <th data-i18n="col_out">TC OUT</th>
+                            <th data-i18n="col_swap">TC SWAP</th>
+                            <th data-i18n="col_script">SCRIPT</th>
+                            <th data-i18n="col_note">NOTE</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="logBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+        <div id="floatHelpPanel" class="float-panel">
+        <div class="float-header" id="floatHelpHeader">
+            <h2>Shortcuts Guide</h2>
+            <button class="close-float" id="btnCloseHelp">&#10005;</button>
+        </div>
+        <div class="float-content">
+            <div class="shortcut-grid" id="helpGrid"></div>
+        </div>
+    </div>
+
+        <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <h2>Customize Shortcuts</h2>
+            <p style="font-size: 9.17px; color:var(--text-sub); text-align:center; margin-bottom:16px; margin-top:6px;">Click a key button, then press your new shortcut combination.</p>
+            <div class="shortcut-grid" id="settingsGrid"></div>
+            <button class="close-btn" id="btnCloseSettings">Save Settings</button>
+        </div>
+    </div>
+
+        <div id="messageModal" class="modal">
+        <div class="modal-content message-modal-content">
+            <h2 id="messageModalTitle">Thông báo</h2>
+            <div id="messageModalBody" class="message-modal-body"></div>
+            <div class="message-modal-actions">
+                <button class="btn-modal-base btn-modal-primary" id="btnCloseMessageModal">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+        <div id="confirmModal" class="modal" style="display:none;">
+        <div class="modal-content message-modal-content">
+            <h2 id="confirmModalTitle">Xác nhận</h2>
+            <div id="confirmModalBody" class="message-modal-body"></div>
+            <div class="message-modal-actions" style="display:flex; gap:10px; justify-content:flex-end;">
+                <button class="btn-modal-base btn-modal-cancel" id="btnConfirmCancel">Hủy</button>
+                <button class="btn-modal-base btn-modal-primary" id="btnConfirmOK">OK</button>
+            </div>
+        </div>
+    </div>
+
+        <div id="rowContextMenu" class="context-menu" style="display: none;">
+        <div class="menu-item" id="menuEdit">Edit Row</div>
+        <div class="menu-item menu-item-danger" id="menuDelete">Delete Row</div>
+    </div>
+
+        <!-- INJECT_COMPONENT:HELP_PANEL -->
+    <!-- INJECT_COMPONENT:SETTINGS_MODAL -->
+    <!-- INJECT_COMPONENT:MESSAGE_MODAL -->
+    <!-- INJECT_COMPONENT:CONFIRM_MODAL -->
+    <!-- INJECT_COMPONENT:CONTEXT_MENU -->
+
+        <script src="/tcpscript/assets/app/js/constants.js"></script>
+    <script src="/tcpscript/assets/app/js/timecode.js"></script>
+    <script src="/tcpscript/assets/app/js/i18n.js"></script>
+    <script src="/tcpscript/assets/app/js/state.js"></script>
+    <script src="/tcpscript/assets/app/js/shortcuts.js"></script>
+    <script src="/tcpscript/assets/app/js/modals.js"></script>
+    <script src="/tcpscript/assets/app/js/api.js"></script>
+    <script src="/tcpscript/assets/app/js/storage.js"></script>
+    <script src="/tcpscript/assets/app/js/renderer.js"></script>
+    <script src="/tcpscript/assets/app/js/playback.js"></script>
+    <script src="/tcpscript/assets/app/js/timeline.js"></script>
+    <script src="/tcpscript/assets/app/js/tabs.js"></script>
+    <script src="/tcpscript/assets/app/js/toolbar.js"></script>
+    <script src="/tcpscript/assets/app/js/init.js"></script>
+</body>
+</html>

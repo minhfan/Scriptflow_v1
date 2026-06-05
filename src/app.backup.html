@@ -1,0 +1,4711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoscript TCP Pro — Video Logging Tool</title>
+    <meta name="description" content="Professional video timecode logging and script automation tool for editors.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           DESIGN SYSTEM — Autoscript TCP Pro
+           Theme: Dark Tech / Professional Media Tool
+           Palette: Obsidian + Electric Amber accent
+           Fonts: Outfit (UI) + JetBrains Mono (timecode)
+        ============================================================ */
+
+        :root {
+            /* --- Colors (Dark Theme - Default) --- */
+            --bg-main: #0a0a0a;
+            --bg-panel: #171717;
+            --bg-raised: #262626;
+            --bg-input: #262626;
+            --bg-hover: #404040;
+            --border-color: #404040;
+
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent: #60a5fa;
+            --accent-dim: rgba(96, 165, 250, 0.12);
+            --accent-glow: rgba(96, 165, 250, 0.4);
+
+            --active-range:  rgba(59, 130, 246, 0.18);
+            --active-border: #3b82f6;
+
+            --success: #22c55e;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --danger-dim: rgba(239, 68, 68, 0.12);
+
+            /* --- Text --- */
+            --text-main: #ffffff;
+            --text-sub:  #c3c2d4;
+            --text-muted: #e2e8f0;
+
+            /* --- Borders --- */
+            --border: #262626;
+            --border-bright: #52525b;
+
+            /* --- Radius scale --- */
+            --r-sm: 6px;
+            --r-md: 10px;
+            --r-lg: 14px;
+
+            /* --- Transitions --- */
+            --t-fast: 0.15s ease;
+            --t-mid: 0.25s ease;
+        }
+
+        /* LIGHT THEME */
+        [data-theme="light"] {
+            --bg-main:    #f4f4f7;
+            --bg-panel:   #ffffff;
+            --bg-raised:  #f0f0f5;
+            --bg-input:   #e8e8ef;
+            --bg-hover:   #dedee8;
+            --accent:        #d97706;
+            --accent-dim:    rgba(217, 119, 6, 0.10);
+            --accent-glow:   rgba(217, 119, 6, 0.20);
+            --active-range:  rgba(217, 119, 6, 0.15);
+            --active-border: #d97706;
+            --text-main: #111118;
+            --text-sub:  #6b6a7a;
+            --text-muted: #aaaabb;
+            --border:       #e0e0eb;
+            --border-bright: #c8c8d8;
+        }
+
+        /* BLUE SLATE THEME */
+        [data-theme="blue"] {
+            --bg-main:    #08101e;
+            --bg-panel:   #0e1a2f;
+            --bg-raised:  #142034;
+            --bg-input:   #192840;
+            --bg-hover:   #1e3050;
+            --accent:        #3b82f6;
+            --accent-dim:    rgba(59, 130, 246, 0.12);
+            --accent-glow:   rgba(59, 130, 246, 0.25);
+            --active-range:  rgba(251, 191, 36, 0.18);
+            --active-border: #fbbf24;
+            --text-main: #ffffff;
+            --text-sub:  #c0cbd6;
+            --text-muted: #8c9eb2;
+            --border:       #1e2d45;
+            --border-bright: #2a3f5a;
+        }
+
+        /* ============================================================
+           CUSTOM SCROLLBARS
+        ============================================================ */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-bright);
+            border-radius: 99px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-sub); }
+
+        /* ============================================================
+           BASE RESET & TYPOGRAPHY
+        ============================================================ */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 12px 16px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: background-color var(--t-mid);
+            letter-spacing: -0.01em;
+            -webkit-font-smoothing: antialiased;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        input, textarea {
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        /* ============================================================
+           HEADER
+        ============================================================ */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+            padding: 6px 4px;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-logo-mark {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .header-logo-mark svg { display: block; }
+
+        header h1 {
+            font-size: 12.5px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-main);
+        }
+
+        header h1 span {
+            color: var(--accent);
+        }
+
+        .header-badge {
+            font-size: 8.33px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            color: var(--text-sub);
+            background: var(--bg-raised);
+            border: 1px solid var(--border-bright);
+            padding: 2px 7px;
+            border-radius: 99px;
+            text-transform: uppercase;
+            margin-left: 4px;
+        }
+
+        .header-controls { display: flex; gap: 6px; align-items: center; }
+        .app-topbar-logo {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .app-topbar-logo .logo-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #fafafa;
+            letter-spacing: 0;
+            line-height: 1;
+        }
+        .app-topbar-logo .logo-title span {
+            color: #10b981;
+        }
+        .app-topbar-logo .logo-title em {
+            font-style: normal;
+            font-size: 11px;
+            font-weight: 600;
+            color: #a1a1aa;
+            margin-left: 4px;
+        }
+        .btn-sync-header {
+            background: rgba(16, 185, 129, 0.16);
+            border-color: rgba(16, 185, 129, 0.65);
+            color: #34d399;
+            font-weight: 700;
+            box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.14) inset;
+        }
+        .btn-sync-header:hover {
+            background: rgba(16, 185, 129, 0.24);
+            border-color: #10b981;
+            color: #6ee7b7;
+        }
+
+        /* ============================================================
+           PREVIEW CUT & SKIP BUTTONS
+        ============================================================ */
+        .preview-cut-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: rgba(239, 68, 68, 0.15);
+            border: 2px solid rgba(239, 68, 68, 0.4);
+            cursor: pointer;
+            transition: all var(--t-fast);
+            display: inline-block;
+        }
+        .log-row.editing {
+            background: rgba(255, 193, 7, 0.1) !important;
+            border-left: 2px solid #FFC107;
+            box-shadow: inset 0 0 10px rgba(255,193,7,0.05);
+        }
+        .log-row.highlight-playing {
+            background: rgba(255, 193, 7, 0.2) !important;
+            border-left: 2px solid #FFC107;
+        }
+        .preview-cut-btn.active {
+            background-color: rgba(239, 68, 68, 1);
+            border-color: rgba(239, 68, 68, 1);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+            animation: pulse-red 1.5s infinite;
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .skip-btn {
+            font-size: 9.17px !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.5px;
+            min-width: 44px;
+        }
+
+        /* ============================================================
+           TIMECODE JUMP OVERLAY
+        ============================================================ */
+        .tc-jump-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            border-radius: var(--r-md);
+        }
+        .tc-jump-input {
+            background: var(--bg-input);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 26.67px;
+            font-weight: 700;
+            text-align: center;
+            width: 220px;
+            padding: 8px 16px;
+            border-radius: var(--r-md);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .tc-jump-input:focus { outline: none; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 12px var(--accent-dim); }
+        .tc-jump-actions { display: flex; flex-direction: column; gap: 6px; }
+
+        .btn-header {
+            background: var(--bg-raised);
+            color: var(--text-sub);
+            border: 1px solid var(--border-bright);
+            padding: 6px 13px;
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            font-size: 9.58px;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: 0.01em;
+            transition: all var(--t-fast);
+            white-space: nowrap;
+        }
+        .btn-header:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        /* Theme select inherits btn-header */
+        select.btn-header {
+            -webkit-appearance: none;
+            appearance: none;
+            padding-right: 26px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6a7a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+        }
+
+        #saveStatus {
+            font-size: 8.75px;
+            font-weight: 500;
+            color: var(--text-sub);
+            letter-spacing: 0.01em;
+            padding: 4px 10px;
+            background: var(--bg-raised);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+        }
+
+        /* ============================================================
+           LAYOUT CONTAINER
+        ============================================================ */
+        .layout-container {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+            gap: 0;
+        }
+
+        .left-col {
+            display: flex;
+            flex-direction: column;
+            width: 60%;
+            min-width: 300px;
+            padding-right: 4px;
+        }
+
+        .right-col {
+            display: flex;
+            flex-direction: column;
+            width: 40%;
+            min-width: 300px;
+            padding-left: 4px;
+            background: var(--bg-panel);
+            border-radius: var(--r-lg);
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            transition: all var(--t-mid);
+        }
+
+        .right-col.fullscreen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 999;
+            border-radius: 0;
+            margin: 0;
+            padding: 28px 32px;
+        }
+
+        .video-section {
+            height: 40%;
+            flex: none;
+            min-height: 200px;
+            background: var(--bg-panel);
+            border-radius: var(--r-lg);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .timeline-section {
+            flex: 1;
+            min-height: 120px;
+            background: var(--bg-panel);
+            border-radius: var(--r-lg);
+            padding: 12px 12px 0 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            margin: 4px 0;
+        }
+
+        .form-section {
+            height: 28%;
+            min-height: 150px;
+            background: var(--bg-panel);
+            border-radius: var(--r-lg);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        /* ============================================================
+           RESIZERS
+        ============================================================ */
+        .resizer-v {
+            width: 12px;
+            cursor: col-resize;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+        .resizer-v::after {
+            content: "";
+            width: 2px;
+            height: 28px;
+            background: var(--border-bright);
+            border-radius: 2px;
+            transition: all var(--t-fast);
+        }
+        .resizer-v:hover::after {
+            background: var(--accent);
+            height: 100%;
+            box-shadow: 0 0 6px var(--accent-glow);
+        }
+
+        .resizer-h {
+            height: 12px;
+            cursor: row-resize;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            margin: 1px 0;
+            flex-shrink: 0;
+        }
+        .resizer-h::after {
+            content: "";
+            height: 2px;
+            width: 28px;
+            background: var(--border-bright);
+            border-radius: 2px;
+            transition: all var(--t-fast);
+        }
+        .resizer-h:hover::after {
+            background: var(--accent);
+            width: 100%;
+            box-shadow: 0 0 6px var(--accent-glow);
+        }
+
+        /* ============================================================
+           VIDEO PANEL
+        ============================================================ */
+        .file-upload {
+            background: var(--bg-input);
+            padding: 9px 12px;
+            border-radius: var(--r-sm);
+            text-align: center;
+            border: 1px dashed var(--border-bright);
+            cursor: pointer;
+            font-size: 9.17px;
+            font-weight: 500;
+            color: var(--text-sub);
+            transition: all var(--t-fast);
+            flex-shrink: 0;
+            letter-spacing: 0.02em;
+        }
+        .file-upload:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+        .video-meta-summary {
+            display: none;
+            margin-top: -2px;
+            padding: 8px 10px;
+            border-radius: var(--r-sm);
+            border: 1px solid var(--border);
+            background: rgba(16, 185, 129, 0.08);
+            color: var(--text-sub);
+            font-size: 9px;
+            line-height: 1.6;
+        }
+        .video-meta-summary strong {
+            color: #6ee7b7;
+            font-weight: 700;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: var(--r-md);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            min-height: 0;
+        }
+
+        video { width: 100%; height: 100%; object-fit: contain; outline: none; }
+
+        /* ============================================================
+           VIDEO CONTROLS BAR
+        ============================================================ */
+        .video-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-input);
+            padding: 6px 12px;
+            border-radius: var(--r-md);
+            font-size: 9.17px;
+            font-weight: 600;
+            color: var(--text-sub);
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+            gap: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .video-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            flex-shrink: 0;
+            padding: 2px 0;
+        }
+
+        .toolbar-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+        }
+
+        .tool-btn {
+            height: 28px;
+            min-width: 34px;
+            padding: 0 9px;
+            border: 1px solid transparent;
+            border-radius: var(--r-sm);
+            background: transparent;
+            color: var(--text-sub);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9.17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--t-fast);
+            white-space: nowrap;
+        }
+
+        .tool-btn:hover {
+            color: var(--accent);
+            background: var(--accent-dim);
+            border-color: var(--accent);
+        }
+
+        .tool-btn:active { transform: translateY(1px); }
+        .tool-btn.primary { color: var(--accent); background: var(--bg-hover); }
+        .tool-btn.icon {
+            min-width: 38px;
+            font-size: 11.67px;
+            line-height: 1;
+        }
+        .tool-btn.active {
+            color: #000;
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .tool-btn.import { color: var(--success); }
+
+        .control-label {
+            font-size: 8.33px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--text-muted);
+        }
+
+        .speed-control {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-hover);
+            padding: 4px 10px;
+            border-radius: var(--r-sm);
+            min-width: 58px;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: ew-resize;
+            user-select: none;
+            border: 1px solid var(--border-bright);
+            transition: all var(--t-fast);
+        }
+        .speed-control:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        .speed-dropdown {
+            display: none;
+            position: absolute;
+            bottom: 120%;
+            left: 0;
+            background: var(--bg-raised);
+            border: 1px solid var(--border-bright);
+            border-radius: var(--r-md);
+            list-style: none;
+            z-index: 100;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            padding: 5px 0;
+            min-width: 80px;
+        }
+        .speed-dropdown li {
+            padding: 6px 16px;
+            color: var(--text-main);
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            transition: all var(--t-fast);
+        }
+        .speed-dropdown li:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .vol-slider { width: 80px; cursor: pointer; accent-color: var(--accent); outline: none; }
+        .vol-slider:focus { outline: none; }
+
+        /* ============================================================
+           BIG TIMECODE
+        ============================================================ */
+        .big-timecode {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 21.67px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--accent);
+            cursor: pointer;
+            user-select: none;
+            transition: all var(--t-fast);
+            letter-spacing: 0.04em;
+            flex-shrink: 0;
+            margin: 2px 0;
+            padding: 4px 0;
+        }
+        .big-timecode:hover { color: var(--text-main); }
+        .big-timecode:active { transform: scale(0.97); }
+
+        /* ============================================================
+           TIMELINE
+        ============================================================ */
+        .timeline-full-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .tc-bound {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: color var(--t-fast);
+            white-space: nowrap;
+            margin-bottom: 43px;
+        }
+        .tc-bound:hover { color: var(--accent); }
+
+        .timeline-full-container {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+            align-items: flex-end;
+            padding-bottom: 25px;
+        }
+
+        .custom-timeline-wrapper {
+            position: relative;
+            height: 100%;
+            flex: 1;
+            min-width: 0;
+            overflow-y: visible;
+            overflow-x: scroll;
+            display: flex;
+            align-items: flex-end;
+            padding-bottom: 45px;
+        }
+        .custom-timeline-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .custom-timeline {
+            position: relative;
+            height: 24px;
+            background: #52525b;
+            border: 1px solid #71717a;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: height var(--t-fast);
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: rgba(59, 130, 246, 0.3);
+            display: none;
+        }
+
+        .timeline-active-range {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background: rgba(239, 68, 68, 0.4);
+            border-radius: 4px;
+            pointer-events: none;
+            display: none;
+            z-index: 3;
+        }
+
+        .marker-range {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            border-radius: 2px;
+            cursor: pointer;
+            z-index: 10;
+            transition: filter var(--t-fast);
+            container-type: inline-size;
+            container-name: marker;
+        }
+        .action-pill-text {
+            display: none;
+        }
+        @container marker (min-width: 30px) {
+            .action-pill-text {
+                display: inline;
+            }
+        }
+        .marker-range:hover { z-index: 20; filter: brightness(1.4); }
+        .marker-range .tooltip {
+            visibility: hidden;
+            width: max-content;
+            background-color: var(--bg-raised);
+            color: var(--text-main);
+            text-align: center;
+            border-radius: var(--r-md);
+            padding: 7px 12px;
+            position: absolute;
+            z-index: 30;
+            bottom: 160%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            font-size: 9.17px;
+            border: 1px solid var(--border-bright);
+            pointer-events: none;
+            white-space: pre-wrap;
+            font-family: 'Outfit', sans-serif;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            transition: opacity var(--t-fast);
+        }
+        .marker-range:hover .tooltip { visibility: visible; opacity: 1; }
+
+        /* ============================================================
+           INPUT FORM
+        ============================================================ */
+        .tc-row { display: flex; gap: 8px; flex-shrink: 0; }
+
+        .tc-box {
+            flex: 1;
+            background: var(--bg-hover);
+            padding: 8px;
+            border-radius: var(--r-md);
+            text-align: center;
+            border: 1px solid var(--border-bright);
+            cursor: pointer;
+            transition: all var(--t-fast);
+        }
+        .tc-box:hover { border-color: var(--accent); background: var(--accent-dim); }
+        .tc-box.active {
+            border-color: #FFC107 !important;
+            background: rgba(255, 193, 7, 0.2) !important;
+            box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.5) !important;
+            color: #FFC107 !important;
+        }
+        .tc-box span {
+            display: block;
+            font-size: 8.33px;
+            font-weight: 700;
+            color: var(--text-sub);
+            margin-bottom: 3px;
+            pointer-events: none;
+            text-transform: uppercase;
+            letter-spacing: 0.10em;
+        }
+        .tc-box .time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            pointer-events: none;
+            letter-spacing: 0.03em;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            position: relative;
+        }
+
+        label {
+            font-size: 7.92px;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+        }
+
+        select {
+            width: 100%;
+            background: var(--bg-input);
+            color: var(--text-main);
+            border: 1px solid var(--border-bright);
+            border-radius: var(--r-sm);
+            padding: 7px 32px 7px 10px;
+            outline: none;
+            font-size: 10.83px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            transition: all var(--t-fast);
+        }
+        select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
+
+        .select-arrow {
+            position: absolute;
+            right: 10px;
+            bottom: 9px;
+            pointer-events: none;
+            font-size: 7.5px;
+            color: var(--text-sub);
+        }
+
+        .action-button-group {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 6px;
+            width: 100%;
+        }
+
+        .action-button {
+            min-height: 30px;
+            border: 1px solid var(--border-bright);
+            border-radius: var(--r-sm);
+            background: var(--bg-input);
+            color: var(--text-sub);
+            font-family: 'Outfit', sans-serif;
+            font-size: 9.17px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all var(--t-fast);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .action-button:hover {
+            border-color: var(--accent);
+            color: var(--text-main);
+            background: var(--bg-hover);
+        }
+
+        .action-button.active {
+            color: var(--action-color, #fff);
+            background: var(--action-bg, var(--accent));
+            border-color: var(--action-bg, var(--accent));
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+
+        @media (max-width: 760px) {
+            .action-button-group { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+        @media (max-width: 480px) {
+            .action-button-group { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+
+        textarea {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-bright);
+            color: var(--text-main);
+            border-radius: var(--r-sm);
+            padding: 8px 10px;
+            outline: none;
+            font-size: 10px;
+            font-family: 'Outfit', sans-serif;
+            resize: vertical;
+            flex: 1;
+            min-height: 40px;
+            transition: border-color var(--t-fast), box-shadow var(--t-fast);
+            line-height: 1.5;
+        }
+        textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+        textarea::placeholder { color: var(--text-muted); }
+
+        /* ============================================================
+           RIGHT COLUMN — LOG TABLE
+        ============================================================ */
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+
+        .table-header h3 {
+            font-size: 10.83px;
+            font-weight: 700;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            letter-spacing: -0.01em;
+            color: var(--text-main);
+        }
+
+        .log-count-badge {
+            font-size: 8.33px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-hover);
+            border: 1px solid var(--border-bright);
+            color: var(--accent);
+            padding: 2px 8px;
+            border-radius: 99px;
+        }
+
+        .table-wrap {
+            overflow: auto;
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+            background: var(--bg-main);
+        }
+
+        table {
+            width: 100%;
+            min-width: 560px;
+            border-collapse: collapse;
+            table-layout: fixed;
+            text-align: left;
+            font-size: 9.58px;
+        }
+
+        #logTable .col-stt    { width: 36px; }
+        #logTable .col-play   { width: 36px; }
+        #logTable .col-action { width: 90px; }
+        #logTable .col-tc     { width: 110px; }
+        #logTable .col-delete { width: 76px; }
+
+        th {
+            background: var(--bg-input);
+            color: var(--text-sub);
+            font-weight: 700;
+            font-size: 8.33px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            border-bottom: 1px solid var(--border-bright);
+        }
+        th, td {
+            padding: 7px 9px;
+            border-bottom: 1px solid var(--border);
+            height: 32px;
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        td.td-text {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: var(--bg-hover); }
+        tr:hover .row-tools { opacity: 1; }
+
+        td[contenteditable="true"] {
+            cursor: text;
+            outline: none;
+            transition: background var(--t-fast);
+        }
+        td[contenteditable="true"]:focus {
+            background: var(--accent-dim);
+            box-shadow: inset 0 0 0 1px var(--accent);
+            border-radius: 4px;
+        }
+
+        .td-tc {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 9.17px;
+            cursor: pointer !important;
+            color: var(--accent);
+            text-align: left;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+        .td-tc:hover { text-decoration: underline; }
+        .td-action { cursor: pointer; text-align: center; white-space: nowrap; }
+        .td-text { max-width: 0; }
+        .td-delete { text-align: center; white-space: nowrap; }
+        .td-stt {
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-sub);
+            cursor: pointer;
+            border-right: 1px solid var(--border);
+        }
+        .td-stt:hover { color: var(--text-main); background: var(--bg-hover); }
+        tr.selected-row { background: var(--bg-hover); box-shadow: inset 3px 0 0 var(--accent); }
+        
+        .row-tools {
+            display: flex;
+            gap: 3px;
+            opacity: 0;
+            transition: opacity var(--t-fast);
+            justify-content: center;
+            align-items: center;
+        }
+        .td-play {
+            width: 44px;
+            min-width: 44px;
+            max-width: 44px;
+            text-align: center;
+            padding: 0;
+        }
+
+        .action-tag {
+            padding: 3px 8px;
+            border-radius: var(--r-sm);
+            font-weight: 700;
+            font-size: 7.92px;
+            font-family: 'Outfit', sans-serif;
+            display: inline-block;
+            min-width: 68px;
+            text-align: center;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-delete {
+            background: var(--danger-dim);
+            color: var(--danger);
+            border: 1px solid transparent;
+            padding: 3px 8px;
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 8.33px;
+            font-family: 'Outfit', sans-serif;
+            transition: all var(--t-fast);
+            display: inline-block;
+        }
+        .btn-delete:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-play-delete {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid transparent;
+            padding: 3px 8px;
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 8.33px;
+            font-family: 'Outfit', sans-serif;
+            transition: all var(--t-fast);
+            display: inline-block;
+        }
+        .btn-play-delete:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        /* ============================================================
+           ACTION BUTTONS ROW
+        ============================================================ */
+        .action-btns { display: flex; gap: 5px; }
+
+        .btn-action {
+            background: var(--bg-raised);
+            border: 1px solid var(--border-bright);
+            border-radius: var(--r-sm);
+            color: var(--text-sub);
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 8.75px;
+            letter-spacing: 0.03em;
+            transition: all var(--t-fast);
+            white-space: nowrap;
+        }
+        .btn-action:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+        .btn-action:active { transform: translateY(1px); }
+
+        .btn-import:hover, .btn-import.active {
+            border-color: #FFC107 !important;
+            color: #FFC107 !important;
+            background: rgba(255, 193, 7, 0.15) !important;
+        }
+        .btn-sync-brand {
+            background: rgba(16, 185, 129, 0.16);
+            border-color: rgba(16, 185, 129, 0.65);
+            color: #34d399;
+            font-weight: 700;
+            box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.14) inset;
+        }
+        .btn-sync-brand:hover,
+        .btn-sync-brand.active {
+            background: rgba(16, 185, 129, 0.24) !important;
+            border-color: #10b981 !important;
+            color: #6ee7b7 !important;
+        }
+
+        .btn-new-project {
+            background: var(--danger-dim);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        .btn-new-project:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: #fff;
+        }
+
+        .btn-export {
+            background: var(--success);
+            border-color: var(--success);
+            color: #000;
+            font-weight: 700;
+        }
+        .btn-export:hover {
+            background: #16a34a;
+            border-color: #16a34a;
+            color: #fff;
+        }
+        .btn-export:active { transform: translateY(1px); }
+
+        .btn-fs {
+            background: var(--accent);
+            border: none;
+            border-radius: var(--r-sm);
+            color: #000;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 8.75px;
+            letter-spacing: 0.02em;
+            transition: all var(--t-fast);
+        }
+        .btn-fs:hover { background: #fbbf24; }
+        .btn-fs:active { transform: scale(0.97); }
+
+        /* ============================================================
+           MODALS
+        ============================================================ */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--bg-panel);
+            padding: 28px;
+            border: 1px solid var(--border-bright);
+            border-radius: var(--r-lg);
+            width: 480px;
+            color: var(--text-main);
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+        }
+
+        .modal-content h2 {
+            font-size: 13.33px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .message-modal-content {
+            width: min(480px, calc(100vw - 32px));
+            padding: 24px;
+        }
+        .message-modal-body {
+            margin-top: 10px;
+            color: var(--text-sub);
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+        .message-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            gap: 12px;
+        }
+        .btn-modal-base {
+            padding: 10px 24px;
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+            transition: all var(--t-fast);
+            border: 1px solid transparent;
+            min-width: 100px;
+            outline: none;
+        }
+        .btn-modal-cancel {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-main);
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        }
+        .btn-modal-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: #fff;
+        }
+        .btn-modal-primary {
+            background: rgba(16, 185, 129, 0.16);
+            border-color: rgba(16, 185, 129, 0.65);
+            color: #34d399;
+            box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.14) inset;
+        }
+        .btn-modal-primary:hover {
+            background: rgba(16, 185, 129, 0.25);
+            border-color: #10b981;
+            color: #fff;
+        }
+
+        /* ============================================================
+           FLOAT HELP PANEL
+        ============================================================ */
+        .float-panel {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 20px;
+            width: 340px;
+            background: var(--bg-raised);
+            border: 1px solid var(--border-bright);
+            border-radius: var(--r-lg);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+            z-index: 2000;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        .float-header {
+            background: var(--bg-input);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .float-header h2 {
+            font-size: 10.83px;
+            font-weight: 700;
+            color: var(--text-main);
+            pointer-events: none;
+        }
+
+        .close-float {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-size: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--r-sm);
+            transition: all var(--t-fast);
+        }
+        .close-float:hover {
+            background: var(--danger-dim);
+            color: var(--danger);
+        }
+
+        .float-content {
+            padding: 12px 16px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        /* ============================================================
+           SHORTCUT GRID
+        ============================================================ */
+        .shortcut-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .float-panel .shortcut-grid { grid-template-columns: 1fr; }
+
+        .sc-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9.17px;
+            font-weight: 500;
+            background: var(--bg-input);
+            padding: 7px 10px;
+            border-radius: var(--r-sm);
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+        }
+
+        .sc-btn {
+            background: var(--bg-raised);
+            color: var(--accent);
+            border: 1px solid var(--border-bright);
+            padding: 3px 9px;
+            border-radius: var(--r-sm);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8.33px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--t-fast);
+            white-space: nowrap;
+        }
+        .sc-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+        .sc-btn.listening {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            animation: pulse 0.8s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.55; }
+        }
+
+        .close-btn {
+            background: var(--bg-hover);
+            border: 1px solid var(--border-bright);
+            color: var(--text-main);
+            padding: 10px;
+            width: 100%;
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            font-size: 10px;
+            margin-top: 18px;
+            transition: all var(--t-fast);
+        }
+        .close-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #000;
+        }
+
+        .hover-tooltip {
+            position: absolute;
+            top: calc(100% + 8px);
+            bottom: auto;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 9.17px;
+            pointer-events: none;
+            transform: translateX(-50%);
+            display: none;
+            z-index: 50;
+            white-space: nowrap;
+        }
+
+@keyframes pulseImport {
+    0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(255, 193, 7, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+}
+#btnToolbarImport {
+    background: var(--bg-hover);
+    border: 1px solid var(--border-bright);
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all var(--t-fast);
+}
+#btnToolbarImport:hover {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+}
+#btnToolbarImportShort {
+    background: var(--bg-hover);
+    border: 1px solid var(--border-bright);
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all var(--t-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#btnToolbarImportShort:hover {
+    border-color: var(--success);
+    background: rgba(16, 185, 129, 0.15);
+}
+.pulse-import {
+    animation: pulseImport 1.5s infinite !important;
+    background: rgba(255, 193, 7, 0.2) !important;
+    border: 1px solid #FFC107 !important;
+    color: #FFC107 !important;
+}
+
+#draftMarker {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 15;
+}
+</style>
+    <style>
+        .context-menu {
+            position: absolute;
+            background: var(--bg-panel, #1e293b);
+            border: 1px solid var(--border, #334155);
+            border-radius: var(--r-md, 8px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 1000;
+            min-width: 120px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .context-menu .menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 10.83px;
+            color: var(--text-main, #f8fafc);
+            transition: background 0.2s;
+        }
+        .context-menu .menu-item:hover {
+            background: var(--bg-hover, #334155);
+        }
+        .context-menu .menu-item-danger {
+            color: var(--danger, #ef4444);
+        }
+        .context-menu .menu-item-danger:hover {
+            background: var(--danger, #ef4444);
+            color: white;
+        }
+        .row-editing {
+            outline: 2px solid #FFC107;
+            background: rgba(255, 193, 7, 0.1) !important;
+        }
+        .menu-animated {
+            animation: fadeInMenu 0.15s ease-out forwards;
+            transform-origin: top center;
+        }
+        @keyframes fadeInMenu {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .highlight-new {
+            animation: flashNew 2s ease-out forwards;
+        }
+        @keyframes flashNew {
+            0% { background-color: rgba(255, 193, 7, 0.5) !important; }
+            100% { background-color: transparent; }
+        }
+        .sheet-tabs-container {
+            display: flex;
+            align-items: center;
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            padding: 0 12px;
+            overflow-x: auto;
+            scrollbar-width: none; /* Firefox */
+        }
+        .sheet-tabs-container::-webkit-scrollbar { display: none; }
+        .sheet-tab {
+            padding: 8px 16px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .sheet-tab:hover {
+            color: var(--text-main);
+            background: var(--bg-input);
+        }
+        .sheet-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        .btn-send {
+            color: #3b82f6;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            font-size: 10px;
+            padding: 2px 6px;
+            transition: all 0.2s;
+        }
+        .btn-send:hover {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        /* ── Floating Tab Menu (shared by SEND row + Import Short) ── */
+        .send-tab-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        /* Row SEND menus use position:fixed (set via JS) to escape overflow:auto */
+        .floating-tab-menu {
+            z-index: 9999;
+            flex-direction: row;
+            gap: 3px;
+            padding: 4px 5px;
+            background: rgba(15, 23, 42, 0.97);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-bright);
+            border-radius: var(--r-md);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            white-space: nowrap;
+            animation: floatMenuIn 0.12s ease;
+        }
+        .floating-tab-menu .tab-chip {
+            padding: 3px 8px;
+            font-size: 9px;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-sub);
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .floating-tab-menu .tab-chip:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+        .floating-tab-menu .tab-chip.sending {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .floating-tab-menu .tab-chip.sent {
+            background: var(--accent) !important;
+            color: #fff !important;
+            border-color: var(--accent) !important;
+        }
+        @keyframes floatMenuIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Import Short button floating menu — no gap, padding bridge */
+        .import-short-wrapper {
+            position: relative;
+            display: flex;
+            flex: 1;
+        }
+        .import-short-wrapper .floating-tab-menu {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            padding-bottom: 6px; /* bridge gap so hover doesn't break */
+        }
+        .import-short-wrapper .floating-tab-menu-inner {
+            display: flex;
+            flex-direction: row;
+            gap: 3px;
+            padding: 4px 5px;
+            background: rgba(15, 23, 42, 0.97);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-bright);
+            border-radius: var(--r-md);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            white-space: nowrap;
+        }
+        .import-short-wrapper:hover .floating-tab-menu {
+            display: block;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="header-logo">
+            <a href="/tcpscript/project" title="Back to Projects" style="display: inline-flex; align-items: center; gap: 4px; color: var(--text-muted); text-decoration: none; font-size: 10px; font-weight: 500; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border, #334155); margin-right: 10px; transition: all 0.2s;" onmouseover="this.style.color='var(--accent, #10b981)';this.style.borderColor='var(--accent, #10b981)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border, #334155)'">&larr; Projects</a>
+            <a href="/tcpscript/project" class="app-topbar-logo" aria-label="Back to project list">
+                <span class="logo-title">TCP <span>Autoscript</span> <em>v2.0</em></span>
+            </a>
+        </div>
+        <div class="header-controls">
+            <span id="saveStatus">Saved</span>
+            <select id="fpsSelect" class="btn-header" style="width: auto;">
+                <option value="23.976">23.976 fps</option>
+                <option value="24">24 fps</option>
+                <option value="25">25 fps</option>
+                <option value="29.97" selected>29.97 fps</option>
+                <option value="30">30 fps</option>
+                <option value="50">50 fps</option>
+                <option value="59.94">59.94 fps</option>
+                <option value="60">60 fps</option>
+            </select>
+            <select id="themeSelect" class="btn-header" style="width: auto;">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="blue">Blue</option>
+            </select>
+            <button class="btn-header" id="btnShortcuts">Settings</button>
+            <button class="btn-header" id="btnHelp">Shortcuts</button>
+        </div>
+    </header>
+
+    <div class="sheet-tabs-container" id="sheetTabsContainer">
+        <button class="sheet-tab active" data-tab="Full-show">Full-show</button>
+        <!-- Dynamic tabs will be added here -->
+    </div>
+
+    <div class="layout-container" id="mainContainer">
+        <div class="left-col" id="leftCol">
+            <div class="video-section" id="videoSection">
+                <label class="file-upload" id="uploadLabel">
+                    <input type="file" id="videoUpload" accept="video/*" style="display: none;">
+                    <span id="uploadText">Click or press 'V' to upload a video file</span>
+                </label>
+                <div id="videoMetaSummary" class="video-meta-summary"></div>
+                <div class="video-wrapper">
+                    <video id="videoPlayer" disablePictureInPicture></video>
+                </div>
+                
+                <div class="video-controls" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                    <div class="control-group">
+                        <span class="control-label">Speed</span>
+                        <div class="speed-control" id="speedDisplay" title="Drag L/R or Click">1.00x</div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <button type="button" class="tool-btn icon primary" id="btnPlayVideo" title="Phát video" aria-label="Phát video" style="font-size: 20px; min-width: 48px; height: 32px; display: flex; justify-content: center; align-items: center; padding: 0;">&#9658;</button>
+                        <div class="big-timecode" id="bigTimecode" title="Click to Copy" style="margin: 0; padding: 0;">00:00:00:00</div>
+                    </div>
+
+                    <div class="control-group" style="display: flex; gap: 15px;">
+                        <div class="control-group" style="margin: 0;">
+                            <span class="control-label">Vol</span>
+                            <input type="range" id="volumeSlider" class="vol-slider" min="0" max="1" step="0.05" value="1">
+                        </div>
+                        <button type="button" class="preview-cut-btn" id="btnPreviewCut" title="Preview Cut: OFF (P)" aria-label="Toggle Preview Cut"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resizer-h" id="resizerH1"></div>
+
+            <div class="timeline-section" id="timelineSection" style="position: relative;">
+                <div class="timeline-zoom-controls" style="position: absolute; top: 12px; right: 12px; z-index: 10;">
+                    <div style="position: relative; display: inline-block;">
+                        <div class="control-group" style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <span class="control-label" style="margin: 0; font-size: 8.33px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Zoom (Z)</span>
+                            <div id="btnZoomDrag" class="speed-control" style="cursor: ew-resize; user-select: none; width: 64px; text-align: center; margin: 0; padding: 4px 12px; height: auto;" title="Drag L/R or Click">
+                                <span id="zoomText">1.00x</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-full-container">
+                    <div id="tcJumpOverlay" class="tc-jump-overlay">
+                        <input type="text" id="tcJumpInput" class="tc-jump-input" placeholder="00:00:00:00" />
+                        <div class="tc-jump-actions">
+                            <button id="tcJumpGo" class="btn-fs" style="padding: 2px 8px;">GO</button>
+                            <button id="tcJumpClose" class="btn-delete" style="padding: 2px 8px;">X</button>
+                        </div>
+                    </div>
+                    <span class="tc-bound" id="tcStart" title="Jump to Start" style="margin-right: 10px;">00:00:00:00</span>
+                    <style>
+                        .zoom-item { padding: 6px 12px; font-size: 9.17px; cursor: pointer; color: white; transition: background 0.2s; }
+                        .zoom-item:hover { background: var(--accent); }
+                    </style>
+                    <div class="custom-timeline-wrapper" style="overflow-x: auto;">
+                        <div class="custom-timeline" id="customTimeline" style="width: 100%; min-width: 100%;">
+                            <div id="draftMarker" class="timeline-marker" style="display: none; z-index: 15;"></div>
+                            <div id="timelineTicks" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none;"></div>
+                            <div class="timeline-progress" id="timelineProgress"></div>
+                            <div class="timeline-active-range" id="activeRange"></div>
+                            <div id="activeSwapIndicator" style="display: none; position: absolute; top: -14px; transform: translateX(-50%); width: 14px; height: 14px; z-index: 25; pointer-events: auto; cursor: pointer;" onmousedown="if(activeSwapSec !== null) { video.currentTime = activeSwapSec; } event.stopPropagation();">
+                                <div style="position: absolute; top: -5px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #ea580c;"></div>
+                            </div>
+                            <div id="activeInIndicator" style="display: none; position: absolute; top: -14px; transform: translateX(-50%); width: 14px; height: 14px; z-index: 25; pointer-events: auto; cursor: pointer;" onmousedown="if(activeInSec !== null) { video.currentTime = activeInSec; } event.stopPropagation();">
+                                <div style="position: absolute; top: -5px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #3b82f6;"></div>
+                            </div>
+                            <div id="activeOutIndicator" style="display: none; position: absolute; top: -14px; transform: translateX(-50%); width: 14px; height: 14px; z-index: 25; pointer-events: auto; cursor: pointer;" onmousedown="if(activeOutSec !== null) { video.currentTime = activeOutSec; } event.stopPropagation();">
+                                <div style="position: absolute; top: -5px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #ef4444;"></div>
+                            </div>
+                            <div id="playheadIndicator" style="position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--text-main); z-index: 20; pointer-events: none; left: 0%;">
+                                <div style="position: absolute; top: -6px; left: -4px; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--text-main);"></div>
+                            </div>
+                            <div class="hover-tooltip" id="hoverTooltip"></div>
+                        </div>
+                    </div>
+                    <span class="tc-bound" id="tcEnd" title="Jump to End" style="margin-left: 10px;">00:00:00:00</span>
+                </div>
+            </div>
+
+            <div class="resizer-h" id="resizerH2"></div>
+
+            <div class="form-section" id="formSection">
+                <div class="tc-row">
+                    <div class="tc-box" id="boxIn" title="Seek to IN (Q) / Mark if empty">
+                        <span>TC IN</span>
+                        <div class="time" id="valTcIn">00:00:00:00</div>
+                    </div>
+                    <div class="tc-box" id="boxOut" title="Seek to OUT (W) / Mark if empty">
+                        <span>TC OUT</span>
+                        <div class="time" id="valTcOut">00:00:00:00</div>
+                    </div>
+                    <div class="tc-box" id="boxSwap" title="Seek to SWAP (E) / Mark if empty" style="display: none;">
+                        <span>TC SWAP (E)</span>
+                        <div class="time" id="valTcSwap">00:00:00:00</div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <label id="labelAction" style="margin-bottom: 0;">ACTION (A):</label>
+                    </div>
+                    <div class="action-button-group" id="actionButtonGroup" role="radiogroup" aria-label="Chọn action">
+                        <button type="button" class="action-button" data-action="DELETE" role="radio">DELETE</button>
+                        <button type="button" class="action-button" data-action="POP-UP" role="radio">POP-UP</button>
+                        <button type="button" class="action-button" data-action="SWAP" role="radio">SWAP</button>
+                        <button type="button" class="action-button" data-action="QUESTION" role="radio">QUESTION</button>
+                        <button type="button" class="action-button" data-action="QUOTE" role="radio">QUOTE</button>
+                        <button type="button" class="action-button" data-action="NOTE" role="radio">NOTE</button>
+                        <button type="button" class="action-button" data-action="OTHERS" role="radio">OTHERS</button>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: stretch; margin-top: 10px; flex: 1;">
+                    <div style="display: flex; flex-direction: column; flex: 1; gap: 10px;">
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                            <label id="labelScript">SCRIPT (S):</label>
+                            <textarea id="inputScript" style="flex: 1; resize: none; overflow-y: hidden;"></textarea>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                            <label id="labelNote">NOTE (N):</label>
+                            <textarea id="inputNote" style="flex: 1; resize: none; overflow-y: hidden;"></textarea>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px; height: 100%;">
+                        <label style="visibility: hidden; margin-bottom: 2px;">IMPORT</label>
+                        <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; width: 70px;">
+                            <button type="button" id="btnToolbarImport" title="Import action (Shift+Enter)" style="flex: 2; font-size: 24.00px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center;">&#10140;</button>
+                            <div class="import-short-wrapper">
+                                <button type="button" id="btnToolbarImportShort" title="Import to specific Short tab" style="width:100%; font-size: 16px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center;">&#10140;<sub style="font-size: 9px; margin-left: 2px; font-weight: bold; position: relative; bottom: -2px;">S</sub></button>
+                                <div class="floating-tab-menu" id="importShortFloatingMenu"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="resizer-v" id="resizerV"></div>
+
+        <div class="right-col" id="tablePanel">
+            <div class="table-header" style="align-items: center;">
+                <h2 class="section-title" style="display: flex; align-items: center; gap: 12px; margin: 0; font-size: 24px;">
+                    <span id="defaultScriptTitle" style="font-weight: 700;">Script</span>
+                    <a id="activeSheetLink" href="#" target="_blank" style="display: none; color: var(--text-main); text-decoration: none; align-items: center; gap: 8px; font-weight: 700; transition: color var(--t-fast);">
+                        <span id="activeSheetName">Sheet</span>
+                    </a>
+                    <span class="log-count-badge" id="logCount" style="margin-left: 8px; font-size: 14px;">0</span>
+                </h2>
+            </div>
+                <div class="action-btns" style="display: flex; align-items: center; width: 100%; margin-bottom: 12px; gap: 10px;">
+                    <div style="position: relative;">
+                        <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; display: flex; align-items: center;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                        </span>
+                        <select id="filterAction" style="background: var(--bg-input); border: 1px solid var(--border-bright); border-radius: var(--r-sm); color: var(--text-main); font-size: 9.17px; padding: 6px 24px 6px 26px; outline: none; font-family: 'Outfit', sans-serif; cursor: pointer; appearance: none; width: auto;">
+                            <option value="ALL">All actions</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="SWAP">SWAP</option>
+                            <option value="POP-UP">POP-UP</option>
+                            <option value="QUESTION">QUESTION</option>
+                            <option value="QUOTE">QUOTE</option>
+                            <option value="NOTE">NOTE</option>
+                            <option value="OTHERS">OTHERS</option>
+                        </select>
+                        <span style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; font-size: 7.5px;">▼</span>
+                    </div>
+                    <div style="position: relative;">
+                        <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; display: flex; align-items: center;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </span>
+                        <input type="text" id="searchInput" placeholder="Search script, timecode..." style="background: var(--bg-input); border: 1px solid var(--border-bright); border-radius: var(--r-sm); color: var(--text-main); font-size: 9.17px; padding: 6px 10px 6px 26px; width: 220px; outline: none; font-family: 'Outfit', sans-serif;">
+                    </div>
+                    <div style="display: flex; gap: 5px; margin-left: auto; align-items: center;">
+                        <label class="btn-action btn-import" id="lblImport" style="cursor: pointer; margin: 0;">
+                            <input type="file" id="csvImport" accept=".csv, .xlsx, .xls" style="display: none;">
+                            Import
+                        </label>
+                        <button type="button" class="btn-action btn-sync-brand" id="btnSyncSheets" title="Sync current sheet">Sync Sheet</button>
+                    </div>
+                </div>
+            <div class="table-wrap">
+                <table id="logTable">
+                    <colgroup>
+                        <col class="col-stt">
+                        <col class="col-play" style="width: 44px;">
+                        <col class="col-action">
+                        <col class="col-tc">
+                        <col class="col-tc">
+                        <col class="col-tc">
+                        <col>
+                        <col>
+                        <col class="col-delete">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th></th>
+                            <th>ACTION</th>
+                            <th>TC IN</th>
+                            <th>TC OUT</th>
+                            <th>TC SWAP</th>
+                            <th>SCRIPT</th>
+                            <th>NOTE</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="logBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="floatHelpPanel" class="float-panel">
+        <div class="float-header" id="floatHelpHeader">
+            <h2>Shortcuts Guide</h2>
+            <button class="close-float" id="btnCloseHelp">&#10005;</button>
+        </div>
+        <div class="float-content">
+            <div class="shortcut-grid" id="helpGrid"></div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <h2>Customize Shortcuts</h2>
+            <p style="font-size: 9.17px; color:var(--text-sub); text-align:center; margin-bottom:16px; margin-top:6px;">Click a key button, then press your new shortcut combination.</p>
+            <div class="shortcut-grid" id="settingsGrid"></div>
+            <!-- Google Sheets settings removed -->
+            <button class="close-btn" id="btnCloseSettings">Save Settings</button>
+        </div>
+    </div>
+
+    <!-- Cutdown Modal -->
+    <div class="modal" id="cutdownModal">
+        <div class="modal-content" style="max-width: 320px;">
+            <h2 style="font-size: 16px; margin-bottom: 8px;">Send to Cutdown</h2>
+            <p style="font-size: 11px; color: var(--text-sub); text-align: center; margin-bottom: 16px;">Select destination sheet for this action.</p>
+            <select id="cutdownTargetSelect" style="width: 100%; padding: 8px; border-radius: var(--r-md); background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border); margin-bottom: 16px; outline: none;">
+                <!-- Options populated dynamically -->
+            </select>
+            <div style="display: flex; gap: 8px; justify-content: center;">
+                <button class="btn-modal-base" id="cutdownModalCancel" style="background: var(--bg-hover);">Cancel</button>
+                <button class="btn-modal-base btn-modal-primary" id="cutdownModalSend">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Short Modal -->
+    <div class="modal" id="importShortModal">
+        <div class="modal-content" style="max-width: 320px;">
+            <h2 style="font-size: 16px; margin-bottom: 8px;">Import to Short</h2>
+            <p style="font-size: 11px; color: var(--text-sub); text-align: center; margin-bottom: 16px;">Select destination sheet for this new action.</p>
+            <select id="importShortTargetSelect" style="width: 100%; padding: 8px; border-radius: var(--r-md); background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border); margin-bottom: 16px; outline: none;">
+                <!-- Options populated dynamically -->
+            </select>
+            <div style="display: flex; gap: 8px; justify-content: center;">
+                <button class="btn-modal-base" id="importShortModalCancel" style="background: var(--bg-hover);">Cancel</button>
+                <button class="btn-modal-base btn-modal-primary" id="importShortModalSend">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="messageModal" class="modal">
+        <div class="modal-content message-modal-content">
+            <h2 id="messageModalTitle">Thông báo</h2>
+            <div id="messageModalBody" class="message-modal-body"></div>
+            <div class="message-modal-actions">
+                <button class="btn-modal-base btn-modal-primary" id="btnCloseMessageModal">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal" style="display:none;">
+        <div class="modal-content message-modal-content">
+            <h2 id="confirmModalTitle">Xác nhận</h2>
+            <div id="confirmModalBody" class="message-modal-body"></div>
+            <div class="message-modal-actions" style="display:flex; gap:10px; justify-content:flex-end;">
+                <button class="btn-modal-base btn-modal-cancel" id="btnConfirmCancel">Hủy</button>
+                <button class="btn-modal-base btn-modal-primary" id="btnConfirmOK">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="rowContextMenu" class="context-menu" style="display: none;">
+        <div class="menu-item" id="menuEdit">Edit Row</div>
+        <div class="menu-item menu-item-danger" id="menuDelete">Delete Row</div>
+    </div>
+
+    <script>
+    // Debug: catch and display any JS errors
+    window.__jsErrors = [];
+    window.onerror = function(msg, src, line, col) {
+        window.__jsErrors.push(msg + ' @ ' + src + ':' + line);
+        console.error('[AUTOSCRIPT ERROR]', msg, '@', src, ':', line);
+    };
+    </script>
+    </script>
+    <script>
+let FPS = 29.97;
+
+function formatTC(seconds) {
+    if (isNaN(seconds) || seconds < 0) return "00:00:00:00";
+    const hh = Math.floor(seconds / 3600);
+    const mm = Math.floor((seconds % 3600) / 60);
+    const ss = Math.floor(seconds % 60);
+    const fractional = seconds - Math.floor(seconds);
+    let ff = Math.floor(fractional * FPS);
+    if (ff >= FPS) ff = FPS - 1;
+    return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}:${String(ff).padStart(2, '0')}`;
+}
+
+function parseTC(tcStr) {
+    if (!tcStr || typeof tcStr !== 'string') return 0;
+    const p = tcStr.trim().split(':');
+    if (p.length !== 4) return 0;
+    const vals = p.map(Number);
+    if (vals.some(isNaN)) return 0;
+    return vals[0]*3600 + vals[1]*60 + vals[2] + vals[3]/FPS;
+}
+
+function formatBoundTC(sec) {
+    if (!sec || isNaN(sec)) return '00:00';
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = Math.floor(sec % 60);
+    
+    if (h > 0) {
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    } else {
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+}
+
+// ============================================================
+//  AUTOSCRIPT TCP — app.js  (complete, bug-free rewrite)
+//  formatTC / parseTC come from timecode.js (loaded first)
+// ============================================================
+
+// ── 1. GLOBAL STATE (must be at the very top) ───────────────
+let playbackSpeed    = 1.0;
+let currentSheetTab  = 'Full-show';
+let availableSheetTabs = ['Full-show'];
+let listeningAction  = null;
+let activeInSec      = null;
+let activeOutSec     = null;
+let activeSwapSec    = null;
+let isPreviewCut     = false;
+let reverseInterval  = null;
+let isResizingV      = false;
+let isResizingH1     = false;
+let isResizingH2     = false;
+let isDraggingFloat  = false;
+let floatOffsetX, floatOffsetY;
+let isDraggingSpeed  = false;
+let speedStartX = 0, speedStartVal = 1.0, speedDidDrag = false;
+let logHistory  = [];
+let redoHistory = [];
+let previewState = { active: false, logIndex: -1, phase: 0, restorePreviewCut: false };
+let originalPreviewCutState = null;
+let editingRowIndex = null;
+let menuTargetIndex = null;
+
+const actionList = ['DELETE','SWAP','POP-UP','QUESTION','QUOTE','NOTE','OTHERS'];
+const actionColors = {
+    'DELETE' : { bg:'#b91c1c', color:'#ffffff' },
+    'SWAP'    : { bg:'#ea580c', color:'#ffffff' },
+    'POP-UP'  : { bg:'#166534', color:'#ffffff' },
+    'QUESTION': { bg:'#1d4ed8', color:'#ffffff' },
+    'QUOTE'   : { bg:'#a855f7', color:'#ffffff' },
+    'NOTE'    : { bg:'#3f3f46', color:'#f8fafc' },
+    'OTHERS'  : { bg:'#1e293b', color:'#e2e8f0' }
+};
+let selectedAction = actionList[0];
+let googleSheetsUrl = localStorage.getItem('autoscript_google_sheets_url') || '';
+
+let currentSpreadsheetId   = localStorage.getItem('autoscript_current_spreadsheet_id') || '';
+let currentSpreadsheetUrl  = localStorage.getItem('autoscript_current_spreadsheet_url') || '';
+let currentSpreadsheetName = localStorage.getItem('autoscript_current_spreadsheet_name') || '';
+const PROJECT_VIDEO_META_CACHE_KEY = 'autoscript_project_video_meta_cache_v1';
+let currentProjectVideoMeta = null;
+let pendingVideoMeta = null;
+
+function getSpreadsheetIdFromPath() {
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    const appIndex = segments.indexOf('app');
+    if (appIndex === -1 || !segments[appIndex + 1]) return '';
+    try {
+        return decodeURIComponent(segments[appIndex + 1]);
+    } catch (error) {
+        return segments[appIndex + 1];
+    }
+}
+
+async function resolveCurrentSpreadsheetMeta() {
+    if (!currentSpreadsheetId) return;
+
+    try {
+        const res = await fetch(`/tcpscript/api/projects/meta?id=${encodeURIComponent(currentSpreadsheetId)}`, {
+            credentials: 'same-origin'
+        });
+        if (!res.ok) return;
+
+        const project = await res.json();
+        currentSpreadsheetUrl = project.url || currentSpreadsheetUrl || `https://docs.google.com/spreadsheets/d/${currentSpreadsheetId}/edit`;
+        currentSpreadsheetName = project.name || currentSpreadsheetName || 'Google Sheet';
+        currentProjectVideoMeta = sanitizeProjectVideoMeta(project.videoMeta) || getCachedProjectVideoMeta(currentSpreadsheetId);
+        localStorage.setItem('autoscript_current_spreadsheet_id', currentSpreadsheetId);
+        localStorage.setItem('autoscript_current_spreadsheet_url', currentSpreadsheetUrl);
+        localStorage.setItem('autoscript_current_spreadsheet_name', currentSpreadsheetName);
+        renderProjectVideoMeta();
+    } catch (error) {
+        console.warn('[APP] Failed to resolve project metadata:', error);
+        currentProjectVideoMeta = getCachedProjectVideoMeta(currentSpreadsheetId);
+        renderProjectVideoMeta();
+    }
+}
+
+// ── Read spreadsheet info from URL query params (from /project page) ──
+(function applyUrlParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlSheetId   = urlParams.get('sheetId');
+    const urlSheetName = urlParams.get('sheetName');
+    const urlSheetUrl  = urlParams.get('sheetUrl');
+    const pathSheetId  = getSpreadsheetIdFromPath();
+    const resolvedSheetId = urlSheetId || pathSheetId;
+    if (resolvedSheetId) {
+        currentSpreadsheetId   = resolvedSheetId;
+        currentSpreadsheetUrl  = urlSheetUrl || `https://docs.google.com/spreadsheets/d/${resolvedSheetId}/edit`;
+        currentSpreadsheetName = urlSheetName || 'Google Sheet';
+        currentProjectVideoMeta = getCachedProjectVideoMeta(resolvedSheetId);
+        localStorage.setItem('autoscript_current_spreadsheet_id', currentSpreadsheetId);
+        localStorage.setItem('autoscript_current_spreadsheet_url', currentSpreadsheetUrl);
+        localStorage.setItem('autoscript_current_spreadsheet_name', currentSpreadsheetName);
+    }
+})();
+
+function updateActiveSheetUI() {
+    const linkEl = document.getElementById('activeSheetLink');
+    const nameEl = document.getElementById('activeSheetName');
+    const defaultTitle = document.getElementById('defaultScriptTitle');
+    if (linkEl && nameEl) {
+        if (currentSpreadsheetId && currentSpreadsheetUrl) {
+            linkEl.href = currentSpreadsheetUrl;
+            nameEl.innerText = currentSpreadsheetName || 'Google Sheet';
+            linkEl.style.display = 'inline-flex';
+            if (defaultTitle) defaultTitle.style.display = 'none';
+        } else {
+            linkEl.style.display = 'none';
+            if (defaultTitle) defaultTitle.style.display = 'inline';
+        }
+    }
+}
+
+let googleClientId = localStorage.getItem('autoscript_google_client_id') || '';
+const sessionToken = localStorage.getItem('autoscript_session_token');
+
+// Cấu hình ID Trang tính gốc làm mẫu (Template Spreadsheet ID)
+const TEMPLATE_SPREADSHEET_ID = "1S6YxzKJE7X5vZRZduA36KDc_E00Cdkxp2mD3VXhwfmA";
+
+// OAuth is bypassed; we use the Worker proxy to Google Apps Script now.
+function isTokenValid() {
+    return true;
+}
+
+function updateGoogleUI() {
+    // Legacy stub
+}
+
+window.initGoogleOAuth = function() {};
+function handleGoogleAuthClick() {}
+
+// ── 2. SESSION DATA ──────────────────────────────────────────
+const LEGACY_LOG_STORAGE_KEY = 'autoscript_tcp_v9';
+let logs = [];
+let projectLogsSaveTimer = null;
+let isProjectLogsLoaded = false;
+let projectLogsLoadToken = 0;
+
+// ── IN-MEMORY TAB CACHE ── Instant tab switching, no KV latency ──
+const tabLogsCache = {};
+
+function getLegacyLocalLogs() {
+    try {
+        const savedLogs = JSON.parse(localStorage.getItem(LEGACY_LOG_STORAGE_KEY));
+        return Array.isArray(savedLogs) ? savedLogs : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+async function saveProjectLogsToKV(tabOverride, logsOverride) {
+    if (!currentSpreadsheetId) return;
+    const tabToSave = tabOverride || currentSheetTab;
+    const logsToSave = logsOverride !== undefined ? logsOverride : logs;
+
+    try {
+        const res = await fetch('/tcpscript/api/project-logs', {
+            method: 'PUT',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionToken}`
+            },
+            body: JSON.stringify({
+                projectId: currentSpreadsheetId,
+                sheetTab: tabToSave,
+                logs: logsToSave
+            })
+        });
+        if (!res.ok) {
+            console.error('[APP] saveProjectLogsToKV failed:', res.status);
+        }
+    } catch (err) {
+        console.error('[APP] saveProjectLogsToKV network error:', err);
+    }
+    localStorage.removeItem(LEGACY_LOG_STORAGE_KEY);
+}
+
+async function loadProjectLogsFromKV(tabOverride) {
+    const requestTab = String(tabOverride || currentSheetTab).trim();
+    const requestToken = ++projectLogsLoadToken;
+
+    if (!currentSpreadsheetId) {
+        if (requestToken !== projectLogsLoadToken) return false;
+        logs = getLegacyLocalLogs();
+        tabLogsCache[requestTab] = JSON.parse(JSON.stringify(logs));
+        isProjectLogsLoaded = true;
+        return true;
+    }
+
+    let loadedLogs = [];
+
+    try {
+        const res = await fetch(`/tcpscript/api/project-logs?id=${encodeURIComponent(currentSpreadsheetId)}&tab=${encodeURIComponent(requestTab)}&t=${Date.now()}`, {
+            credentials: 'same-origin',
+            headers: { 'Authorization': `Bearer ${sessionToken}` }
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+        const kvLogs = Array.isArray(data.logs) ? data.logs : [];
+
+        if (kvLogs.length > 0) {
+            loadedLogs = kvLogs;
+            localStorage.removeItem(LEGACY_LOG_STORAGE_KEY);
+        } else if (requestTab === 'Full-show') {
+            const legacyLogs = getLegacyLocalLogs();
+            if (legacyLogs.length > 0) {
+                loadedLogs = legacyLogs;
+                await saveProjectLogsToKV(requestTab, loadedLogs);
+            } else {
+                loadedLogs = [];
+            }
+        } else {
+            loadedLogs = [];
+        }
+    } catch (error) {
+        console.warn('[APP] loadProjectLogsFromKV error:', error);
+        if (requestTab === 'Full-show') {
+            loadedLogs = getLegacyLocalLogs();
+        } else {
+            loadedLogs = [];
+        }
+    }
+
+    if (requestToken !== projectLogsLoadToken) {
+        return false;
+    }
+
+    logs = loadedLogs;
+    tabLogsCache[requestTab] = JSON.parse(JSON.stringify(loadedLogs));
+    isProjectLogsLoaded = true;
+    return true;
+}
+
+// ── 3. SHORTCUT DEFINITIONS ──────────────────────────────────
+const defaultShortcuts = {
+    action    : { key:'A', shift:false, ctrl:false, alt:false, label:'Select ACTION'         },
+    script    : { key:'S', shift:false, ctrl:false, alt:false, label:'Select SCRIPT'         },
+    note      : { key:'N', shift:false, ctrl:false, alt:false, label:'Select NOTE'           },
+    video     : { key:'V', shift:false, ctrl:false, alt:false, label:'Upload Video'          },
+    tcin      : { key:'I', shift:false, ctrl:false, alt:false, label:'Mark TC IN'            },
+    tcout     : { key:'O', shift:false, ctrl:false, alt:false, label:'Mark TC OUT'           },
+    tcswap    : { key:'E', shift:false, ctrl:false, alt:false, label:'Mark TC SWAP'          },
+    jumpin    : { key:'Q', shift:false, ctrl:false, alt:false, label:'Seek to IN'            },
+    jumpout   : { key:'W', shift:false, ctrl:false, alt:false, label:'Seek to OUT'           },
+    play      : { key:' ', shift:false, ctrl:false, alt:false, label:'Play/Pause'            },
+    save      : { key:'Enter', shift:true, ctrl:false, alt:false, label:'Import (Shift+Enter)' },
+    prev      : { key:'[', shift:false, ctrl:false, alt:false, label:'Prev Marker'           },
+    next      : { key:']', shift:false, ctrl:false, alt:false, label:'Next Marker'           },
+    slow      : { key:',', shift:false, ctrl:false, alt:false, label:'Speed -0.25x'          },
+    fast      : { key:'.', shift:false, ctrl:false, alt:false, label:'Speed +0.25x'          },
+    previewCut: { key:'P', shift:false, ctrl:false, alt:false, label:'Toggle Preview Cut'    },
+    fullscreen: { key:'F', shift:false, ctrl:false, alt:false, label:'Toggle Fullscreen'     },
+    zoom1x    : { key:'Z', shift:false, ctrl:false, alt:false, label:'Fit Timeline (Zoom 1x)' },
+    zoomOut   : { key:'-', shift:false, ctrl:false, alt:false, label:'Zoom Out 5x'           },
+    zoomIn    : { key:'=', shift:false, ctrl:false, alt:false, label:'Zoom In 5x'            }
+};
+
+let shortcuts = { ...defaultShortcuts };
+try {
+    const saved = JSON.parse(localStorage.getItem('autoscript_shortcuts'));
+    if (saved && typeof saved === 'object') {
+        for (const key of Object.keys(defaultShortcuts)) {
+            if (saved[key] && typeof saved[key].key === 'string') {
+                shortcuts[key] = { ...defaultShortcuts[key], ...saved[key] };
+            }
+        }
+    }
+} catch(e) {
+    localStorage.removeItem('autoscript_shortcuts');
+}
+
+// ── 4. DOM REFERENCES ────────────────────────────────────────
+const mainContainer  = document.getElementById('mainContainer');
+const leftCol        = document.getElementById('leftCol');
+const rightCol       = document.getElementById('tablePanel');
+const resizerV       = document.getElementById('resizerV');
+const resizerH1      = document.getElementById('resizerH1');
+const resizerH2      = document.getElementById('resizerH2');
+const videoSection   = document.getElementById('videoSection');
+const formSection    = document.getElementById('formSection');
+const floatPanel     = document.getElementById('floatHelpPanel');
+const floatHeader    = document.getElementById('floatHelpHeader');
+const video          = document.getElementById('videoPlayer');
+const upload         = document.getElementById('videoUpload');
+const bigTc          = document.getElementById('bigTimecode');
+const valTcIn        = document.getElementById('valTcIn');
+const valTcOut       = document.getElementById('valTcOut');
+const valTcSwap      = document.getElementById('valTcSwap');
+const boxIn          = document.getElementById('boxIn');
+const boxOut         = document.getElementById('boxOut');
+const boxSwap        = document.getElementById('boxSwap');
+const activeRange    = document.getElementById('activeRange');
+const speedDisplay   = document.getElementById('speedDisplay');
+const speedMenu      = document.getElementById('speedMenu');
+const mSettings      = document.getElementById('settingsModal');
+const themeSelect    = document.getElementById('themeSelect');
+const btnPreviewCut  = document.getElementById('btnPreviewCut');
+const btnPlayVideo   = document.getElementById('btnPlayVideo');
+const btnPlayReverse = document.getElementById('btnPlayReverse');
+const timelineWrapper  = document.getElementById('customTimeline');
+const timelineProgress = document.getElementById('timelineProgress');
+const hoverTooltip   = document.getElementById('hoverTooltip');
+const mMessage       = document.getElementById('messageModal');
+const messageTitleEl = document.getElementById('messageModalTitle');
+const messageBodyEl  = document.getElementById('messageModalBody');
+const actionButtons  = Array.from(document.querySelectorAll('#actionButtonGroup .action-button'));
+const btnToolbarImport = document.getElementById('btnToolbarImport');
+const btnSyncSheets    = document.getElementById('btnSyncSheets');
+
+// ── 5. UTILITY FUNCTIONS ─────────────────────────────────────
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+}
+
+function formatShortcutDisplay(sc) {
+    if (!sc) return '?';
+    const parts = [];
+    if (sc.ctrl)  parts.push('Ctrl');
+    if (sc.alt)   parts.push('Alt');
+    if (sc.shift) parts.push('Shift');
+    parts.push(sc.key === ' ' ? 'Space' : sc.key.toUpperCase());
+    return parts.join('+');
+}
+
+function matchShortcut(e, name) {
+    const sc = shortcuts[name];
+    if (!sc) return false;
+    const keyMatch = sc.key === ' ' ? e.key === ' ' : e.key.toUpperCase() === sc.key.toUpperCase();
+    return keyMatch && e.shiftKey === sc.shift
+        && (e.ctrlKey || e.metaKey) === sc.ctrl
+        && e.altKey === sc.alt;
+}
+
+function closeMessageModal() {
+    if (mMessage) {
+        mMessage.style.display = 'none';
+    }
+}
+
+function openMessageModal(title, message) {
+    if (!mMessage || !messageTitleEl || !messageBodyEl) {
+        console.warn('[Modal fallback]', title, message);
+        return;
+    }
+    messageTitleEl.innerText = title || 'Thông báo';
+    messageBodyEl.innerText = message || '';
+    mMessage.style.display = 'flex';
+}
+
+function openConfirmModal(title, message) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('confirmModal');
+        const titleEl = document.getElementById('confirmModalTitle');
+        const bodyEl = document.getElementById('confirmModalBody');
+        const btnOK = document.getElementById('btnConfirmOK');
+        const btnCancel = document.getElementById('btnConfirmCancel');
+        if (!modal || !titleEl || !bodyEl) {
+            resolve(confirm(message));
+            return;
+        }
+        titleEl.innerText = title || 'Xác nhận';
+        bodyEl.innerText = message || '';
+        modal.style.display = 'flex';
+        function cleanup() {
+            modal.style.display = 'none';
+            btnOK.removeEventListener('click', onOK);
+            btnCancel.removeEventListener('click', onCancel);
+            modal.removeEventListener('click', onBackdrop);
+        }
+        function onOK() { cleanup(); resolve(true); }
+        function onCancel() { cleanup(); resolve(false); }
+        function onBackdrop(e) { if (e.target === modal) { cleanup(); resolve(false); } }
+        btnOK.addEventListener('click', onOK);
+        btnCancel.addEventListener('click', onCancel);
+        modal.addEventListener('click', onBackdrop);
+    });
+}
+
+// ── 6. UNDO / REDO ───────────────────────────────────────────
+function saveState(clearRedo = true) {
+    logHistory.push(JSON.parse(JSON.stringify(logs)));
+    if (logHistory.length > 50) logHistory.shift();
+    if (clearRedo) redoHistory = [];
+}
+function undo() {
+    if (logHistory.length > 0) {
+        redoHistory.push(JSON.parse(JSON.stringify(logs)));
+        logs = logHistory.pop();
+        renderTable(); drawMarkers(); saveSession();
+    }
+}
+function redo() {
+    if (redoHistory.length > 0) {
+        logHistory.push(JSON.parse(JSON.stringify(logs)));
+        logs = redoHistory.pop();
+        renderTable(); drawMarkers(); saveSession();
+    }
+}
+
+let isLogsDirty = false;
+
+// ── 7. SESSION SAVE ──────────────────────────────────────────
+function saveSession() {
+    const status = document.getElementById('saveStatus');
+    if (status) status.innerText = 'Syncing...';
+    if (!isProjectLogsLoaded) return;
+
+    isLogsDirty = true;
+    // Always update in-memory cache immediately
+    tabLogsCache[currentSheetTab] = JSON.parse(JSON.stringify(logs));
+
+    // Debounced KV save (background, non-blocking)
+    if (projectLogsSaveTimer) clearTimeout(projectLogsSaveTimer);
+    projectLogsSaveTimer = setTimeout(async () => {
+        try {
+            await saveProjectLogsToKV();
+            isLogsDirty = false;
+            if (status) status.innerText = 'Saved';
+        } catch (error) {
+            console.error('[APP] Failed to sync project logs:', error);
+            if (status) status.innerText = 'Sync failed';
+        }
+    }, 500);
+}
+
+// ── 8. RENDER SETTINGS (Shortcuts panel) ─────────────────────
+function renderSettings() {
+    const sGrid = document.getElementById('settingsGrid');
+    const hGrid = document.getElementById('helpGrid');
+    if (!sGrid || !hGrid) return;
+    sGrid.innerHTML = ''; hGrid.innerHTML = '';
+    for (const [key, sc] of Object.entries(shortcuts)) {
+        const text = formatShortcutDisplay(sc);
+        hGrid.innerHTML += `<div class="sc-item"><span>${sc.label}</span> <kbd style="font-family:monospace;font-weight:bold;color:var(--accent);background:var(--bg-panel);padding:2px 6px;border-radius:4px;border:1px solid var(--border);">${text}</kbd></div>`;
+        const btn = document.createElement('button');
+        btn.className = 'sc-btn'; btn.innerText = text;
+        btn.onclick = ev => { ev.target.innerText = 'Listening…'; ev.target.classList.add('listening'); listeningAction = key; };
+        const div = document.createElement('div'); div.className = 'sc-item';
+        div.innerHTML = `<span>${sc.label}</span>`; div.appendChild(btn);
+        sGrid.appendChild(div);
+    }
+    const lAction = document.getElementById('labelAction');
+    const lScript = document.getElementById('labelScript');
+    const lNote   = document.getElementById('labelNote');
+    const uText   = document.getElementById('uploadText');
+    if (lAction) lAction.innerText = `ACTION (${formatShortcutDisplay(shortcuts.action)}):`;
+    if (lScript) lScript.innerText = `SCRIPT (${formatShortcutDisplay(shortcuts.script)}):`;
+    if (lNote)   lNote.innerText   = `NOTE (${formatShortcutDisplay(shortcuts.note)}):`;
+    if (uText)   uText.innerText   = `Click or press '${formatShortcutDisplay(shortcuts.video)}' to upload a video file`;
+
+    // Load Google Sheets Web App URL input
+    const sheetsUrlInput = document.getElementById('sheetsUrlInput');
+    if (sheetsUrlInput) {
+        sheetsUrlInput.value = googleSheetsUrl;
+        if (!sheetsUrlInput.dataset.hasListener) {
+            sheetsUrlInput.dataset.hasListener = "true";
+            sheetsUrlInput.addEventListener('input', e => {
+                googleSheetsUrl = e.target.value.trim();
+                localStorage.setItem('autoscript_google_sheets_url', googleSheetsUrl);
+            });
+        }
+    }
+
+    // Load Google Client ID input
+    const googleClientIdInput = document.getElementById('googleClientIdInput');
+    if (googleClientIdInput) {
+        googleClientIdInput.value = googleClientId;
+        if (!googleClientIdInput.dataset.hasListener) {
+            googleClientIdInput.dataset.hasListener = "true";
+            googleClientIdInput.addEventListener('input', e => {
+                googleClientId = e.target.value.trim();
+                localStorage.setItem('autoscript_google_client_id', googleClientId);
+                initGoogleOAuth(); // Re-init client client-side on change
+            });
+        }
+    }
+
+    // Bind Google Auth login status button
+    const btnGoogleAuth = document.getElementById('btnGoogleAuth');
+    if (btnGoogleAuth) {
+        updateGoogleUI();
+        if (!btnGoogleAuth.dataset.hasListener) {
+            btnGoogleAuth.dataset.hasListener = "true";
+            btnGoogleAuth.addEventListener('click', handleGoogleAuthClick);
+        }
+    }
+}
+
+// ── 9. RENDER TABLE ──────────────────────────────────────────
+let searchQuery = '';
+let filterQuery = 'ALL';
+
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+    searchInput.addEventListener('input', e => {
+        searchQuery = e.target.value.toLowerCase();
+        renderTable();
+    });
+}
+const filterActionSel = document.getElementById('filterAction');
+if (filterActionSel) {
+    filterActionSel.addEventListener('change', e => {
+        filterQuery = e.target.value;
+        renderTable();
+    });
+}
+
+window.updateRowAction = function(index, action) {
+    if (index >= 0 && index < logs.length) {
+        logs[index].action = action;
+        renderTable();
+        drawMarkers();
+        saveSession();
+    }
+};
+
+function renderTable() {
+    const tw = document.querySelector('.table-wrap');
+    const oldScrollTop = tw ? tw.scrollTop : 0;
+    const tbody = document.getElementById('logBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    let count = 0;
+    logs.forEach((log, index) => {
+        if (filterQuery !== 'ALL' && log.action !== filterQuery) return;
+        if (searchQuery) {
+            const text = (log.script + ' ' + log.note + ' ' + log.tcin + ' ' + log.tcout + ' ' + (log.tcswap || '')).toLowerCase();
+            if (!text.includes(searchQuery)) return;
+        }
+        count++;
+        const colorSet = actionColors[log.action] || actionColors['OTHERS'];
+        const bg  = colorSet.bg, txt = colorSet.color;
+        const showPreview = (log.action === 'DELETE' || log.action === 'SWAP');
+        const playButton = showPreview ? `<button class="btn-play-delete" onclick="playActionPreview(${index})" title="Preview action">&#9658;</button>` : '';
+        const isEditing = (index === editingRowIndex);
+        const editable = isEditing ? 'contenteditable="true"' : '';
+        const editClass = isEditing ? 'row-editing' : '';
+        
+        let actionCell;
+        if (isEditing) {
+            const opts = actionList.map(a => `<option value="${a}" ${a === log.action ? 'selected' : ''}>${escapeHtml(a)}</option>`).join('');
+            actionCell = `<select onchange="window.updateRowAction(${index}, this.value)" style="width:auto; padding:3px 8px; font-size:7.92px; font-weight:700; background:${bg}; color:${txt}; border:1px solid rgba(255,255,255,0.2); border-radius:var(--r-sm); outline:none; text-align:center; cursor:pointer; font-family:'Outfit',sans-serif; min-width:68px; letter-spacing:0.05em;">${opts}</select>`;
+        } else {
+            actionCell = `<span class="action-tag" style="background:${bg};color:${txt}">${escapeHtml(log.action)}</span>`;
+        }
+        
+        const swapVal = log.tcswap || '';
+        const outVal = log.tcout === '00:00:00:00' ? '' : log.tcout;
+        
+        tbody.innerHTML += `
+            <tr id="row-${index}" class="log-row ${editClass}" oncontextmenu="showRowMenu(event, ${index})">
+                <td class="td-stt">${index + 1}</td>
+                <td class="td-play">${playButton}</td>
+                <td class="td-action">${actionCell}</td>
+                <td class="td-tc" ${editable} onclick="window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'tcin',this)">${escapeHtml(log.tcin)}</td>
+                <td class="td-tc" ${editable} onclick="window.jumpToTC(${index},'tcout')" onblur="inlineUpdate(${index},'tcout',this)">${outVal ? escapeHtml(outVal) : ''}</td>
+                <td class="td-tc" ${editable} onclick="window.jumpToTC(${index},'tcswap')" onblur="inlineUpdate(${index},'tcswap',this)">${swapVal ? escapeHtml(swapVal) : ''}</td>
+                <td class="td-text" ${editable} onclick="if(this.getAttribute('contenteditable')!=='true') window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'script',this)">${escapeHtml(log.script)}</td>
+                <td class="td-text" ${editable} onclick="if(this.getAttribute('contenteditable')!=='true') window.jumpToTC(${index},'tcin')" onblur="inlineUpdate(${index},'note',this)">${escapeHtml(log.note)}</td>
+                <td class="td-delete"><span class="row-tools"><span class="send-tab-wrapper" onmouseenter="buildRowSendMenu(this, ${index})" onmouseleave="hideRowSendMenu(this)"><button class="btn-send" title="Send to Tab">SEND</button></span><button class="btn-delete" onclick="deleteLog(${index})" title="Delete">&#10006;</button></span></td>
+            </tr>`;
+    });
+    const logCount = document.getElementById('logCount');
+    if (logCount) logCount.innerText = count;
+    if (tw) tw.scrollTop = oldScrollTop;
+}
+
+// ── 10. DRAW TIMELINE MARKERS ────────────────────────────────
+function drawMarkers() {
+    Array.from(timelineWrapper.querySelectorAll('.marker-range')).forEach(el => el.remove());
+    
+    const masterLogs = tabLogsCache['Full-show'] || logs;
+    if (!video.duration || !masterLogs.length) return;
+    
+    const timelineWidthPx = timelineWrapper.clientWidth || 1;
+
+    // Sort by duration descending so longer items render first (behind shorter ones)
+    const sortedLogs = masterLogs.map((log, origIndex) => ({ log, origIndex })).sort((a, b) => {
+        const durA = (a.log.outSec && a.log.outSec > a.log.inSec) ? (a.log.outSec - a.log.inSec) : 0;
+        const durB = (b.log.outSec && b.log.outSec > b.log.inSec) ? (b.log.outSec - b.log.inSec) : 0;
+        return durB - durA;
+    });
+
+    const placed = [];
+
+    sortedLogs.forEach(item => {
+        const log = item.log;
+        const origIndex = item.origIndex;
+        const colorSet = actionColors[log.action] || actionColors['OTHERS'];
+        const colorHex = colorSet.bg;
+        const hasDuration = log.outSec && log.outSec > log.inSec;
+        const startSec = log.inSec;
+        const endSec = hasDuration ? log.outSec : log.inSec + 0.1;
+        const startPct = (startSec / video.duration) * 100;
+        
+        let level = 0;
+        while (placed.some(p => p.level === level && Math.max(startSec, p.start) < Math.min(endSec, p.end))) {
+            level++;
+        }
+        placed.push({ start: startSec, end: endSec, level: level });
+
+        let hideText = false;
+        if (hasDuration) {
+            const timelineWidthPx = document.getElementById('customTimeline').clientWidth || timelineWrapper.clientWidth * 1;
+            const markerWidthPx = ((endSec - startSec) / video.duration) * timelineWidthPx;
+            if (markerWidthPx < 50) hideText = true;
+        }
+
+        const marker = document.createElement('div');
+        marker.className = 'marker-range';
+
+        marker.style.left  = startPct + '%';
+        if (hasDuration) {
+            marker.style.width = ((endSec - startSec) / video.duration) * 100 + '%';
+        } else {
+            marker.style.width = '0%';
+        }
+        marker.style.backgroundColor  = colorHex + '50';
+        
+        const topOffsetDur = 24 + (level * 22);
+        const topOffsetNoDur = 36 + (level * 22);
+        const lineOffsetNoDur = 16 + (level * 22);
+
+        let pillHTML = '';
+        if (hasDuration) {
+            pillHTML = `
+                <div class="action-pill" style="position:absolute; top:-${topOffsetDur}px; left:0; width:100%; height:18px; display:flex; align-items:center; justify-content:center; background:${colorHex}; color:${colorSet.color}; font-size:10px; font-weight:bold; border-radius:6px; pointer-events:auto; cursor:pointer; border:1px solid rgba(255,255,255,0.3); z-index:5; box-shadow:0 2px 4px rgba(0,0,0,0.3); overflow:hidden; text-overflow:ellipsis;">
+                    <span class="action-pill-text" style="display: ${hideText ? 'none' : 'inline'}">${escapeHtml(log.action)}</span>
+                </div>
+            `;
+        } else {
+            pillHTML = `
+                <div class="action-pill" style="position:absolute; top:-${topOffsetNoDur}px; left:0; transform:translateX(-50%); background:${colorHex}; width:6px; height:18px; border-radius:3px; pointer-events:auto; cursor:pointer; border:1px solid rgba(255,255,255,0.5); z-index:5; box-shadow:0 2px 4px rgba(0,0,0,0.5);">
+                </div>
+                <div style="position:absolute; top:-${lineOffsetNoDur}px; left:0; transform:translateX(-50%); width:2px; height:${lineOffsetNoDur}px; background:rgba(255,255,255,0.3); z-index:4;"></div>
+            `;
+        }
+        // Swap indicator is drawn separately on the timeline wrapper below
+        let tooltipContent = '';
+        if (log.script) tooltipContent += `<div style="margin-bottom:4px;"><strong style="color:#aaa;">Script:</strong><br>${escapeHtml(log.script)}</div>`;
+        if (log.note) tooltipContent += `<div><strong style="color:#aaa;">Note:</strong><br>${escapeHtml(log.note)}</div>`;
+
+        marker.innerHTML = pillHTML;
+        
+        marker.addEventListener('mousedown', ev => { 
+            if (ev.target.closest('.action-pill')) {
+                ev.stopPropagation();
+                window.jumpToTC(origIndex, 'tcin', true);
+            }
+        });
+        
+        marker.addEventListener('mouseenter', () => {
+            if (!tooltipContent) return;
+            let gt = document.getElementById('globalTooltip');
+            if (!gt) {
+                gt = document.createElement('div');
+                gt.id = 'globalTooltip';
+                gt.style.cssText = `display:none; flex-direction:column; align-items:flex-start; gap:4px; padding:8px 12px; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.2); border-radius:8px; z-index:99999; position:fixed; pointer-events:none; max-width:500px; box-shadow:0 4px 12px rgba(0,0,0,0.5);`;
+                document.body.appendChild(gt);
+            }
+            gt.style.background = `${colorHex}F2`; // 95% opacity
+            gt.innerHTML = `<span style="font-size:12px;text-align:left;white-space:pre-wrap;color:white;line-height:1.4;text-shadow:0 1px 2px rgba(0,0,0,0.8);">${tooltipContent}</span>`;
+            gt.style.display = 'flex';
+            const pill = marker.querySelector('.action-pill');
+            const rect = (pill || marker).getBoundingClientRect();
+            gt.style.left = (rect.left + rect.width / 2) + 'px';
+            gt.style.top = (rect.top - 10) + 'px';
+            gt.style.transform = 'translate(-50%, -100%)';
+        });
+        
+        marker.addEventListener('mouseleave', () => {
+            const gt = document.getElementById('globalTooltip');
+            if (gt) gt.style.display = 'none';
+        });
+        
+        timelineWrapper.appendChild(marker);
+        
+        if (log.action === 'SWAP' && log.swapSec != null) {
+            const swapLeftPct = (log.swapSec / video.duration) * 100;
+            const swapMarker = document.createElement('div');
+            swapMarker.className = 'marker-range marker-swap';
+            swapMarker.style.position = 'absolute';
+            swapMarker.style.top = '0';
+            swapMarker.style.height = '100%';
+            swapMarker.style.left = swapLeftPct + '%';
+            swapMarker.style.pointerEvents = 'auto';
+            swapMarker.style.cursor = 'pointer';
+            swapMarker.innerHTML = `
+                <div style="position:absolute; top: -14px; left: 0; transform: translateX(-50%); width: 14px; height: calc(100% + 14px); z-index: 6;">
+                    <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 2px; height: 100%; background: #ea580c;"></div>
+                    <div style="position:absolute; top: -5px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #ea580c;"></div>
+                </div>
+            `;
+            swapMarker.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                video.currentTime = log.swapSec;
+            });
+            timelineWrapper.appendChild(swapMarker);
+        }
+    });
+}
+
+// ── 11. PLAYBACK ─────────────────────────────────────────────
+function togglePlayback() {
+    if (video.paused) video.play();
+    else video.pause();
+}
+
+function updateToolbarPlayState() {
+    if (!video.paused) {
+        btnPlayVideo.innerHTML = '&#10074;&#10074;';
+        btnPlayVideo.classList.remove('primary');
+        btnPlayVideo.title = 'Tạm dừng video';
+        if (reverseInterval) { clearInterval(reverseInterval); reverseInterval = null; if (btnPlayReverse) btnPlayReverse.classList.remove('active'); }
+    } else if (reverseInterval) {
+        btnPlayVideo.innerHTML = '&#10074;&#10074;';
+        btnPlayVideo.classList.remove('primary');
+        btnPlayVideo.title = 'Tạm dừng tua lùi';
+    } else {
+        btnPlayVideo.innerHTML = '&#9658;';
+        btnPlayVideo.classList.add('primary');
+        btnPlayVideo.title = 'Phát video';
+    }
+    btnPlayVideo.setAttribute('aria-label', btnPlayVideo.title);
+}
+
+// ── 12. TIMELINE + ACTIVE RANGE ──────────────────────────────
+function updateActiveRange() {
+    if (!video.duration) return;
+    const draftMarker = document.getElementById('draftMarker');
+    const swapIndicator = document.getElementById('activeSwapIndicator');
+    
+    if (btnToolbarImport) {
+        if (activeInSec !== null) btnToolbarImport.classList.add('pulse-import');
+        else btnToolbarImport.classList.remove('pulse-import');
+    }
+
+    if (activeInSec !== null && activeOutSec !== null) { 
+        activeRange.style.display = 'block';
+        activeRange.style.left  = (activeInSec / video.duration) * 100 + '%';
+        activeRange.style.width = ((activeOutSec - activeInSec) / video.duration) * 100 + '%';
+        
+        const colorSet = actionColors[selectedAction] || {bg: 'rgba(239, 68, 68, 0.4)'};
+        activeRange.style.background = colorSet.bg + '66'; // 0.4 alpha
+        
+        if (draftMarker) draftMarker.style.display = 'none';
+    } else if (activeInSec !== null && activeOutSec === null) {
+        activeRange.style.display = 'none';
+        if (draftMarker) {
+            draftMarker.style.display = 'block';
+            const draftOut = Math.max(activeInSec, video.currentTime);
+            draftMarker.style.left = (activeInSec / video.duration) * 100 + '%';
+            draftMarker.style.width = ((draftOut - activeInSec) / video.duration) * 100 + '%';
+            const colorSet = actionColors[selectedAction] || {bg: 'rgba(255,255,255,0.7)'};
+            draftMarker.style.background = colorSet.bg;
+            draftMarker.style.opacity = '0.5';
+        }
+    } else {
+        activeRange.style.display = 'none';
+        if (draftMarker) draftMarker.style.display = 'none';
+    }
+    
+    if (selectedAction === 'SWAP' && activeSwapSec !== null) {
+        if (swapIndicator) {
+            swapIndicator.style.display = 'block';
+            swapIndicator.style.left = (activeSwapSec / video.duration) * 100 + '%';
+        }
+    } else {
+        if (swapIndicator) swapIndicator.style.display = 'none';
+    }
+
+    const inIndicator = document.getElementById('activeInIndicator');
+    if (activeInSec !== null) {
+        if (inIndicator) {
+            inIndicator.style.display = 'block';
+            inIndicator.style.left = (activeInSec / video.duration) * 100 + '%';
+        }
+    } else {
+        if (inIndicator) inIndicator.style.display = 'none';
+    }
+
+    const outIndicator = document.getElementById('activeOutIndicator');
+    if (activeOutSec !== null) {
+        if (outIndicator) {
+            outIndicator.style.display = 'block';
+            outIndicator.style.left = (activeOutSec / video.duration) * 100 + '%';
+        }
+    } else {
+        if (outIndicator) outIndicator.style.display = 'none';
+    }
+
+    const swapIndicatorContent = document.getElementById('activeSwapIndicator');
+    if (activeSwapSec !== null) {
+        if (swapIndicatorContent) {
+            swapIndicatorContent.style.display = 'block';
+            swapIndicatorContent.style.left = (activeSwapSec / video.duration) * 100 + '%';
+        }
+    } else {
+        if (swapIndicatorContent) swapIndicatorContent.style.display = 'none';
+    }
+}
+
+// ── 13. TC IN / OUT ──────────────────────────────────────────
+function markInPoint() {
+    if (!video.duration) return;
+    if (editingRowIndex !== null) {
+        activeInSec = video.currentTime;
+        valTcIn.innerText = formatTC(activeInSec);
+        logs[editingRowIndex].inSec = activeInSec;
+        logs[editingRowIndex].tcin = formatTC(activeInSec);
+        const row = document.getElementById(`row-${editingRowIndex}`);
+        if (row) {
+            const cells = row.querySelectorAll('td');
+            if (cells[4]) cells[4].innerText = formatTC(activeInSec);
+        }
+        drawMarkers();
+        updateActiveRange();
+        return;
+    }
+    // Toggle: de-select if already selected
+    if (activeInSec !== null) {
+        activeInSec = null;
+        boxIn.classList.remove('active');
+        valTcIn.innerText = formatTC(video.currentTime);
+        updateActiveRange();
+        return;
+    }
+    activeInSec = video.currentTime;
+    if (activeOutSec !== null && activeOutSec <= activeInSec) {
+        activeOutSec = null;
+        valTcOut.innerText = formatTC(video.currentTime);
+        boxOut.classList.remove('active');
+    }
+    valTcIn.innerText = formatTC(activeInSec);
+    boxIn.classList.add('active');
+    updateActiveRange();
+}
+
+function markOutPoint() {
+    if (!video.duration) return;
+    if (editingRowIndex !== null) {
+        activeOutSec = video.currentTime;
+        valTcOut.innerText = formatTC(activeOutSec);
+        logs[editingRowIndex].outSec = activeOutSec;
+        logs[editingRowIndex].tcout = formatTC(activeOutSec);
+        const row = document.getElementById(`row-${editingRowIndex}`);
+        if (row) {
+            const cells = row.querySelectorAll('td');
+            if (cells[5]) cells[5].innerText = formatTC(activeOutSec);
+        }
+        drawMarkers();
+        updateActiveRange();
+        return;
+    }
+    // Toggle: de-select if already selected
+    if (activeOutSec !== null) {
+        activeOutSec = null;
+        boxOut.classList.remove('active');
+        valTcOut.innerText = formatTC(video.currentTime);
+        updateActiveRange();
+        return;
+    }
+    activeOutSec = video.currentTime;
+    if (activeInSec !== null && activeInSec >= activeOutSec) {
+        activeInSec = null;
+        valTcIn.innerText = formatTC(video.currentTime);
+        boxIn.classList.remove('active');
+    }
+    valTcOut.innerText = formatTC(activeOutSec);
+    boxOut.classList.add('active');
+    updateActiveRange();
+}
+
+function markSwapPoint() {
+    if (!video.duration) return;
+    if (editingRowIndex !== null) {
+        activeSwapSec = video.currentTime;
+        valTcSwap.innerText = formatTC(activeSwapSec);
+        logs[editingRowIndex].swapSec = activeSwapSec;
+        logs[editingRowIndex].tcswap = formatTC(activeSwapSec);
+        const row = document.getElementById(`row-${editingRowIndex}`);
+        if (row) {
+            const cells = row.querySelectorAll('td');
+            if (cells[3]) cells[3].innerText = formatTC(activeSwapSec);
+        }
+        drawMarkers();
+        updateActiveRange();
+        return;
+    }
+    // Toggle: de-select if already selected
+    if (activeSwapSec !== null) {
+        activeSwapSec = null;
+        if (boxSwap) boxSwap.classList.remove('active');
+        if (valTcSwap) valTcSwap.innerText = formatTC(video.currentTime);
+        updateActiveRange();
+        return;
+    }
+    activeSwapSec = video.currentTime;
+    if (valTcSwap) valTcSwap.innerText = formatTC(activeSwapSec);
+    if (boxSwap) boxSwap.classList.add('active');
+    updateActiveRange();
+}
+
+// ── 14. JUMP MARKER ──────────────────────────────────────────
+function jumpMarker(direction) {
+    if (!logs.length) return;
+    const sorted = [...logs].sort((a,b) => a.inSec - b.inSec);
+    let target = null;
+    if (direction === 1) {
+        const next = sorted.find(l => l.inSec > video.currentTime + 0.5);
+        if (next) target = next.inSec;
+    } else {
+        const prevs = sorted.filter(l => l.inSec < video.currentTime - 0.5);
+        if (prevs.length) target = prevs[prevs.length - 1].inSec;
+    }
+    if (target !== null) video.currentTime = target;
+}
+
+let clipboardLogData = null; // Stores last imported log for ->S shortcut
+
+// ── 15. SAVE LOG (Import Action) ─────────────────────────────
+async function logAction(actionName) {
+    if (!video.duration) return;
+    
+    if (actionName === 'DELETE') {
+        if (editingRowIndex !== null && logs[editingRowIndex].outSec === null && activeOutSec === null) {
+            openMessageModal('Lỗi', 'Action DELETE bắt buộc phải có TC OUT. Vui lòng thêm TC OUT!');
+            return;
+        } else if (editingRowIndex === null && activeOutSec === null) {
+            openMessageModal('Lỗi', 'Action DELETE bắt buộc phải có TC OUT. Vui lòng thêm TC OUT!');
+            return;
+        }
+    }
+
+    if (editingRowIndex !== null) {
+        if (document.activeElement && document.activeElement.hasAttribute('contenteditable')) {
+            document.activeElement.blur();
+        }
+        // Update the log data
+        logs[editingRowIndex].action = actionName;
+        // Update the selected action UI
+        selectedAction = actionName;
+        updateActionButtons();
+        if (boxSwap) boxSwap.style.display = actionName === 'SWAP' ? 'block' : 'none';
+        // Re-render table to show new action tag
+        renderTable();
+        drawMarkers();
+        return;
+    }
+
+    if (activeInSec === null) return;
+
+    // Warning: check if new action overlaps with any existing DELETE zone
+    if (actionName !== 'DELETE') {
+        const newIn = activeInSec;
+        const newOut = activeOutSec !== null ? activeOutSec : activeInSec;
+        const overlappingDelete = logs.find(l => 
+            l.action === 'DELETE' && l.inSec !== null && l.outSec !== null &&
+            newIn < l.outSec && newOut > l.inSec
+        );
+        if (overlappingDelete) {
+            const confirmed = await openConfirmModal(
+                '⚠️ Cảnh báo vùng DELETE',
+                `Vùng TC IN/OUT của action "${actionName}" đang nằm trong (hoặc chồng lấn) một vùng DELETE đã đánh dấu trước đó (${formatTC(overlappingDelete.inSec)} → ${formatTC(overlappingDelete.outSec)}).\n\nĐoạn này sẽ bị xóa khi xuất bản, action mới có thể không có ý nghĩa.\n\nBạn có muốn tiếp tục thêm không?`
+            );
+            if (!confirmed) return;
+        }
+    }
+
+    saveState();
+    const st = document.getElementById('inputScript').value.trim();
+    const nt = document.getElementById('inputNote').value.trim();
+    logs.push({
+        action: actionName,
+        inSec: activeInSec,
+        outSec: activeOutSec,
+        swapSec: activeSwapSec,
+        tcswap: activeSwapSec !== null ? formatTC(activeSwapSec) : '',
+        tcin: formatTC(activeInSec),
+        tcout: activeOutSec !== null ? formatTC(activeOutSec) : '',
+        script: st,
+        note: nt
+    });
+    logs.sort((a, b) => a.inSec - b.inSec);
+    saveSession();
+    renderTable(); drawMarkers();
+
+    const newIdx = logs.findIndex(l => l.inSec === activeInSec && l.action === actionName && l.script === st && l.note === nt);
+    if (newIdx >= 0) {
+        const row = document.getElementById('row-' + newIdx);
+        if (row) {
+            row.classList.add('highlight-new');
+            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => row.classList.remove('highlight-new'), 2000);
+        }
+    }
+
+    // Store to clipboard BEFORE clearing
+    clipboardLogData = {
+        action: actionName,
+        inSec: activeInSec,
+        outSec: activeOutSec,
+        swapSec: activeSwapSec,
+        tcswap: activeSwapSec !== null ? formatTC(activeSwapSec) : '',
+        tcin: formatTC(activeInSec),
+        tcout: activeOutSec !== null ? formatTC(activeOutSec) : '',
+        script: st,
+        note: nt
+    };
+
+    activeInSec = null; activeOutSec = null; activeSwapSec = null;
+    valTcIn.innerText = formatTC(video.currentTime);
+    valTcOut.innerText = formatTC(video.currentTime);
+    if (valTcSwap) valTcSwap.innerText = formatTC(video.currentTime);
+    document.getElementById('inputScript').value = '';
+    document.getElementById('inputNote').value = '';
+    updateActiveRange();
+    boxIn.classList.remove('active');
+    boxOut.classList.remove('active');
+    if (boxSwap) boxSwap.classList.remove('active');
+
+    renderTable();
+    drawMarkers();
+}
+
+function saveLog() {
+    logAction(selectedAction);
+}
+
+// ── 16. PREVIEW CUT ──────────────────────────────────────────
+function togglePreviewCut() {
+    isPreviewCut = !isPreviewCut;
+    btnPreviewCut.classList.toggle('active', isPreviewCut);
+    btnPreviewCut.title = isPreviewCut ? 'Preview Cut: ON (P)' : 'Preview Cut: OFF (P)';
+}
+
+// ── 17. ACTION BUTTONS STATE ─────────────────────────────────
+function updateActionButtons() {
+    actionButtons.forEach(btn => {
+        const action = btn.dataset.action;
+        const colorSet = actionColors[action] || actionColors['OTHERS'];
+        const active = action === selectedAction;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-checked', String(active));
+        btn.style.setProperty('--action-bg', colorSet.bg);
+        btn.style.setProperty('--action-color', colorSet.color);
+    });
+}
+
+function setSelectedAction(action) {
+    if (!actionColors[action]) return;
+    selectedAction = action;
+    updateActionButtons();
+    if (boxSwap) {
+        boxSwap.style.display = action === 'SWAP' ? 'block' : 'none';
+    }
+    updateActiveRange();
+    // If in edit mode, also update the editing row's action
+    if (editingRowIndex !== null) {
+        logs[editingRowIndex].action = action;
+        renderTable();
+        drawMarkers();
+    }
+}
+
+// ── 18. INLINE TABLE EDIT ────────────────────────────────────
+window.inlineUpdate = function(index, field, element) {
+    saveState();
+    logs[index][field] = element.value || element.innerText.trim();
+    if (field === 'tcswap') { logs[index].swapSec = parseTC(logs[index].tcswap); drawMarkers(); }
+    if (field === 'tcin')  { logs[index].inSec  = parseTC(logs[index].tcin);  drawMarkers(); }
+    if (field === 'tcout') { logs[index].outSec = parseTC(logs[index].tcout); drawMarkers(); }
+    saveSession();
+};
+
+let tcAutoSelected = false;
+let tcJumpWait = false;
+function clearAutoSelectedTC() {
+    activeInSec = null; activeOutSec = null; activeSwapSec = null;
+    valTcIn.innerText = formatTC(video.currentTime);
+    valTcOut.innerText = formatTC(video.currentTime);
+    const tcSwapEl = document.getElementById('valTcSwap');
+    if (tcSwapEl) tcSwapEl.innerText = formatTC(video.currentTime);
+    boxIn.classList.remove('active');
+    boxOut.classList.remove('active');
+    if (boxSwap) boxSwap.classList.remove('active');
+    updateActiveRange();
+    tcAutoSelected = false;
+}
+
+window.jumpToTC = function(index, field, useMaster = false) {
+    const logArray = useMaster ? (tabLogsCache['Full-show'] || logs) : logs;
+    const log = logArray[index];
+    if (!log) return;
+    
+    tcAutoSelected = true;
+    tcJumpWait = true;
+    
+    // Auto-sync TC toolbar with the clicked row
+    if (log.inSec !== undefined && log.inSec !== null) {
+        activeInSec = log.inSec;
+        valTcIn.innerText = formatTC(activeInSec);
+        boxIn.classList.add('active');
+    }
+    if (log.outSec !== undefined && log.outSec !== null) {
+        activeOutSec = log.outSec;
+        valTcOut.innerText = formatTC(activeOutSec);
+        boxOut.classList.add('active');
+    }
+    if (log.swapSec !== undefined && log.swapSec !== null && document.getElementById('valTcSwap')) {
+        activeSwapSec = log.swapSec;
+        document.getElementById('valTcSwap').innerText = formatTC(activeSwapSec);
+        if (boxSwap) boxSwap.classList.add('active');
+    }
+    
+    // Activate edit mode fully by populating the form
+    document.getElementById('inputScript').value = log.script || '';
+    document.getElementById('inputNote').value = log.note || '';
+    if (log.action) {
+        selectedAction = log.action;
+        updateActionButtons();
+    }
+    
+    updateActiveRange();
+
+    const sec = parseTC(log[field]);
+    if (sec !== null && !isNaN(sec)) {
+        video.currentTime = sec;
+        let targetZoom = 50;
+        let pts = [];
+        if (log.inSec !== null) pts.push(log.inSec);
+        if (log.outSec !== null) pts.push(log.outSec);
+        if (log.action === 'SWAP' && log.swapSec !== null) pts.push(log.swapSec);
+        let validDur = 0, centerSec = sec;
+        if (pts.length >= 2) {
+            let minSec = Math.min(...pts);
+            let maxSec = Math.max(...pts);
+            validDur = maxSec - minSec;
+            if (validDur > 0) {
+                targetZoom = Math.max(1, Math.min(50, video.duration / (validDur * 3)));
+                centerSec = minSec + validDur / 2;
+            }
+        }
+        applyZoom(targetZoom, false, centerSec);
+    }
+};
+
+window.deleteLog = function(index) {
+    saveState(); logs.splice(index, 1); 
+    if (editingRowIndex === index) editingRowIndex = null;
+    else if (editingRowIndex > index) editingRowIndex--;
+    renderTable(); drawMarkers(); saveSession();
+};
+
+function endPreview() {
+    if (previewState.restorePreviewCut) {
+        isPreviewCut = originalPreviewCutState;
+        btnPreviewCut.classList.toggle('active', isPreviewCut);
+        btnPreviewCut.title = isPreviewCut ? 'Preview Cut: ON (P)' : 'Preview Cut: OFF (P)';
+        previewState.restorePreviewCut = false;
+    }
+    previewState.active = false;
+}
+
+window.playActionPreview = function(index) {
+    const log = logs[index];
+    if (!log) return;
+    
+    // Remember original state and FORCE Preview Cut ON
+    originalPreviewCutState = isPreviewCut;
+    if (!isPreviewCut) {
+        isPreviewCut = true;
+        btnPreviewCut.classList.add('active');
+        btnPreviewCut.title = 'Preview Cut: ON (P)';
+    }
+    
+    previewState.active = true;
+    previewState.logIndex = index;
+    previewState.restorePreviewCut = true;
+    
+    const iSec = Number.isFinite(log.inSec) ? log.inSec : parseTC(log.tcin);
+    const oSec = Number.isFinite(log.outSec) ? log.outSec : parseTC(log.tcout);
+    const sSec = (log.action === 'SWAP' && Number.isFinite(log.swapSec)) ? log.swapSec : parseTC(log.tcswap || '');
+    
+    if (log.action === 'SWAP' && Number.isFinite(sSec) && sSec > 0) {
+        // SWAP preview: show swap point context → jump to IN → play to OUT → jump back to swap → end
+        previewState.phase = 1;
+        video.currentTime = Math.max(0, sSec - 2);
+    } else if (log.action === 'DELETE') {
+        // DELETE preview: show 2s before IN, skip delete zone (auto by isPreviewCut), play 3s after OUT
+        previewState.phase = 0;
+        video.currentTime = Math.max(0, iSec - 2);
+    } else {
+        // Standard preview for SWAP without swap point
+        previewState.phase = 0;
+        video.currentTime = Number.isFinite(iSec) ? Math.max(0, iSec - 2) : 0;
+    }
+    
+    video.play();
+
+    // Smart zoom to focus on the action area
+    let pts = [];
+    if (Number.isFinite(iSec)) pts.push(iSec);
+    if (Number.isFinite(oSec) && oSec > 0) pts.push(oSec);
+    if (log.action === 'SWAP' && Number.isFinite(sSec) && sSec > 0) pts.push(sSec);
+    let centerSec = iSec || 0;
+    let targetZoom = 50;
+    if (pts.length >= 2) {
+        let minSec = Math.min(...pts);
+        let maxSec = Math.max(...pts);
+        let validDur = maxSec - minSec;
+        if (validDur > 0) {
+            targetZoom = Math.max(1, Math.min(50, video.duration / (validDur * 3)));
+            centerSec = minSec + validDur / 2;
+        }
+    }
+    applyZoom(targetZoom, false, centerSec);
+};
+
+// ── 20. SKIP / JUMP ──────────────────────────────────────────
+function skipTime(seconds) {
+    if (!video.duration) return;
+    video.currentTime = Math.max(0, Math.min(video.duration, video.currentTime + seconds));
+}
+
+function showTimecodeJump() {
+    const overlay = document.getElementById('tcJumpOverlay');
+    const input = document.getElementById('tcJumpInput');
+    if (!overlay || !input) return;
+    overlay.style.display = 'flex';
+    input.value = bigTc.innerText;
+    input.focus();
+    input.select();
+}
+
+function hideTimecodeJump() {
+    const overlay = document.getElementById('tcJumpOverlay');
+    if (overlay) overlay.style.display = 'none';
+}
+
+function executeTimecodeJump() {
+    const input = document.getElementById('tcJumpInput');
+    if (!input) return;
+    const sec = parseTC(input.value);
+    if (sec > 0 && sec <= video.duration) {
+        video.currentTime = sec;
+    }
+    hideTimecodeJump();
+}
+
+// ── 22. EVENT LISTENERS ──────────────────────────────────────
+
+// -- Resize --
+resizerV.addEventListener('mousedown', e => { isResizingV = true; document.body.style.cursor = 'col-resize'; e.preventDefault(); });
+if (resizerH1) resizerH1.addEventListener('mousedown', e => { isResizingH1 = true; document.body.style.cursor = 'row-resize'; e.preventDefault(); });
+if (resizerH2) resizerH2.addEventListener('mousedown', e => { isResizingH2 = true; document.body.style.cursor = 'row-resize'; e.preventDefault(); });
+
+window.addEventListener('mousemove', e => {
+    if (isResizingV) {
+        const rect = mainContainer.getBoundingClientRect();
+        const pct  = ((e.clientX - rect.left) / rect.width) * 100;
+        if (pct > 20 && pct < 80) { leftCol.style.width = pct + '%'; rightCol.style.width = (100 - pct) + '%'; }
+    }
+    if (isResizingH1) {
+        const rect = leftCol.getBoundingClientRect();
+        const topH = e.clientY - rect.top;
+        if (topH > 100 && topH < rect.height - 250) {
+            videoSection.style.height = topH + 'px';
+            videoSection.style.flex = 'none';
+        }
+    }
+    if (isResizingH2) {
+        const rect = leftCol.getBoundingClientRect();
+        const formH = rect.bottom - e.clientY;
+        if (formH > 100 && formH < rect.height - 250) {
+            formSection.style.height = formH + 'px';
+            formSection.style.flex = 'none';
+        }
+    }
+    if (isDraggingFloat) {
+        floatPanel.style.left = (e.clientX - floatOffsetX) + 'px';
+        floatPanel.style.top  = (e.clientY - floatOffsetY) + 'px';
+    }
+    if (isDraggingSpeed) {
+        const dx = e.clientX - speedStartX;
+        if (Math.abs(dx) > 3) speedDidDrag = true;
+        const newSpeed = Math.max(0.25, Math.min(speedStartVal + Math.round(dx / 10) * 0.25, 10.0));
+        if (Math.abs(newSpeed - playbackSpeed) > 0.05) {
+            playbackSpeed = newSpeed; video.playbackRate = playbackSpeed;
+            speedDisplay.innerText = playbackSpeed.toFixed(2) + 'x';
+        }
+    }
+});
+
+window.addEventListener('mouseup', () => {
+    isResizingV = false; isResizingH1 = false; isResizingH2 = false;
+    isDraggingFloat = false; isDraggingSpeed = false;
+    document.body.style.cursor = 'default';
+});
+
+// -- Float panel --
+document.getElementById('btnHelp').onclick = () => {
+    floatPanel.style.display = floatPanel.style.display === 'flex' ? 'none' : 'flex';
+};
+document.getElementById('btnCloseHelp').onclick = () => { floatPanel.style.display = 'none'; };
+floatHeader.addEventListener('mousedown', e => {
+    isDraggingFloat = true;
+    floatOffsetX = e.clientX - floatPanel.offsetLeft;
+    floatOffsetY = e.clientY - floatPanel.offsetTop;
+    document.body.style.cursor = 'move';
+});
+
+// -- Settings modal --
+document.getElementById('btnShortcuts').onclick   = () => { mSettings.style.display = 'flex'; };
+document.getElementById('btnCloseSettings').onclick = () => { mSettings.style.display = 'none'; };
+
+// -- Master TC Clicks --
+boxIn.addEventListener('click', () => {
+    if (!video.duration) return;
+    if (editingRowIndex !== null) {
+        activeInSec = video.currentTime;
+        valTcIn.innerText = formatTC(activeInSec);
+        logs[editingRowIndex].inSec = activeInSec;
+        logs[editingRowIndex].tcin = formatTC(activeInSec);
+        // Update the table cell directly (TC IN is column index 4: STT, Play, Action, Swap, IN)
+        const row = document.getElementById(`row-${editingRowIndex}`);
+        if (row) {
+            const cells = row.querySelectorAll('td');
+            if (cells[4]) cells[4].innerText = formatTC(activeInSec);
+        }
+        drawMarkers();
+        updateActiveRange();
+        return;
+    }
+    if (activeInSec !== null) {
+        activeInSec = null;
+        boxIn.classList.remove('active');
+        valTcIn.innerText = formatTC(video.currentTime);
+        updateActiveRange();
+    } else {
+        activeInSec = video.currentTime;
+        valTcIn.innerText = formatTC(activeInSec);
+        boxIn.classList.add('active');
+        updateActiveRange();
+    }
+});
+
+boxOut.addEventListener('click', () => {
+    if (!video.duration) return;
+    if (editingRowIndex !== null) {
+        activeOutSec = video.currentTime;
+        valTcOut.innerText = formatTC(activeOutSec);
+        logs[editingRowIndex].outSec = activeOutSec;
+        logs[editingRowIndex].tcout = formatTC(activeOutSec);
+        const row = document.getElementById(`row-${editingRowIndex}`);
+        if (row) {
+            const cells = row.querySelectorAll('td');
+            if (cells[5]) cells[5].innerText = formatTC(activeOutSec);
+        }
+        drawMarkers();
+        updateActiveRange();
+        return;
+    }
+    if (activeOutSec !== null) {
+        activeOutSec = null;
+        boxOut.classList.remove('active');
+        valTcOut.innerText = formatTC(video.currentTime);
+        updateActiveRange();
+    } else {
+        activeOutSec = video.currentTime;
+        valTcOut.innerText = formatTC(activeOutSec);
+        boxOut.classList.add('active');
+        updateActiveRange();
+    }
+});
+
+if (boxSwap) {
+    boxSwap.addEventListener('click', () => {
+        if (!video.duration) return;
+        if (editingRowIndex !== null) {
+            activeSwapSec = video.currentTime;
+            valTcSwap.innerText = formatTC(activeSwapSec);
+            logs[editingRowIndex].swapSec = activeSwapSec;
+            logs[editingRowIndex].tcswap = formatTC(activeSwapSec);
+            const row = document.getElementById(`row-${editingRowIndex}`);
+            if (row) {
+                const cells = row.querySelectorAll('td');
+                if (cells[3]) cells[3].innerText = formatTC(activeSwapSec);
+            }
+            drawMarkers();
+            updateActiveRange();
+            return;
+        }
+        if (activeSwapSec !== null) {
+            activeSwapSec = null;
+            boxSwap.classList.remove('active');
+            valTcSwap.innerText = formatTC(video.currentTime);
+            updateActiveRange();
+        } else {
+            activeSwapSec = video.currentTime;
+            valTcSwap.innerText = formatTC(activeSwapSec);
+            boxSwap.classList.add('active');
+            updateActiveRange();
+        }
+    });
+}
+
+// -- Theme --
+document.getElementById('themeSelect').addEventListener('change', (e) => {
+    document.body.setAttribute('data-theme', e.target.value);
+});
+
+const fpsSelect = document.getElementById('fpsSelect');
+if (fpsSelect) {
+    fpsSelect.addEventListener('change', (e) => {
+        FPS = parseFloat(e.target.value);
+        if (video.duration) {
+            document.getElementById('tcEnd').innerText = formatBoundTC(video.duration);
+            bigTc.innerText = formatTC(video.currentTime);
+            renderTable();
+            drawMarkers();
+            renderTimelineTicks();
+        }
+    });
+}
+
+// -- Action buttons --
+actionButtons.forEach(btn => btn.addEventListener('click', () => setSelectedAction(btn.dataset.action)));
+
+// -- Video upload --
+upload.addEventListener('change', e => {
+    if (e.target.files[0]) {
+        const selectedFile = e.target.files[0];
+        if (video.src && video.src.startsWith('blob:')) URL.revokeObjectURL(video.src);
+        video.src = URL.createObjectURL(selectedFile);
+        document.getElementById('uploadText').innerText = selectedFile.name;
+        pendingVideoMeta = {
+            fileName: selectedFile.name,
+            fileSize: selectedFile.size,
+            fileType: selectedFile.type,
+            lastModified: selectedFile.lastModified,
+            durationSec: 0,
+            updatedAt: new Date().toISOString()
+        };
+        persistProjectVideoMeta(pendingVideoMeta);
+    }
+});
+
+
+
+// -- Video events --
+video.addEventListener('loadedmetadata', () => {
+    document.getElementById('tcStart').innerText = '00:00';
+    document.getElementById('tcEnd').innerText = formatBoundTC(video.duration);
+    drawMarkers();
+    renderTimelineTicks();
+    if (pendingVideoMeta) {
+        pendingVideoMeta.durationSec = video.duration || 0;
+        pendingVideoMeta.updatedAt = new Date().toISOString();
+        persistProjectVideoMeta(pendingVideoMeta);
+        pendingVideoMeta = null;
+    }
+});
+document.getElementById('tcStart').addEventListener('click', () => { video.currentTime = 0; });
+document.getElementById('tcEnd').addEventListener('click', () => { if (video.duration) video.currentTime = video.duration; });
+video.addEventListener('focus', () => video.blur());
+
+// -- Play / Pause button --
+btnPlayVideo.addEventListener('click', () => {
+    if (reverseInterval) {
+        clearInterval(reverseInterval); reverseInterval = null;
+        if (btnPlayReverse) btnPlayReverse.classList.remove('active');
+    }
+    togglePlayback();
+});
+video.addEventListener('play', () => {
+    updateToolbarPlayState();
+    if (tcAutoSelected) clearAutoSelectedTC();
+});
+video.addEventListener('pause', updateToolbarPlayState);
+video.addEventListener('seeked', () => {
+    if (tcJumpWait) {
+        tcJumpWait = false;
+    } else if (tcAutoSelected) {
+        clearAutoSelectedTC();
+    }
+});
+
+// -- Play Reverse --
+if (btnPlayReverse) {
+    btnPlayReverse.addEventListener('click', () => {
+        if (!video.paused) video.pause();
+        if (reverseInterval) {
+            clearInterval(reverseInterval); reverseInterval = null;
+            btnPlayReverse.classList.remove('active');
+            updateToolbarPlayState();
+        } else {
+            reverseInterval = setInterval(() => {
+                if (video.currentTime <= 0.05) {
+                    clearInterval(reverseInterval); reverseInterval = null;
+                    btnPlayReverse.classList.remove('active');
+                    video.currentTime = 0;
+                    updateToolbarPlayState();
+                } else {
+                    video.currentTime -= 0.05;
+                }
+            }, 50);
+            btnPlayReverse.classList.add('active');
+            updateToolbarPlayState();
+        }
+    });
+}
+
+// -- Import Action button --
+if (btnToolbarImport) btnToolbarImport.addEventListener('click', saveLog);
+
+// -- Big TC --
+bigTc.addEventListener('click', function() {
+    navigator.clipboard.writeText(this.innerText);
+    this.style.color = 'var(--success)';
+    setTimeout(() => { this.style.color = 'var(--accent)'; }, 500);
+});
+bigTc.addEventListener('dblclick', function(e) {
+    e.preventDefault();
+    showTimecodeJump();
+});
+
+// -- Speed control --
+speedDisplay.addEventListener('mousedown', e => {
+    isDraggingSpeed = true; speedDidDrag = false;
+    speedStartX = e.clientX; speedStartVal = playbackSpeed;
+    document.body.style.cursor = 'ew-resize'; e.preventDefault();
+});
+speedDisplay.addEventListener('click', e => {
+    if (speedDidDrag) return;
+    e.stopPropagation();
+    playbackSpeed = 1;
+    video.playbackRate = 1;
+    speedDisplay.innerText = '1.00x';
+});
+
+// Global Click Handling (Context Menu & Edit Persistence)
+document.addEventListener('mousedown', (e) => { 
+    if (e.target.closest('.tc-jump-overlay')) return;
+    const menu = document.getElementById('rowContextMenu');
+    if (menu && e.target.closest('#rowContextMenu') === null) {
+        menu.style.display = 'none';
+    }
+    if (editingRowIndex !== null) {
+        const row = document.getElementById(`row-${editingRowIndex}`);
+        // Stay in edit mode if clicking within the editing row
+        if (row && row.contains(e.target)) return;
+        // Stay in edit mode if clicking context menu
+        if (e.target.closest('.context-menu')) return;
+        // Stay in edit mode if clicking ANY workspace element
+        if (e.target.closest('.form-section')) return;
+        if (e.target.closest('.tc-row')) return;
+        if (e.target.closest('.action-button-group')) return;
+        if (e.target.closest('.action-button')) return;
+        if (e.target.closest('#btnToolbarImport')) return;
+        if (e.target.closest('#btnToolbarImportShort')) return;
+        if (e.target.closest('.custom-timeline-wrapper')) return;
+        // Stay in edit mode if clicking TC boxes
+        if (e.target.closest('#boxIn') || e.target.closest('#boxOut') || e.target.closest('#boxSwap')) return;
+        // Exit edit mode for everything else
+        saveEdit();
+    }
+});
+
+document.querySelectorAll('#speedMenu li').forEach(li => {
+    li.addEventListener('click', e => {
+        playbackSpeed = parseFloat(e.target.getAttribute('data-speed'));
+        video.playbackRate = playbackSpeed;
+        speedDisplay.innerText = playbackSpeed.toFixed(2) + 'x';
+    });
+});
+
+// -- Global listeners --
+document.addEventListener('contextmenu', e => {
+    if (!e.target.closest('.log-row') && !e.target.closest('.context-menu')) {
+        hideContextMenu();
+    }
+});
+
+// Mirror Workspace script/note to Edit Row (bidirectional sync)
+document.getElementById('inputScript').addEventListener('input', function(e) {
+    if (editingRowIndex !== null && editingRowIndex >= 0 && editingRowIndex < logs.length) {
+        logs[editingRowIndex].script = e.target.value;
+        // Also update the rendered table cell
+        const row = document.getElementById(`row-${editingRowIndex}`);
+        if (row) {
+            const cells = row.querySelectorAll('td');
+            if (cells[6]) cells[6].innerText = e.target.value;
+        }
+    }
+});
+document.getElementById('inputNote').addEventListener('input', function(e) {
+    if (editingRowIndex !== null && editingRowIndex >= 0 && editingRowIndex < logs.length) {
+        logs[editingRowIndex].note = e.target.value;
+        // Also update the rendered table cell
+        const row = document.getElementById(`row-${editingRowIndex}`);
+        if (row) {
+            const cells = row.querySelectorAll('td');
+            if (cells[7]) cells[7].innerText = e.target.value;
+        }
+    }
+});
+
+// -- Volume --
+document.getElementById('volumeSlider').addEventListener('input', e => { video.volume = e.target.value; });
+
+// -- Preview Cut --
+btnPreviewCut.addEventListener('click', togglePreviewCut);
+
+// -- Timeline hover tooltip --
+timelineWrapper.addEventListener('mousemove', e => {
+    if (!video.duration) { hoverTooltip.style.display = 'none'; return; }
+    const rect = timelineWrapper.getBoundingClientRect();
+    const xPos = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+    const hoverSec = (xPos / rect.width) * video.duration;
+    hoverTooltip.style.display = 'block';
+    hoverTooltip.style.left = xPos + 'px';
+    hoverTooltip.innerText = formatTC(hoverSec);
+});
+timelineWrapper.addEventListener('mouseleave', () => { hoverTooltip.style.display = 'none'; });
+
+// -- Timeline drag scrub --
+let isScrubbingTimeline = false;
+timelineWrapper.addEventListener('mousedown', e => {
+    e.preventDefault();
+    if (!video.duration) return;
+    isScrubbingTimeline = true;
+    updateTimelineScrub(e);
+});
+window.addEventListener('mousemove', e => {
+    if (isScrubbingTimeline) updateTimelineScrub(e);
+});
+window.addEventListener('mouseup', e => {
+    if (isScrubbingTimeline) {
+        isScrubbingTimeline = false;
+        seekToScrub(e);
+    }
+});
+function updateTimelineScrub(e) {
+    if (!video.duration) return;
+    const customTimeline = document.getElementById('customTimeline');
+    const rect = customTimeline.getBoundingClientRect();
+    let xPos = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+    const pct = (xPos / rect.width) * 100;
+    const playhead = document.getElementById('playheadIndicator');
+    if (playhead) playhead.style.left = pct + '%';
+    timelineProgress.style.width = pct + '%';
+    const ct = (xPos / rect.width) * video.duration;
+    bigTc.innerText = formatTC(ct);
+    video.currentTime = ct;
+}
+function seekToScrub(e) {
+    if (!video.duration) return;
+    const customTimeline = document.getElementById('customTimeline');
+    const rect = customTimeline.getBoundingClientRect();
+    let xPos = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+    video.currentTime = (xPos / rect.width) * video.duration;
+}
+
+// -- timeupdate --
+video.addEventListener('timeupdate', () => {
+    const ct = video.currentTime;
+    if (!video.duration) return;
+    if (!isScrubbingTimeline) {
+        const pct = (ct / video.duration) * 100;
+        timelineProgress.style.width = pct + '%';
+        const playhead = document.getElementById('playheadIndicator');
+        if (playhead) playhead.style.left = pct + '%';
+        bigTc.innerText = formatTC(ct);
+    }
+    
+    if (activeInSec === null && valTcIn) valTcIn.innerText = formatTC(ct);
+    if (activeOutSec === null && valTcOut) valTcOut.innerText = formatTC(ct);
+    if (activeSwapSec === null && valTcSwap) valTcSwap.innerText = formatTC(ct);
+    
+    let activeColor = 'var(--text-main)';
+    for (let i = 0; i < logs.length; i++) {
+        const log = logs[i];
+        const end = log.outSec ? log.outSec : log.inSec + 1;
+        const row = document.getElementById('row-' + i);
+        if (ct >= log.inSec - 0.05 && ct < end) {
+            const colorSet = actionColors[log.action] || actionColors['OTHERS'];
+            activeColor = colorSet.bg;
+            if (row) row.classList.add('highlight-playing');
+        } else {
+            if (row) row.classList.remove('highlight-playing');
+        }
+    }
+    bigTc.style.color = activeColor;
+    if (activeInSec !== null && activeOutSec === null) updateActiveRange();
+
+    if (isPreviewCut) {
+        const isReversing = reverseInterval !== null;
+        for (let i = 0; i < logs.length; i++) {
+            if (logs[i].action === 'DELETE' && logs[i].outSec) {
+                if (ct >= logs[i].inSec && ct < logs[i].outSec) {
+                    if (isReversing) {
+                        video.currentTime = logs[i].inSec - 0.05;
+                    } else {
+                        video.currentTime = logs[i].outSec;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    if (previewState && previewState.active) {
+        const log = logs[previewState.logIndex];
+        if (log) {
+            if (log.action === 'SWAP') {
+                const sSec = Number.isFinite(log.swapSec) ? log.swapSec : parseTC(log.tcswap);
+                const iSec = Number.isFinite(log.inSec) ? log.inSec : parseTC(log.tcin);
+                const oSec = Number.isFinite(log.outSec) ? log.outSec : parseTC(log.tcout);
+                if (previewState.phase === 1) {
+                    if (ct >= sSec) {
+                        video.currentTime = iSec;
+                        previewState.phase = 2;
+                    }
+                } else if (previewState.phase === 2) {
+                    const endTarget = (Number.isFinite(oSec) && oSec > iSec) ? oSec : iSec + 3;
+                    if (ct >= endTarget) {
+                        video.currentTime = sSec;
+                        previewState.phase = 3;
+                    }
+                } else if (previewState.phase === 3) {
+                    if (ct >= sSec + 3) {
+                        video.pause();
+                        endPreview();
+                    }
+                }
+            } else {
+                const iSec = Number.isFinite(log.inSec) ? log.inSec : parseTC(log.tcin);
+                const oSec = Number.isFinite(log.outSec) ? log.outSec : parseTC(log.tcout);
+                const endTarget = (Number.isFinite(oSec) && oSec > iSec) ? oSec + 3 : iSec + 3;
+                if (ct >= endTarget) {
+                    video.pause();
+                    endPreview();
+                }
+            }
+        }
+    }
+});
+
+// -- CSV Import/Export --
+const csvImportEl = document.getElementById('csvImport');
+if (csvImportEl) {
+    csvImportEl.addEventListener('change', function(e) {
+        const file = e.target.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            try {
+                const data = new Uint8Array(ev.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const rows = XLSX.utils.sheet_to_json(worksheet, {header: 1, defval: ""});
+                
+                const newLogs = [];
+                // Skip the first 4 rows (header rows from template)
+                for (let i = 4; i < rows.length; i++) {
+                    const cols = rows[i];
+                    if (!cols || cols.length === 0) continue;
+                    
+                    let action = (cols[1] || '').toString().trim();
+                    if (action === 'DELTELE') action = 'DELETE';
+                    let tcswap = (cols[2] || '').toString().trim();
+                    let tcin = (cols[3] || '').toString().trim();
+                    let tcout = (cols[4] || '').toString().trim();
+                    let script = (cols[5] || '').toString().trim();
+                    let note = (cols[6] || '').toString().trim();
+                    
+                    if (action || tcin || script) {
+                        newLogs.push({ action, tcswap, tcin, tcout, script, note, inSec: parseTC(tcin), outSec: parseTC(tcout) || null, swapSec: tcswap ? parseTC(tcswap) : null });
+                    }
+                }
+                
+                if (newLogs.length > 0) {
+                    openConfirmModal('Import Data', `Tìm thấy ${newLogs.length} dòng. Ghi đè danh sách hiện tại?`).then(ok => {
+                        if (ok) { logs = newLogs; renderTable(); drawMarkers(); saveProjectLogsToKV(); }
+                    });
+                } else openMessageModal('Lỗi Import', 'File không hợp lệ hoặc rỗng!');
+            } catch (err) {
+                console.error(err);
+                openMessageModal('Lỗi Import', 'Không thể đọc file. Vui lòng chọn file Excel (.xlsx) hoặc CSV hợp lệ.');
+            }
+        };
+        reader.readAsArrayBuffer(file);
+        e.target.value = '';
+    });
+}
+
+// -- Google Sheets Synchronization --
+async function syncToGoogleSheets() {
+    if (!logs.length) {
+        openMessageModal('Đồng bộ Google Sheets', 'Danh sách log rỗng. Không có gì để đồng bộ.');
+        return;
+    }
+
+    const btn = document.getElementById('btnSyncSheets');
+    const originalText = btn ? btn.innerText : 'Sync Sheet';
+    if (btn) {
+        btn.innerText = 'Syncing...';
+        btn.disabled = true;
+    }
+
+    try {
+        const sheetId = currentSpreadsheetId || TEMPLATE_SPREADSHEET_ID;
+        const values = logs.map(log => [
+            "",
+            log.action,
+            log.tcin,
+            log.tcout,
+            log.tcswap,
+            log.script,
+            log.note
+        ]);
+
+        const writeRes = await fetch(`/tcpscript/api/google-sheets`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${sessionToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: 'syncLogs',
+                sheetId: sheetId,
+                tab: currentSheetTab || 'Full-show',
+                values: values
+            })
+        });
+
+        if (!writeRes.ok) {
+            const errTxt = await writeRes.text();
+            throw new Error('Lỗi đồng bộ qua proxy: ' + errTxt);
+        }
+
+        const writeData = await writeRes.json();
+        if (writeData.status === 'error') {
+            throw new Error(writeData.message || 'Lỗi từ Google Apps Script');
+        }
+
+        openMessageModal('Đồng bộ Google Sheets', 'Đồng bộ qua hệ thống thành công.\nVui lòng kiểm tra file Google Sheets của bạn.');
+    } catch (error) {
+        console.error('[AUTOSCRIPT SYNC ERROR]', error);
+        openMessageModal('Lỗi đồng bộ', error.message || 'Không thể gửi yêu cầu đồng bộ.');
+    } finally {
+        if (btn) {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    }
+}
+
+function sanitizeProjectVideoMeta(meta) {
+    if (!meta || typeof meta !== 'object') return null;
+    const fileName = String(meta.fileName || '').trim();
+    if (!fileName) return null;
+    return {
+        fileName,
+        fileSize: Number.isFinite(Number(meta.fileSize)) ? Number(meta.fileSize) : 0,
+        fileType: String(meta.fileType || '').trim(),
+        lastModified: Number.isFinite(Number(meta.lastModified)) ? Number(meta.lastModified) : 0,
+        durationSec: Number.isFinite(Number(meta.durationSec)) ? Number(meta.durationSec) : 0,
+        updatedAt: meta.updatedAt ? String(meta.updatedAt) : ''
+    };
+}
+
+function getProjectVideoMetaCache() {
+    try {
+        return JSON.parse(localStorage.getItem(PROJECT_VIDEO_META_CACHE_KEY) || '{}');
+    } catch (error) {
+        return {};
+    }
+}
+
+function getCachedProjectVideoMeta(projectId) {
+    if (!projectId) return null;
+    const cache = getProjectVideoMetaCache();
+    return sanitizeProjectVideoMeta(cache[projectId]);
+}
+
+function setCachedProjectVideoMeta(projectId, meta) {
+    if (!projectId) return;
+    const cache = getProjectVideoMetaCache();
+    cache[projectId] = sanitizeProjectVideoMeta(meta);
+    localStorage.setItem(PROJECT_VIDEO_META_CACHE_KEY, JSON.stringify(cache));
+}
+
+function formatVideoMetaBytes(bytes) {
+    if (!Number.isFinite(bytes) || bytes <= 0) return '';
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    let value = bytes;
+    let unitIndex = 0;
+    while (value >= 1024 && unitIndex < units.length - 1) {
+        value /= 1024;
+        unitIndex += 1;
+    }
+    return `${value.toFixed(value >= 100 || unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
+}
+
+function formatVideoMetaDuration(durationSec) {
+    if (!Number.isFinite(durationSec) || durationSec <= 0) return '';
+    const totalSec = Math.round(durationSec);
+    const hh = Math.floor(totalSec / 3600);
+    const mm = Math.floor((totalSec % 3600) / 60);
+    const ss = totalSec % 60;
+    if (hh > 0) {
+        return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+    }
+    return `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+}
+
+function formatVideoMetaDate(value) {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function renderProjectVideoMeta() {
+    const summaryEl = document.getElementById('videoMetaSummary');
+    if (!summaryEl) return;
+
+    const hasLoadedVideo = !!(video && (video.currentSrc || video.src));
+    if (hasLoadedVideo) {
+        summaryEl.style.display = 'none';
+        summaryEl.innerHTML = '';
+        return;
+    }
+
+    const meta = sanitizeProjectVideoMeta(currentProjectVideoMeta);
+    if (!meta) {
+        summaryEl.style.display = 'none';
+        summaryEl.innerHTML = '';
+        return;
+    }
+
+    const detailParts = [];
+    const sizeText = formatVideoMetaBytes(meta.fileSize);
+    const durationText = formatVideoMetaDuration(meta.durationSec);
+    const updatedText = formatVideoMetaDate(meta.updatedAt);
+    if (sizeText) detailParts.push(sizeText);
+    if (durationText) detailParts.push(durationText);
+    if (updatedText) detailParts.push(updatedText);
+
+    summaryEl.style.display = 'block';
+    summaryEl.innerHTML = `<strong>Video gần nhất:</strong> ${escapeHtml(meta.fileName)}${detailParts.length ? `<br>${escapeHtml(detailParts.join(' · '))}` : ''}<br>Chọn lại file để tiếp tục trên máy này.`;
+}
+
+async function persistProjectVideoMeta(meta) {
+    const safeMeta = sanitizeProjectVideoMeta(meta);
+    if (!currentSpreadsheetId || !safeMeta) return;
+
+    currentProjectVideoMeta = safeMeta;
+    setCachedProjectVideoMeta(currentSpreadsheetId, safeMeta);
+    renderProjectVideoMeta();
+
+    try {
+        await fetch('/tcpscript/api/projects/video-meta', {
+            method: 'PUT',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: currentSpreadsheetId,
+                videoMeta: safeMeta
+            })
+        });
+    } catch (error) {
+        console.warn('[APP] Failed to sync video metadata:', error);
+    }
+}
+
+if (btnSyncSheets) {
+    btnSyncSheets.addEventListener('click', syncToGoogleSheets);
+}
+
+const btnCloseMessageModal = document.getElementById('btnCloseMessageModal');
+if (btnCloseMessageModal) {
+    btnCloseMessageModal.addEventListener('click', closeMessageModal);
+}
+if (mMessage) {
+    mMessage.addEventListener('click', event => {
+        if (event.target === mMessage) {
+            closeMessageModal();
+        }
+    });
+}
+
+// -- New Project logic removed as it's now handled in project.html --
+
+// ── 23. KEYBOARD SHORTCUTS ─────────────────────────────────
+document.addEventListener('keydown', e => {
+    if (mMessage && mMessage.style.display === 'flex' && e.key === 'Escape') {
+        e.preventDefault();
+        closeMessageModal();
+        return;
+    }
+    const cModal = document.getElementById('confirmModal');
+    if (cModal && cModal.style.display === 'flex' && e.key === 'Escape') {
+        e.preventDefault();
+        const btnCancel = document.getElementById('btnConfirmCancel');
+        if (btnCancel) btnCancel.click();
+        return;
+    }
+    if (listeningAction) {
+        e.preventDefault();
+        if (e.key === 'Escape') { listeningAction = null; renderSettings(); return; }
+        if (['Shift','Control','Alt','Meta'].includes(e.key)) return;
+        shortcuts[listeningAction] = { key: e.key.toUpperCase(), shift: e.shiftKey, ctrl: e.ctrlKey || e.metaKey, alt: e.altKey, label: shortcuts[listeningAction].label };
+        localStorage.setItem('autoscript_shortcuts', JSON.stringify(shortcuts));
+        listeningAction = null; renderSettings();
+        return;
+    }
+    if (e.key === 'Escape' || e.code === 'Space') {
+        if (previewState.active) endPreview();
+    }
+    if (e.key === 'Escape') {
+        if (editingRowIndex !== null) saveEdit();
+    }
+    if (mSettings.style.display === 'flex') {
+        if (e.key === 'Escape') mSettings.style.display = 'none';
+        return;
+    }
+    const tcJumpOverlay = document.getElementById('tcJumpOverlay');
+    if (tcJumpOverlay && tcJumpOverlay.style.display === 'flex') {
+        if (e.key === 'Enter') { e.preventDefault(); executeTimecodeJump(); return; }
+        if (e.key === 'Escape') { e.preventDefault(); hideTimecodeJump(); return; }
+        return;
+    }
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'z') { e.preventDefault(); redo(); return; }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) { e.preventDefault(); undo(); return; }
+    
+    const active = document.activeElement;
+    const isTypingInput = active.tagName === 'INPUT' && !['button','checkbox','radio','range','submit','reset','color'].includes(active.type);
+    const typing = isTypingInput || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT' || active.isContentEditable;
+    if (e.key === 'Escape') { active.blur(); return; }
+
+    // Always allow Save shortcut even when typing
+    if (matchShortcut(e, 'save')) { e.preventDefault(); saveLog(); return; }
+
+    if (typing) return;
+
+    if (matchShortcut(e, 'zoom1x')) {
+        e.preventDefault();
+        applyZoom(1);
+        return;
+    }
+    if (matchShortcut(e, 'zoomOut')) {
+        e.preventDefault();
+        applyZoom(Math.max(1, timelineZoom - 5));
+        return;
+    }
+    if (matchShortcut(e, 'zoomIn')) {
+        e.preventDefault();
+        applyZoom(Math.min(50, timelineZoom + 5));
+        return;
+    }
+
+    if (matchShortcut(e, 'play')) { e.preventDefault(); togglePlayback(); }
+    else if (matchShortcut(e, 'tcin'))       { e.preventDefault(); markInPoint(); }
+    else if (matchShortcut(e, 'tcout'))      { e.preventDefault(); markOutPoint(); }
+    else if (matchShortcut(e, 'tcswap'))     { e.preventDefault(); markSwapPoint(); }
+    else if (matchShortcut(e, 'prev'))       { e.preventDefault(); jumpMarker(-1); }
+    else if (matchShortcut(e, 'next'))       { e.preventDefault(); jumpMarker(1); }
+    else if (matchShortcut(e, 'jumpin'))     { e.preventDefault(); if (activeInSec !== null) video.currentTime = activeInSec; }
+    else if (matchShortcut(e, 'jumpout'))    { e.preventDefault(); if (activeOutSec !== null) video.currentTime = activeOutSec; }
+    else if (matchShortcut(e, 'slow'))       { e.preventDefault(); playbackSpeed = Math.max(0.25, playbackSpeed - 0.25); video.playbackRate = playbackSpeed; speedDisplay.innerText = playbackSpeed.toFixed(2) + 'x'; }
+    else if (matchShortcut(e, 'fast'))       { e.preventDefault(); playbackSpeed = Math.min(10, playbackSpeed + 0.25); video.playbackRate = playbackSpeed; speedDisplay.innerText = playbackSpeed.toFixed(2) + 'x'; }
+    else if (matchShortcut(e, 'previewCut')) { e.preventDefault(); togglePreviewCut(); }
+    else if (matchShortcut(e, 'script'))     { e.preventDefault(); document.getElementById('inputScript').focus(); }
+    else if (matchShortcut(e, 'note'))       { e.preventDefault(); document.getElementById('inputNote').focus(); }
+    else if (matchShortcut(e, 'action'))     { e.preventDefault(); let idx = actionList.indexOf(selectedAction); idx = (Math.max(0, idx) + 1) % actionList.length; setSelectedAction(actionList[idx]); }
+    else if (matchShortcut(e, 'video'))      { e.preventDefault(); upload.click(); }
+    else if (e.code === 'ArrowRight')        { e.preventDefault(); skipTime(5); }
+    else if (e.code === 'ArrowLeft')         { e.preventDefault(); skipTime(-5); }
+});
+
+function saveEdit() {
+    if (editingRowIndex !== null && editingRowIndex >= 0 && editingRowIndex < logs.length) {
+        const log = logs[editingRowIndex];
+        // Sync workspace textarea values back into the log
+        const scriptEl = document.getElementById('inputScript');
+        const noteEl = document.getElementById('inputNote');
+        if (scriptEl) log.script = scriptEl.value.trim();
+        if (noteEl)   log.note   = noteEl.value.trim();
+        // Recalculate formatted TC from seconds
+        log.tcin  = formatTC(log.inSec);
+        log.tcout = log.outSec ? formatTC(log.outSec) : '00:00:00:00';
+        log.tcswap = log.swapSec ? formatTC(log.swapSec) : '';
+    }
+    editingRowIndex = null;
+    // Clear workspace
+    activeInSec = null; activeOutSec = null; activeSwapSec = null;
+    valTcIn.innerText = '00:00:00:00';
+    valTcOut.innerText = '00:00:00:00';
+    if (valTcSwap) valTcSwap.innerText = '00:00:00:00';
+    document.getElementById('inputScript').value = '';
+    document.getElementById('inputNote').value = '';
+    updateActiveRange();
+    boxIn.classList.remove('active');
+    boxOut.classList.remove('active');
+    if (boxSwap) boxSwap.classList.remove('active');
+    saveSession();
+    renderTable();
+    drawMarkers();
+}
+
+function hideContextMenu() {
+    const menu = document.getElementById('rowContextMenu');
+    if (menu) menu.style.display = 'none';
+}
+
+window.showRowMenu = function(e, index) {
+    e.preventDefault();
+    menuTargetIndex = index;
+    const menu = document.getElementById('rowContextMenu');
+    if (menu) {
+        menu.style.display = 'flex';
+        menu.style.left = e.pageX + 'px';
+        menu.style.top = e.pageY + 'px';
+    }
+};
+
+const menuEdit = document.getElementById('menuEdit');
+if (menuEdit) menuEdit.addEventListener('click', () => {
+    // If already editing another row, save it first
+    if (editingRowIndex !== null && editingRowIndex !== menuTargetIndex) {
+        saveEdit();
+    }
+    editingRowIndex = menuTargetIndex;
+    
+    // Mirror all data to workspace
+    const log = logs[editingRowIndex];
+    if (!log) { editingRowIndex = null; return; }
+    
+    activeInSec = log.inSec;
+    activeOutSec = log.outSec;
+    activeSwapSec = log.swapSec;
+    
+    valTcIn.innerText = formatTC(activeInSec);
+    valTcOut.innerText = activeOutSec != null ? formatTC(activeOutSec) : '00:00:00:00';
+    if (valTcSwap) valTcSwap.innerText = activeSwapSec != null ? formatTC(activeSwapSec) : '00:00:00:00';
+    
+    document.getElementById('inputScript').value = log.script || '';
+    document.getElementById('inputNote').value = log.note || '';
+    
+    // Update action selection to match the editing row
+    selectedAction = log.action;
+    updateActionButtons();
+    if (boxSwap) boxSwap.style.display = log.action === 'SWAP' ? 'block' : 'none';
+    
+    // Update TC box active states
+    if (activeInSec != null) boxIn.classList.add('active'); else boxIn.classList.remove('active');
+    if (activeOutSec != null) boxOut.classList.add('active'); else boxOut.classList.remove('active');
+    if (boxSwap) {
+        if (activeSwapSec != null) boxSwap.classList.add('active'); else boxSwap.classList.remove('active');
+    }
+    updateActiveRange();
+    
+    renderTable();
+    hideContextMenu();
+});
+
+const menuDelete = document.getElementById('menuDelete');
+if (menuDelete) menuDelete.addEventListener('click', () => {
+    deleteLog(menuTargetIndex);
+    hideContextMenu();
+});
+
+// ── 24. INITIALIZATION ─────────────────────────────────────
+updateActionButtons();
+updateToolbarPlayState();
+
+// Zoom / Timeline logic initialization ...
+let timelineZoom = 1;
+const btnZoomDrag = document.getElementById('btnZoomDrag');
+const zoomMenu = document.getElementById('zoomMenu');
+
+let zoomAnimationId = null;
+let currentAnimTarget = null;
+let customCenterTime = null;
+
+function applyZoom(newZoom, immediate = false, centerSec = null) {
+    if (newZoom < 1) newZoom = 1;
+    if (newZoom > 50) newZoom = 50;
+
+    currentAnimTarget = newZoom;
+    customCenterTime = centerSec;
+
+    if (immediate) {
+        if (zoomAnimationId) {
+            cancelAnimationFrame(zoomAnimationId);
+            zoomAnimationId = null;
+        }
+        setZoomInstantly(newZoom);
+    } else {
+        if (!zoomAnimationId) {
+            animateZoom();
+        }
+    }
+}
+
+function setZoomInstantly(z) {
+    const wrapper = document.querySelector('.custom-timeline-wrapper');
+    const timeline = document.getElementById('customTimeline');
+
+    timelineZoom = z;
+    timeline.style.width = (timelineZoom * 100) + '%';
+    timeline.style.minWidth = (timelineZoom * 100) + '%';
+
+    if (video.duration && wrapper.offsetWidth > 0) {
+        const newTimelineWidth = wrapper.clientWidth * timelineZoom;
+        const centerTime = customCenterTime !== null ? customCenterTime : video.currentTime;
+        const playheadX = (centerTime / video.duration) * newTimelineWidth;
+        wrapper.scrollLeft = playheadX - (wrapper.offsetWidth / 2);
+    }
+
+    const zoomText = document.getElementById('zoomText');
+    const btnZoomDrag = document.getElementById('btnZoomDrag');
+    if (zoomText) {
+        zoomText.innerText = timelineZoom.toFixed(2) + 'x';
+    }
+    if (btnZoomDrag) {
+        if (timelineZoom > 1) {
+            btnZoomDrag.style.color = '#60a5fa';
+            btnZoomDrag.style.textShadow = '0 0 8px rgba(96,165,250,0.5)';
+        } else {
+            btnZoomDrag.style.color = '';
+            btnZoomDrag.style.textShadow = '';
+        }
+    }
+    drawMarkers();
+    renderTimelineTicks();
+}
+
+function animateZoom() {
+    const diff = currentAnimTarget - timelineZoom;
+    if (Math.abs(diff) < 0.05) {
+        setZoomInstantly(currentAnimTarget);
+        zoomAnimationId = null;
+        return;
+    }
+    const newZ = timelineZoom + diff * 0.2;
+    setZoomInstantly(newZ);
+    zoomAnimationId = requestAnimationFrame(animateZoom);
+}
+const customTimelineWrapper = document.querySelector('.custom-timeline-wrapper');
+let isPanningTimeline = false;
+let startPanX = 0;
+let startScrollLeft = 0;
+
+customTimelineWrapper.addEventListener('mousedown', (e) => {
+    if (e.target.closest('.custom-timeline')) return; // Allow scrub interactions
+    isPanningTimeline = true;
+    startPanX = e.clientX;
+    startScrollLeft = customTimelineWrapper.scrollLeft;
+    customTimelineWrapper.style.cursor = 'grabbing';
+});
+
+window.addEventListener('mousemove', (e) => {
+    if (!isPanningTimeline) return;
+    e.preventDefault(); // prevent text selection while panning
+    const dx = e.clientX - startPanX;
+    customTimelineWrapper.scrollLeft = startScrollLeft - dx;
+});
+
+window.addEventListener('mouseup', () => {
+    if (isPanningTimeline) {
+        isPanningTimeline = false;
+        customTimelineWrapper.style.cursor = '';
+    }
+});
+
+timelineWrapper.addEventListener('wheel', (e) => {
+    if (!video.duration) return;
+    if (e.deltaY === 0) return;
+    
+    e.preventDefault();
+    const zoomDelta = e.deltaY * -0.05;
+    let baseZoom = zoomAnimationId ? currentAnimTarget : timelineZoom;
+    let newZoom = Math.max(1, Math.min(50, baseZoom + zoomDelta));
+    if (newZoom === currentAnimTarget) return;
+    
+    applyZoom(newZoom);
+}, { passive: false });
+
+if (btnZoomDrag) {
+    let isZoomDragging = false;
+    let startX = 0;
+    let startZoom = 1;
+
+    btnZoomDrag.addEventListener('mousedown', (e) => {
+        isZoomDragging = false;
+        startX = e.clientX;
+        startZoom = timelineZoom;
+        
+        function onMouseMove(ev) {
+            const dx = ev.clientX - startX;
+            if (Math.abs(dx) > 3) {
+                isZoomDragging = true;
+                let z = startZoom + Math.round(dx / 10) * 1;
+                applyZoom(z, true);
+            }
+        }
+        function onMouseUp(ev) {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+            if (!isZoomDragging) {
+                applyZoom(1);
+            }
+        }
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+}
+
+function renderTimelineTicks() {
+    const ticksContainer = document.getElementById('timelineTicks');
+    if (!ticksContainer || !video.duration) return;
+    ticksContainer.innerHTML = '';
+    const duration = video.duration;
+    
+    // We want roughly 10-12 ticks visible in the current viewport
+    const visibleDuration = duration / timelineZoom;
+    const targetStep = visibleDuration / 10;
+    
+    const steps = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200];
+    let step = steps[steps.length - 1];
+    for (let s of steps) {
+        if (s >= targetStep) {
+            step = s;
+            break;
+        }
+    }
+
+    for (let t = 0; t <= duration; t += step) {
+        const pct = (t / duration) * 100;
+        const tick = document.createElement('div');
+        tick.style.position = 'absolute';
+        tick.style.left = pct + '%';
+        tick.style.top = '0';
+        tick.style.height = '100%';
+        tick.style.borderLeft = '1px solid rgba(255,255,255,0.1)';
+        
+        const label = document.createElement('div');
+        let labelText = '';
+        if (t > 0) {
+            const h = Math.floor(t / 3600);
+            const m = Math.floor((t % 3600) / 60);
+            const s = Math.floor(t % 60);
+            if (h > 0) labelText += h + 'h';
+            if (m > 0 || (h > 0 && s > 0)) labelText += m + 'm';
+            if (s > 0) labelText += s + 's';
+        }
+        label.innerText = labelText;
+        
+        label.style.position = 'absolute';
+        label.style.top = '28px'; // Moved below the timeline
+        label.style.left = '-10px';
+        label.style.fontSize = '9px';
+        label.style.color = 'var(--text-muted)';
+        label.style.pointerEvents = 'none';
+        
+        tick.appendChild(label);
+        ticksContainer.appendChild(tick);
+    }
+}
+
+// (Duplicate loadedmetadata removed — merged into main listener above)
+
+// ==========================================
+// Multi-Sheet / Cutdown Logic
+// ==========================================
+async function loadSheetTabsFromGoogle() {
+    if (!currentSpreadsheetId) return;
+    try {
+        const url = `/tcpscript/api/google-sheets?action=getTabs&id=${currentSpreadsheetId}&t=${Date.now()}`;
+        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${sessionToken}` }});
+        if (res.ok) {
+            const data = await res.json();
+            if (data.status === 'success' && data.tabs) {
+                // Filter out 'Reels 1.1' as requested
+                availableSheetTabs = data.tabs.filter(tab => tab !== 'Reels 1.1');
+                renderSheetTabs();
+            } else {
+                console.error('[APP] getTabs failed:', data);
+            }
+        }
+    } catch (e) { console.error('[APP] Failed to load tabs:', e); }
+}
+
+function renderSheetTabs() {
+    const container = document.getElementById('sheetTabsContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    availableSheetTabs.forEach(tab => {
+        const btn = document.createElement('button');
+        btn.className = 'sheet-tab' + (tab === currentSheetTab ? ' active' : '');
+        btn.dataset.tab = tab;
+        btn.innerText = tab;
+        btn.onclick = () => switchSheetTab(tab);
+        container.appendChild(btn);
+    });
+}
+
+function switchSheetTab(tabName) {
+    if (currentSheetTab === tabName) return;
+    if (projectLogsSaveTimer) {
+        clearTimeout(projectLogsSaveTimer);
+        projectLogsSaveTimer = null;
+    }
+    tabLogsCache[currentSheetTab] = JSON.parse(JSON.stringify(logs));
+    if (isLogsDirty) {
+        saveProjectLogsToKV(currentSheetTab, tabLogsCache[currentSheetTab]);
+        isLogsDirty = false;
+    }
+    currentSheetTab = tabName;
+    renderSheetTabs();
+    if (tabLogsCache[tabName] !== undefined) {
+        logs = JSON.parse(JSON.stringify(tabLogsCache[tabName]));
+        renderTable();
+        updateTimeline();
+    } else {
+        logs = [];
+        renderTable();
+        updateTimeline();
+        loadProjectLogsFromKV(tabName).then((loaded) => {
+            if (!loaded) return;
+            renderTable();
+            updateTimeline();
+        });
+    }
+    updateImportShortVisibility();
+}
+
+async function sendLogToTargetTab(targetTab, logData, chipEl) {
+    if (!targetTab || !logData) return false;
+    if (chipEl) { chipEl.classList.add('sending'); chipEl.innerText = '...'; }
+    try {
+        // If tab is not in RAM cache, we MUST fetch it from KV first to avoid overwriting existing data
+        if (!tabLogsCache[targetTab]) {
+            try {
+                const res = await fetch(`/tcpscript/api/project-logs?id=${encodeURIComponent(currentSpreadsheetId)}&tab=${encodeURIComponent(targetTab)}&t=${Date.now()}`, {
+                    headers: { 'Authorization': `Bearer ${sessionToken}` }
+                });
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+                const data = await res.json();
+                tabLogsCache[targetTab] = Array.isArray(data.logs) ? data.logs : [];
+            } catch (err) {
+                console.warn('[APP] Failed to fetch target tab logs, initializing empty array:', err);
+                throw new Error(`Không thể tải dữ liệu của tab "${targetTab}" trước khi gửi.`);
+            }
+        }
+        tabLogsCache[targetTab].push(JSON.parse(JSON.stringify(logData)));
+        await saveProjectLogsToKV(targetTab, tabLogsCache[targetTab]);
+        return true;
+    } catch (e) {
+        console.error('[APP] sendLogToTargetTab failed:', e);
+        openMessageModal('Lỗi', 'Chuyển thất bại: ' + e.message);
+        return false;
+    } finally {
+        if (chipEl && !chipEl.classList.contains('sent')) { 
+            chipEl.classList.remove('sending'); 
+            chipEl.innerText = targetTab; 
+        }
+    }
+}
+
+// ── ROW SEND: Fixed-position floating tab menu ──────────────
+let _activeRowMenu = null;
+
+window.buildRowSendMenu = function(wrapperEl, logIndex) {
+    // Remove any existing menu
+    hideRowSendMenu();
+    
+    const tabs = availableSheetTabs.filter(t => t !== currentSheetTab);
+    if (tabs.length === 0) return;
+    
+    // Create fixed-position menu
+    const menu = document.createElement('div');
+    menu.className = 'floating-tab-menu';
+    menu.style.display = 'flex';
+    menu.style.position = 'fixed';
+    
+    // Position above the SEND button
+    const btnRect = wrapperEl.getBoundingClientRect();
+    menu.style.bottom = (window.innerHeight - btnRect.top + 4) + 'px';
+    menu.style.right = (window.innerWidth - btnRect.right) + 'px';
+    
+    menu.innerHTML = tabs.map(tab => `<button class="tab-chip" data-tab="${tab}">${tab}</button>`).join('');
+        menu.querySelectorAll('.tab-chip').forEach(chip => {
+        chip.onclick = async (e) => {
+            e.stopPropagation();
+            const log = logs[logIndex];
+            if (!log) return;
+            const ok = await sendLogToTargetTab(chip.dataset.tab, log, chip);
+            if (ok) {
+                chip.classList.add('sent');
+                chip.innerText = '✓';
+                setTimeout(() => window.forceHideRowSendMenu(), 600);
+            }
+        };
+    });
+    
+    // Keep menu alive when hovering over it
+    menu.onmouseenter = () => { menu._hovered = true; };
+    menu.onmouseleave = () => { menu._hovered = false; hideRowSendMenu(); };
+    wrapperEl._menuRef = menu;
+    
+    document.body.appendChild(menu);
+    _activeRowMenu = { menu, wrapper: wrapperEl };
+};
+
+window.forceHideRowSendMenu = function() {
+    if (_activeRowMenu) {
+        _activeRowMenu.menu.remove();
+        if (_activeRowMenu.wrapper) _activeRowMenu.wrapper._menuRef = null;
+        _activeRowMenu = null;
+    }
+};
+
+window.hideRowSendMenu = function(wrapperEl) {
+    if (!_activeRowMenu) return;
+    const { menu, wrapper } = _activeRowMenu;
+    // Don't hide if cursor is still over menu or wrapper
+    setTimeout(() => {
+        if (menu._hovered) return;
+        if (wrapper.matches(':hover')) return;
+        menu.remove();
+        wrapper._menuRef = null;
+        _activeRowMenu = null;
+    }, 80);
+};
+
+function buildImportShortMenu() {
+    const menu = document.getElementById('importShortFloatingMenu');
+    if (!menu) return;
+    const tabs = availableSheetTabs.filter(t => t !== currentSheetTab);
+    if (tabs.length === 0) { menu.innerHTML = '<div class="floating-tab-menu-inner"><span style="font-size:9px;color:var(--text-muted);padding:2px 6px;">No other tabs</span></div>'; return; }
+    menu.innerHTML = '<div class="floating-tab-menu-inner">' + tabs.map(tab => `<button class="tab-chip" data-tab="${tab}">${tab}</button>`).join('') + '</div>';
+    menu.querySelectorAll('.tab-chip').forEach(chip => {
+        chip.onclick = async (e) => {
+            e.stopPropagation();
+            if (!video.duration) { openMessageModal('Lỗi', 'Chưa có video.'); return; }
+            
+            let logDataToSend = null;
+            let usedForm = false;
+            
+            // 1. Try to get data from current form if user is actively filling it
+            if (activeInSec !== null) {
+                const actionName = selectedAction || 'OTHERS';
+                if (actionName === 'DELETE' && activeOutSec === null) { openMessageModal('Lỗi', 'Action DELETE bắt buộc phải có TC OUT.'); return; }
+                const st = document.getElementById('inputScript').value.trim();
+                const nt = document.getElementById('inputNote').value.trim();
+                logDataToSend = {
+                    action: actionName,
+                    inSec: activeInSec, outSec: activeOutSec, swapSec: activeSwapSec,
+                    tcswap: activeSwapSec !== null ? formatTC(activeSwapSec) : '',
+                    tcin: formatTC(activeInSec),
+                    tcout: activeOutSec !== null ? formatTC(activeOutSec) : '',
+                    script: st, note: nt, timestamp: Date.now()
+                };
+                usedForm = true;
+            } 
+            // 2. If form is empty, check clipboard
+            else if (clipboardLogData !== null) {
+                logDataToSend = { ...clipboardLogData, timestamp: Date.now() };
+            } 
+            // 3. Nothing to send
+            else {
+                openMessageModal('Lỗi', 'Vui lòng thiết lập TC IN trước khi Import, hoặc Import 1 action trước để dùng lại dữ liệu (Clipboard).'); 
+                return; 
+            }
+
+            const ok = await sendLogToTargetTab(chip.dataset.tab, logDataToSend, chip);
+            if (ok) {
+                if (usedForm) {
+                    document.getElementById('inputScript').value = '';
+                    document.getElementById('inputNote').value = '';
+                    activeInSec = null; activeOutSec = null; activeSwapSec = null;
+                    document.getElementById('valTcIn').innerText = '00:00:00:00';
+                    document.getElementById('valTcOut').innerText = '00:00:00:00';
+                    if (document.getElementById('valTcSwap')) document.getElementById('valTcSwap').innerText = '00:00:00:00';
+                    if (btnToolbarImport) btnToolbarImport.classList.remove('pulse-import');
+                }
+                // Keep clipboard intact so user can send it to multiple short tabs!
+                chip.classList.add('sent');
+                chip.innerText = '✓';
+                setTimeout(() => { chip.classList.remove('sent'); chip.innerText = chip.dataset.tab; }, 800);
+            }
+        };
+    });
+}
+
+// Hide Import Short button when already on a Short tab
+function updateImportShortVisibility() {
+    const wrapper = document.querySelector('.import-short-wrapper');
+    if (wrapper) {
+        wrapper.style.display = (currentSheetTab === 'Full-show') ? 'flex' : 'none';
+    }
+}
+
+// Build import short menu whenever sheet tabs change
+const _origRenderSheetTabs = renderSheetTabs;
+renderSheetTabs = function() {
+    _origRenderSheetTabs();
+    buildImportShortMenu();
+    updateImportShortVisibility();
+};
+buildImportShortMenu();
+updateImportShortVisibility();
+
+const _originalUpdateGoogleUI = window.updateGoogleUI;
+if (typeof _originalUpdateGoogleUI === 'function') {
+    window.updateGoogleUI = function() {
+        _originalUpdateGoogleUI();
+        if (isTokenValid()) {
+            loadSheetTabsFromGoogle();
+        }
+    };
+}
+
+renderSettings();
+resolveCurrentSpreadsheetMeta().finally(() => {
+    loadProjectLogsFromKV().finally(() => {
+        renderTable();
+        updateActiveSheetUI();
+        renderProjectVideoMeta();
+        updateGoogleUI();
+        initGoogleOAuth();
+        setTimeout(drawMarkers, 300);
+        console.log('[AUTOSCRIPT] ✓ Initialized successfully');
+    });
+});
+</script>
+</body>
+</html>

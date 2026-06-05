@@ -1,0 +1,2510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptFlow TCP — Projects</title>
+    <meta name="description" content="Manage your Autoscript video logging projects. Create, open, and sync Google Sheets.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+/* ============================================================
+   AUTOSCRIPT TCP — Project Page Styles
+   Design: design-taste-frontend-v1
+   Palette: Zinc/Slate base + Emerald accent
+   Font: Outfit + JetBrains Mono
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+    --bg-deep: #09090b;
+    --bg-surface: #18181b;
+    --bg-card: #141416;
+    --bg-card-hover: #1a1a1e;
+    --bg-input: #27272a;
+    --bg-input-focus: #3f3f46;
+    --border: #27272a;
+    --border-bright: #3f3f46;
+    --border-subtle: rgba(255,255,255,0.06);
+    --text-main: #fafafa;
+    --text-sub: #a1a1aa;
+    --text-muted: #71717a;
+    --text-dim: #52525b;
+    --accent: #10b981;
+    --accent-dim: rgba(16, 185, 129, 0.12);
+    --accent-glow: rgba(16, 185, 129, 0.2);
+    --status-ongoing: #f59e0b;
+    --status-ongoing-dim: rgba(245, 158, 11, 0.14);
+    --status-not-started: #71717a;
+    --status-not-started-dim: rgba(113, 113, 122, 0.16);
+    --danger: #ef4444;
+    --danger-dim: rgba(239, 68, 68, 0.1);
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 20px;
+    --r-xl: 24px;
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.15);
+    --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.4), 0 16px 40px rgba(0,0,0,0.2);
+    --transition-base: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+html { height: 100%; }
+
+body {
+    font-family: var(--font-sans);
+    background: var(--bg-deep);
+    color: var(--text-main);
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Top Navigation Bar ──────────────────────────────────── */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(9, 9, 11, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+}
+
+.topbar-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.topbar-logo {
+    display: flex;
+    align-items: flex-start;
+    text-decoration: none;
+    color: var(--text-main);
+}
+
+.logo-badge {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 3px 10px;
+    border-radius: 100px;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.logo-title {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--text-main);
+}
+
+.logo-title span {
+    color: var(--accent);
+}
+
+.logo-title em {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    line-height: 1;
+    font-style: normal;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.topbar-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-bright);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.topbar-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.topbar-email {
+    font-size: 12.5px;
+    color: var(--text-sub);
+    font-weight: 500;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.topbar-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.topbar-btn:hover {
+    background: var(--bg-input);
+    border-color: var(--text-sub);
+    color: var(--text-main);
+}
+
+.topbar-btn-logout:hover {
+    background: var(--danger-dim);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+/* ── Main Content ────────────────────────────────────────── */
+.main-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+}
+
+/* ── Page Header ─────────────────────────────────────────── */
+.page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 36px;
+    animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.page-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+    min-width: 0;
+    gap: 12px;
+    flex-wrap: nowrap;
+}
+
+.page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text-main);
+    line-height: 1;
+}
+
+.page-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 6px;
+}
+
+.sync-notice {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    margin: -12px 0 24px;
+    padding: 0 14px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.22);
+    border-radius: var(--r-md);
+    color: #a7f3d0;
+    font-size: 12.5px;
+    font-weight: 500;
+    animation: fadeSlideUp 0.25s ease forwards;
+}
+
+.project-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
+    min-width: 0;
+    margin-left: auto;
+}
+
+.toolbar-search {
+    width: 240px;
+    min-width: 0;
+    flex: 0 1 240px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    min-height: 46px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    transition: var(--transition-base);
+}
+
+.toolbar-search:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+    background: rgba(255,255,255,0.03);
+}
+
+.toolbar-search-icon {
+    color: var(--text-dim);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.toolbar-search input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    font-size: 13px;
+}
+
+.toolbar-search input::placeholder {
+    color: var(--text-dim);
+}
+
+.toolbar-search input::-webkit-search-cancel-button {
+    appearance: none;
+}
+
+.toolbar-sort {
+    position: relative;
+    width: 138px;
+    flex: 0 0 138px;
+}
+
+.toolbar-filter {
+    width: 164px;
+    flex-basis: 164px;
+}
+
+.toolbar-sort select {
+    width: 100%;
+    min-height: 46px;
+    padding: 0 38px 0 14px;
+    background: #111113;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+    transition: var(--transition-base);
+    appearance: none;
+    color-scheme: dark;
+}
+
+.toolbar-sort select:hover {
+    border-color: var(--border-bright);
+    color: var(--text-main);
+}
+
+.toolbar-sort select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+    color: var(--text-main);
+}
+
+.toolbar-sort select option {
+    background: #111113;
+    color: var(--text-main);
+}
+
+.toolbar-sort-icon {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    pointer-events: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.view-toggle {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+}
+
+.view-toggle-btn {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: calc(var(--r-md) - 4px);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.view-toggle-btn:hover {
+    color: var(--text-sub);
+    background: rgba(255,255,255,0.04);
+}
+
+.view-toggle-btn.active {
+    background: var(--accent-dim);
+    color: var(--accent);
+}
+
+.btn-manage-users,
+.btn-new-project {
+    flex-shrink: 0;
+}
+
+.btn-new-project {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    transition: var(--transition-base);
+    white-space: nowrap;
+}
+
+.btn-new-project:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px var(--accent-glow);
+}
+
+.btn-new-project:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* ── Project Grid ────────────────────────────────────────── */
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.project-grid.is-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+/* ── Project Card ────────────────────────────────────────── */
+.project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 24px;
+    transition: var(--transition-base);
+    position: relative;
+    animation: fadeScaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-bright);
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+}
+
+.project-grid.is-list .project-card {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    min-height: 0;
+}
+
+.project-card-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.project-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.project-grid.is-list .project-card-header {
+    margin-bottom: 14px;
+    align-items: flex-start;
+}
+
+.project-card-header-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.project-card-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    border-radius: var(--r-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+.project-card-icon.status-ongoing {
+    background: var(--status-ongoing-dim);
+    border-color: rgba(245, 158, 11, 0.22);
+    color: var(--status-ongoing);
+}
+
+.project-card-icon.status-not_started {
+    background: var(--status-not-started-dim);
+    border-color: rgba(113, 113, 122, 0.24);
+    color: var(--status-not-started);
+}
+
+.project-card-icon.status-done {
+    background: var(--accent-dim);
+    border-color: rgba(16, 185, 129, 0.15);
+    color: var(--accent);
+}
+
+.project-card-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.card-action-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--r-sm);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.card-action-btn:hover {
+    background: var(--bg-input);
+    border-color: var(--border);
+    color: var(--text-sub);
+}
+
+.card-action-btn.danger:hover {
+    background: var(--danger-dim);
+    border-color: rgba(239, 68, 68, 0.25);
+    color: #fca5a5;
+}
+
+.project-card-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 8px;
+    line-height: 1.3;
+    word-break: break-word;
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.project-card-name:hover {
+    color: var(--accent);
+}
+
+.project-grid.is-list .project-card-name {
+    margin-bottom: 0;
+    padding: 0;
+    line-height: 1.35;
+}
+
+/* ── Card Info Rows (Speaker / Source) ────────────────────── */
+.project-card-fields,
+.project-card-meta {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.project-card-fields {
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.project-card-meta {
+    gap: 10px;
+}
+
+.project-card-meta {
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.project-grid.is-list .project-card-meta {
+    margin-bottom: 20px;
+}
+
+.project-grid.is-list .info-row {
+    min-height: 0;
+}
+
+.info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-sm);
+    transition: var(--transition-base);
+    cursor: pointer;
+    position: relative;
+}
+
+.project-text-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 18px;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+}
+
+.info-row:hover {
+    background: rgba(255,255,255,0.04);
+    border-color: var(--border);
+}
+
+.project-text-row:hover .info-link-icon {
+    opacity: 1;
+}
+
+.info-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    min-width: 58px;
+    padding-top: 1px;
+}
+
+.info-value {
+    font-size: 12.5px;
+    color: var(--text-sub);
+    line-height: 1.5;
+    word-break: break-word;
+    flex: 1;
+}
+
+.info-value.empty {
+    color: var(--text-dim);
+    font-style: italic;
+}
+
+.info-value-inline {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.info-edit-icon {
+    display: none;
+}
+
+.info-link-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    opacity: 0;
+    transition: opacity 0.2s, color 0.2s;
+    flex-shrink: 0;
+    margin-top: -1px;
+    text-decoration: none;
+}
+
+.info-link-icon:hover {
+    color: var(--accent);
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 22px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.status-pill.status-ongoing {
+    color: var(--status-ongoing);
+    background: var(--status-ongoing-dim);
+    border: 1px solid rgba(245, 158, 11, 0.22);
+}
+
+.status-pill.status-not_started {
+    color: var(--text-sub);
+    background: var(--status-not-started-dim);
+    border: 1px solid rgba(113, 113, 122, 0.24);
+}
+
+.status-pill.status-done {
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* ── Card Footer ─────────────────────────────────────────── */
+.project-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.project-grid.is-list .project-card-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
+    padding-top: 16px;
+    padding-left: 0;
+    border-top: 1px solid var(--border-subtle);
+    border-left: none;
+}
+
+.project-card-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.project-card-date {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.btn-open-project,
+.btn-open-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: var(--transition-base);
+    text-decoration: none;
+}
+
+.btn-open-project:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+.btn-open-link {
+    background: rgba(255,255,255,0.03);
+    color: var(--text-sub);
+    border-color: var(--border-bright);
+}
+
+.btn-open-link:hover {
+    background: var(--bg-input-focus);
+    color: var(--text-main);
+    border-color: var(--text-sub);
+}
+
+.btn-open-project:active,
+.btn-open-link:active {
+    transform: scale(0.97);
+}
+
+/* ── Sheet Link ──────────────────────────────────────────── */
+.project-sheet-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+    margin-bottom: 16px;
+}
+
+.project-sheet-link:hover {
+    color: var(--accent);
+}
+
+/* ── Empty State ─────────────────────────────────────────── */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.empty-icon {
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-sub);
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    max-width: 400px;
+    margin: 0 auto 28px;
+    line-height: 1.6;
+}
+
+.btn-empty {
+    margin: 0 auto;
+}
+
+/* ── Loading Skeleton ────────────────────────────────────── */
+.skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.skeleton-card {
+    height: 240px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    position: relative;
+}
+
+.skeleton-shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.03) 50%, transparent 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ── Modal ────────────────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    animation: modalSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modal-card-sm {
+    max-width: 380px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: var(--r-sm);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.modal-close:hover {
+    background: var(--bg-input);
+    color: var(--text-main);
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-input-group {
+    margin-bottom: 18px;
+}
+
+.modal-input-group:last-child {
+    margin-bottom: 0;
+}
+
+.confirm-modal-text {
+    font-size: 14px;
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+.confirm-modal-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+}
+
+.modal-input-group label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-sub);
+    margin-bottom: 8px;
+}
+
+.input-optional {
+    font-weight: 400;
+    color: var(--text-dim);
+    font-size: 10px;
+}
+
+.modal-input-group input,
+.modal-input-group select {
+    width: 100%;
+    padding: 11px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    outline: none;
+    transition: var(--transition-base);
+    color-scheme: dark;
+}
+
+.modal-input-group input::placeholder {
+    color: var(--text-dim);
+}
+
+.modal-input-group input:focus,
+.modal-input-group select:focus {
+    border-color: var(--accent);
+    background: var(--bg-input-focus);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.modal-input-group select option {
+    background: #111113;
+    color: var(--text-main);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+}
+
+.btn-modal-cancel {
+    padding: 9px 18px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    color: var(--text-sub);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.btn-modal-cancel:hover {
+    background: var(--bg-input);
+}
+
+.btn-modal-create {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.btn-modal-create:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.btn-modal-danger {
+    background: #ef4444;
+}
+
+.btn-modal-danger:hover {
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.24);
+}
+
+.btn-modal-create:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-modal-create:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.modal-status {
+    padding: 12px 24px;
+    font-size: 12px;
+    color: var(--text-sub);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-status.error {
+    color: #fca5a5;
+    background: var(--danger-dim);
+}
+
+.modal-status.success {
+    color: var(--accent);
+    background: var(--accent-dim);
+}
+
+.modal-status .spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--border-bright);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+/* ── Animations ──────────────────────────────────────────── */
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeScaleIn {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .topbar-inner {
+        padding: 0 16px;
+    }
+
+    .topbar-email {
+        display: none;
+    }
+
+    .topbar-btn span {
+        display: none;
+    }
+
+    .main-content {
+        padding: 24px 16px 60px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .page-header-actions {
+        width: 100%;
+        justify-content: stretch;
+        flex-wrap: wrap;
+    }
+
+    .project-toolbar {
+        width: 100%;
+        margin-left: 0;
+        flex-wrap: wrap;
+    }
+
+    .toolbar-search {
+        width: 100%;
+        flex-basis: 100%;
+    }
+
+    .toolbar-sort {
+        width: auto;
+        flex: 1 1 160px;
+    }
+
+    .btn-new-project {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .skeleton-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .project-card {
+        padding: 20px;
+    }
+
+    .project-grid.is-list .project-card {
+        min-height: 0;
+    }
+
+    .project-grid.is-list .project-card-header {
+        align-items: flex-start;
+    }
+
+    .project-grid.is-list .project-card-name {
+        padding: 0;
+    }
+
+    .project-grid.is-list .project-card-footer {
+        min-width: 0;
+        padding-left: 0;
+        padding-top: 16px;
+        border-left: none;
+        border-top: 1px solid var(--border-subtle);
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .project-card-buttons {
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header h1 {
+        font-size: 22px;
+    }
+
+    .modal-card {
+        border-radius: var(--r-lg);
+    }
+
+    .page-header-actions {
+        gap: 10px;
+    }
+
+    .project-toolbar {
+        gap: 10px;
+    }
+
+    .toolbar-sort {
+        flex-basis: 100%;
+        width: 100%;
+    }
+
+    .view-toggle {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .view-toggle-btn {
+        flex: 1;
+    }
+}
+
+@media (max-width: 1180px) and (min-width: 769px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .page-header-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .project-toolbar {
+        margin-left: 0;
+        flex-wrap: wrap;
+    }
+
+    .toolbar-search {
+        flex: 1 1 260px;
+        width: auto;
+    }
+}
+
+/* ── User Management Section (Admin Only) ────────────────── */
+.btn-manage-users {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text-sub);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    transition: var(--transition-base);
+    white-space: nowrap;
+}
+
+.btn-manage-users:hover {
+    background: var(--bg-input);
+    color: var(--text-main);
+    border-color: var(--text-sub);
+}
+
+.btn-manage-users.active {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.user-management-section {
+    animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.users-list-table-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.users-table th {
+    background: #111113;
+    padding: 16px 24px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+}
+
+.users-table td {
+    padding: 16px 24px;
+    font-size: 13.5px;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: middle;
+}
+
+.users-table tr:last-child td {
+    border-bottom: none;
+}
+
+.user-pin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 100px;
+    line-height: 1;
+}
+
+.user-pin-badge.set {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.user-pin-badge.unset {
+    background: var(--danger-dim);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.user-actions-cell {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-user-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: var(--transition-base);
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text-sub);
+}
+
+.btn-user-action.reset:hover {
+    background: var(--bg-input);
+    color: var(--text-main);
+    border-color: var(--text-sub);
+}
+
+.btn-user-action.delete {
+    border-color: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+}
+
+.btn-user-action.delete:hover {
+    background: var(--danger-dim);
+    border-color: var(--danger);
+    color: #ffffff;
+}
+
+.btn-add-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-bright);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 600;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.btn-add-user:hover {
+    background: var(--bg-input-focus);
+    border-color: var(--text-sub);
+}
+
+</style>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="topbar" id="topbar">
+        <div class="topbar-inner">
+            <a href="/tcpscript/project" class="topbar-logo">
+                <span class="logo-title">TCP <span>ScriptFlow</span> <em>v2.0</em></span>
+            </a>
+
+            <div class="topbar-right">
+                <div class="topbar-user" id="topbarUser">
+                    <div class="topbar-avatar" id="topbarAvatar">
+                        <span class="profile-initial" style="font-weight: 700; color: #fff; font-size: 14px;">U</span>
+                    </div>
+                    <span class="topbar-email" id="topbarEmail">User</span>
+                </div>
+                <a href="/tcpscript/setting" class="topbar-btn topbar-btn-settings" id="btnSettings" title="Settings" style="display: none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <span>Settings</span>
+                </a>
+                <button type="button" class="topbar-btn topbar-btn-logout" id="btnLogout" title="Sign out">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <span>Sign out</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1 id="pageTitle">Projects</h1>
+                <p class="page-subtitle" id="pageSubtitle">Manage your video logging projects</p>
+            </div>
+            <div class="page-header-actions">
+                <div class="project-toolbar" id="projectToolbar">
+                    <label class="toolbar-search" for="projectSearchInput">
+                        <span class="toolbar-search-icon" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                        </span>
+                        <input type="search" id="projectSearchInput" placeholder="Search projects, speakers, sources..." autocomplete="off">
+                    </label>
+                    <label class="toolbar-sort toolbar-filter" for="projectStatusFilter">
+                        <select id="projectStatusFilter" aria-label="Filter projects by status">
+                            <option value="all">All Status</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="not_started">Not Started Yet</option>
+                            <option value="done">Done</option>
+                        </select>
+                        <span class="toolbar-sort-icon" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </span>
+                    </label>
+                    <label class="toolbar-sort" for="projectSortSelect">
+                        <select id="projectSortSelect" aria-label="Sort projects by date">
+                            <option value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                        </select>
+                        <span class="toolbar-sort-icon" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </span>
+                    </label>
+                    <div class="view-toggle" role="group" aria-label="Project view">
+                        <button type="button" class="view-toggle-btn active" id="btnGridView" title="Grid view" aria-pressed="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+                        </button>
+                        <button type="button" class="view-toggle-btn" id="btnListView" title="List view" aria-pressed="false">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="btn-new-project" id="btnNewProject">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>New Project</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="sync-notice" id="syncNotice" style="display: none;"></div>
+
+        <!-- Project Grid View -->
+        <div id="projectsView">
+            <!-- Project Grid -->
+            <div class="project-grid" id="projectGrid">
+                <!-- Cards rendered by JS -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                    </svg>
+                </div>
+                <h3 id="emptyStateTitle">No projects yet</h3>
+                <p id="emptyStateText">Create your first project to start logging timecodes. Each project is linked to a Google Sheet.</p>
+                <button type="button" class="btn-new-project btn-empty" id="btnNewProjectEmpty">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Create First Project</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" id="loadingState" style="display: none;">
+            <div class="skeleton-grid">
+                <div class="skeleton-card"><div class="skeleton-shimmer"></div></div>
+                <div class="skeleton-card"><div class="skeleton-shimmer"></div></div>
+                <div class="skeleton-card"><div class="skeleton-shimmer"></div></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- New Project Modal -->
+    <div class="modal-overlay" id="newProjectModal" style="display: none;">
+        <div class="modal-card" id="modalCard">
+            <div class="modal-header">
+                <h2>New Project</h2>
+                <button type="button" class="modal-close" id="modalClose">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-input-group">
+                    <label for="modalProjectName">Project Name</label>
+                    <input type="text" id="modalProjectName" placeholder="Enter project name..." autocomplete="off">
+                </div>
+                <div class="modal-input-group">
+                    <label for="modalProjectStatus">Status</label>
+                    <select id="modalProjectStatus" autocomplete="off">
+                        <option value="not_started">Not Started Yet</option>
+                        <option value="ongoing">Ongoing</option>
+                        <option value="done">Done</option>
+                    </select>
+                </div>
+                <div class="modal-input-group">
+                    <label for="modalSpeaker">Speaker <span class="input-optional">(Row 1 — B1)</span></label>
+                    <input type="text" id="modalSpeaker" placeholder="e.g. JASON NGUYEN - CEO | TIERRA" autocomplete="off">
+                </div>
+                <div class="modal-input-group">
+                    <label for="modalSource">Source <span class="input-optional">(Row 2 - B2)</span></label>
+                    <input type="text" id="modalSource" placeholder="e.g. (26-03-2026) TCP ACL" autocomplete="off">
+                </div>
+                <div class="modal-input-group">
+                    <label for="modalLink">Link</label>
+                    <input type="url" id="modalLink" placeholder="https://..." autocomplete="off" spellcheck="false">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" id="modalCancel">Cancel</button>
+                <button type="button" class="btn-modal-create" id="modalCreate">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>Create Project</span>
+                </button>
+            </div>
+            <div class="modal-status" id="modalStatus" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Edit Field Modal -->
+    <div class="modal-overlay" id="editFieldModal" style="display: none;">
+        <div class="modal-card modal-card-sm">
+            <div class="modal-header">
+                <h2 id="editFieldTitle">Edit Field</h2>
+                <button type="button" class="modal-close" id="editFieldClose">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-input-group">
+                    <label for="editFieldInput" id="editFieldLabel">Value</label>
+                    <input type="text" id="editFieldInput" autocomplete="off">
+                    <select id="editFieldSelect" style="display: none;">
+                        <option value="not_started">Not Started Yet</option>
+                        <option value="ongoing">Ongoing</option>
+                        <option value="done">Done</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" id="editFieldCancel">Cancel</button>
+                <button type="button" class="btn-modal-create" id="editFieldSave">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirmModal" style="display: none;">
+        <div class="modal-card modal-card-sm">
+            <div class="modal-header">
+                <h2 id="confirmModalTitle">Confirm Action</h2>
+                <button type="button" class="modal-close" id="confirmModalClose">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="confirm-modal-text" id="confirmModalText"></p>
+                <p class="confirm-modal-note" id="confirmModalNote" style="display: none;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" id="confirmModalCancel">Cancel</button>
+                <button type="button" class="btn-modal-create btn-modal-danger" id="confirmModalConfirm">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// ============================================================
+//  AUTOSCRIPT TCP — Project Page Logic
+//  Handles project CRUD via Worker API, profile-based token auth,
+//  and Admin-only User Management panel.
+// ============================================================
+
+(function () {
+    'use strict';
+
+    // ── Session Checking & Auth ─────────────────────────────
+    const sessionToken = localStorage.getItem('autoscript_session_token');
+    const sessionUser = localStorage.getItem('autoscript_session_username');
+
+    function requireAuth() {
+        if (!sessionToken || !sessionUser) {
+            localStorage.removeItem('autoscript_session_token');
+            localStorage.removeItem('autoscript_session_username');
+            window.location.href = '/tcpscript/login';
+            return false;
+        }
+        return true;
+    }
+
+    if (!requireAuth()) return;
+
+    // Helper for API headers
+    function getAuthHeaders() {
+        return {
+            'Authorization': `Bearer ${sessionToken}`,
+            'Content-Type': 'application/json'
+        };
+    }
+
+    // ── State ────────────────────────────────────────────────
+    let projects = [];
+    let editingProject = null; // { index, field } for inline edit modal
+    let projectSearchQuery = '';
+    let projectStatusFilter = localStorage.getItem('autoscript_project_status_filter') || 'all';
+    let projectSortMode = localStorage.getItem('autoscript_project_sort_mode') === 'oldest' ? 'oldest' : 'newest';
+    let projectViewMode = localStorage.getItem('autoscript_project_view_mode') === 'list' ? 'list' : 'grid';
+
+    // ── DOM References ───────────────────────────────────────
+    // Views
+    const projectsView = document.getElementById('projectsView');
+    const projectGrid = document.getElementById('projectGrid');
+    const emptyState = document.getElementById('emptyState');
+    const emptyStateTitle = document.getElementById('emptyStateTitle');
+    const emptyStateText = document.getElementById('emptyStateText');
+    const loadingState = document.getElementById('loadingState');
+    const pageTitle = document.getElementById('pageTitle');
+    const pageSubtitle = document.getElementById('pageSubtitle');
+    const projectToolbar = document.getElementById('projectToolbar');
+    const syncNotice = document.getElementById('syncNotice');
+    const projectSearchInput = document.getElementById('projectSearchInput');
+    const projectStatusFilterSelect = document.getElementById('projectStatusFilter');
+    const projectSortSelect = document.getElementById('projectSortSelect');
+    const btnGridView = document.getElementById('btnGridView');
+    const btnListView = document.getElementById('btnListView');
+
+    // Topbar
+    const topbarEmail = document.getElementById('topbarEmail');
+    const topbarAvatar = document.getElementById('topbarAvatar');
+    const btnSettings = document.getElementById('btnSettings');
+    const btnLogout = document.getElementById('btnLogout');
+
+    // Project Actions
+    const btnNewProject = document.getElementById('btnNewProject');
+    const btnNewProjectEmpty = document.getElementById('btnNewProjectEmpty');
+
+    // Project Modal references
+    const newProjectModal = document.getElementById('newProjectModal');
+    const modalClose = document.getElementById('modalClose');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalCreate = document.getElementById('modalCreate');
+    const modalProjectName = document.getElementById('modalProjectName');
+    const modalProjectStatus = document.getElementById('modalProjectStatus');
+    const modalSpeaker = document.getElementById('modalSpeaker');
+    const modalSource = document.getElementById('modalSource');
+    const modalLink = document.getElementById('modalLink');
+    const modalStatus = document.getElementById('modalStatus');
+
+    // Edit field modal
+    const editFieldModal = document.getElementById('editFieldModal');
+    const editFieldClose = document.getElementById('editFieldClose');
+    const editFieldCancel = document.getElementById('editFieldCancel');
+    const editFieldSave = document.getElementById('editFieldSave');
+    const editFieldInput = document.getElementById('editFieldInput');
+    const editFieldSelect = document.getElementById('editFieldSelect');
+    const editFieldTitle = document.getElementById('editFieldTitle');
+    const editFieldLabel = document.getElementById('editFieldLabel');
+    const confirmModal = document.getElementById('confirmModal');
+    const confirmModalTitle = document.getElementById('confirmModalTitle');
+    const confirmModalText = document.getElementById('confirmModalText');
+    const confirmModalNote = document.getElementById('confirmModalNote');
+    const confirmModalClose = document.getElementById('confirmModalClose');
+    const confirmModalCancel = document.getElementById('confirmModalCancel');
+    const confirmModalConfirm = document.getElementById('confirmModalConfirm');
+    let syncNoticeTimer = null;
+    let confirmModalResolver = null;
+
+    // ── Helpers ──────────────────────────────────────────────
+    function formatDate(isoString) {
+        try {
+            const d = new Date(isoString);
+            return d.toLocaleString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+        } catch (e) {
+            return '—';
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function normalizeProjectStatus(status) {
+        return ['ongoing', 'not_started', 'done'].includes(status) ? status : 'done';
+    }
+
+    function getProjectStatusLabel(status) {
+        const labels = {
+            ongoing: 'Ongoing',
+            not_started: 'Not Started Yet',
+            done: 'Done'
+        };
+        return labels[normalizeProjectStatus(status)];
+    }
+
+    function getDisplayProjectName(name) {
+        return String(name || '').replace(/^Autoscript\s*-\s*/i, '').trim();
+    }
+
+    function slugifyProjectName(name) {
+        return String(name || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '') || 'project';
+    }
+
+    function buildProjectAppUrl(project) {
+        return `/tcpscript/app/${encodeURIComponent(project.id)}`;
+    }
+
+    function isLikelyExternalLink(value) {
+        const normalizedValue = String(value || '').trim();
+        if (!normalizedValue || /\s/.test(normalizedValue)) return false;
+        if (/^https?:\/\//i.test(normalizedValue)) return true;
+        if (/^www\./i.test(normalizedValue)) return true;
+        return /^(?:\d{1,3}(?:\.\d{1,3}){3}|(?:[a-z0-9-]+\.)+[a-z]{2,})(?:[/:?#].*)?$/i.test(normalizedValue);
+    }
+
+    function getExternalLinkUrl(link) {
+        const value = String(link || '').trim();
+        if (!value) return '';
+        if (!isLikelyExternalLink(value)) return '';
+        return /^https?:\/\//i.test(value) ? value : `https://${value}`;
+    }
+
+    function getDisplayCompactText(input) {
+        const value = String(input || '').trim();
+        if (!value) return '';
+        if (!getExternalLinkUrl(value)) return value;
+
+        try {
+            const parsedUrl = new URL(getExternalLinkUrl(value));
+            const compactValue = `${parsedUrl.hostname}${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`;
+            return compactValue.length <= 42
+                ? compactValue
+                : `${compactValue.slice(0, 28)}...${compactValue.slice(-11)}`;
+        } catch (e) {
+            return value.length <= 42
+                ? value
+                : `${value.slice(0, 28)}...${value.slice(-11)}`;
+        }
+    }
+
+    function normalizeSearchValue(value) {
+        return String(value || '').trim().toLowerCase();
+    }
+
+    function getFilteredProjects() {
+        const query = normalizeSearchValue(projectSearchQuery);
+
+        return projects.filter((project) => {
+            const projectStatus = normalizeProjectStatus(project.status);
+            const matchesStatus = projectStatusFilter === 'all' || projectStatus === projectStatusFilter;
+            if (!matchesStatus) {
+                return false;
+            }
+
+            if (!query) {
+                return true;
+            }
+
+            const searchable = [
+                getDisplayProjectName(project.name),
+                project.speaker,
+                project.source,
+                project.link,
+                getProjectStatusLabel(projectStatus)
+            ].map(normalizeSearchValue);
+
+            return searchable.some((value) => value.includes(query));
+        });
+    }
+
+    function getProjectTimestamp(project) {
+        const parsed = Date.parse(project && project.createdAt ? project.createdAt : '');
+        return Number.isNaN(parsed) ? 0 : parsed;
+    }
+
+    function getVisibleProjects() {
+        const filteredProjects = getFilteredProjects();
+
+        return filteredProjects.slice().sort((projectA, projectB) => {
+            const diff = getProjectTimestamp(projectB) - getProjectTimestamp(projectA);
+            return projectSortMode === 'oldest' ? -diff : diff;
+        });
+    }
+
+    function syncProjectToolbar() {
+        if (projectToolbar) {
+            projectToolbar.style.display = 'flex';
+        }
+
+        if (projectSortSelect) {
+            projectSortSelect.value = projectSortMode;
+        }
+
+        if (projectStatusFilterSelect) {
+            projectStatusFilterSelect.value = projectStatusFilter;
+        }
+
+        if (projectGrid) {
+            projectGrid.classList.toggle('is-list', projectViewMode === 'list');
+        }
+
+        if (btnGridView) {
+            const isActive = projectViewMode === 'grid';
+            btnGridView.classList.toggle('active', isActive);
+            btnGridView.setAttribute('aria-pressed', String(isActive));
+        }
+
+        if (btnListView) {
+            const isActive = projectViewMode === 'list';
+            btnListView.classList.toggle('active', isActive);
+            btnListView.setAttribute('aria-pressed', String(isActive));
+        }
+    }
+
+    function setProjectViewMode(nextMode) {
+        projectViewMode = nextMode === 'list' ? 'list' : 'grid';
+        localStorage.setItem('autoscript_project_view_mode', projectViewMode);
+        syncProjectToolbar();
+        renderProjects();
+    }
+
+    function setProjectSortMode(nextMode) {
+        projectSortMode = nextMode === 'oldest' ? 'oldest' : 'newest';
+        localStorage.setItem('autoscript_project_sort_mode', projectSortMode);
+        syncProjectToolbar();
+        renderProjects();
+    }
+
+    function setProjectStatusFilter(nextFilter) {
+        projectStatusFilter = ['all', 'ongoing', 'not_started', 'done'].includes(nextFilter) ? nextFilter : 'all';
+        localStorage.setItem('autoscript_project_status_filter', projectStatusFilter);
+        syncProjectToolbar();
+        renderProjects();
+    }
+
+    function showSyncNotice(message) {
+        if (!syncNotice) return;
+        if (syncNoticeTimer) {
+            clearTimeout(syncNoticeTimer);
+        }
+
+        syncNotice.textContent = message || 'Changes synced successfully.';
+        syncNotice.style.display = 'flex';
+
+        syncNoticeTimer = setTimeout(() => {
+            syncNotice.style.display = 'none';
+        }, 3200);
+    }
+
+    function closeConfirmModal(result) {
+        if (confirmModal) {
+            confirmModal.style.display = 'none';
+        }
+
+        if (confirmModalResolver) {
+            const resolve = confirmModalResolver;
+            confirmModalResolver = null;
+            resolve(Boolean(result));
+        }
+    }
+
+    function openConfirmModal(config) {
+        if (!confirmModal || !confirmModalTitle || !confirmModalText || !confirmModalConfirm) {
+            return Promise.resolve(false);
+        }
+
+        confirmModalTitle.textContent = config && config.title ? config.title : 'Confirm Action';
+        confirmModalText.textContent = config && config.message ? config.message : 'Please confirm this action.';
+        confirmModalConfirm.textContent = config && config.confirmText ? config.confirmText : 'Confirm';
+        confirmModalConfirm.classList.toggle('btn-modal-danger', Boolean(config && config.isDanger));
+
+        if (confirmModalCancel) {
+            confirmModalCancel.style.display = config && config.hideCancel ? 'none' : '';
+        }
+
+        if (confirmModalNote) {
+            const note = config && config.note ? config.note : '';
+            confirmModalNote.textContent = note;
+            confirmModalNote.style.display = note ? 'block' : 'none';
+        }
+
+        confirmModal.style.display = 'flex';
+        confirmModalConfirm.focus();
+
+        return new Promise((resolve) => {
+            confirmModalResolver = resolve;
+        });
+    }
+
+    function openMessageModal(config) {
+        return openConfirmModal({
+            title: config && config.title ? config.title : 'Notice',
+            message: config && config.message ? config.message : '',
+            note: config && config.note ? config.note : '',
+            confirmText: config && config.confirmText ? config.confirmText : 'OK',
+            hideCancel: true,
+            isDanger: Boolean(config && config.isDanger)
+        });
+    }
+
+    // ── Render User Info ─────────────────────────────────────
+    function renderUserInfo() {
+        if (topbarEmail) topbarEmail.textContent = sessionUser;
+        if (topbarAvatar) {
+            topbarAvatar.innerHTML = `<span class="profile-initial" style="font-weight: 700; color: #fff; font-size: 14px;">${sessionUser.charAt(0).toUpperCase()}</span>`;
+            // Set dynamic background color based on length
+            const colors = ['#10b981', '#6366f1', '#ec4899', '#f59e0b', '#f43f5e'];
+            const colorIndex = sessionUser.toLowerCase() === 'admin' ? 0 : sessionUser.toLowerCase() === 'nguyên' ? 1 : sessionUser.length % colors.length;
+            topbarAvatar.style.background = colors[colorIndex];
+        }
+
+        // Chỉ Admin mới thấy Setting
+        if (btnSettings && sessionUser.toLowerCase() === 'admin') {
+            btnSettings.style.display = 'inline-flex';
+        }
+    }
+
+    // ── Projects CRUD Logic ──────────────────────────────────
+    async function loadProjects() {
+        if (loadingState) loadingState.style.display = 'block';
+        if (projectsView) projectsView.style.display = 'none';
+
+        try {
+            const res = await fetch('/tcpscript/api/projects', {
+                headers: getAuthHeaders()
+            });
+            if (res.status === 401) {
+                handleLogout();
+                return;
+            }
+            if (!res.ok) throw new Error('Failed to fetch project list');
+            projects = await res.json();
+            renderProjects();
+        } catch (e) {
+            console.error('Load projects error:', e);
+            if (projectGrid) {
+                projectGrid.innerHTML = `<div style="color: var(--danger); text-align: center; grid-column: 1/-1; padding: 40px;">Error: ${e.message}</div>`;
+            }
+        } finally {
+            if (loadingState) loadingState.style.display = 'none';
+            if (projectsView) projectsView.style.display = 'block';
+        }
+    }
+
+    function renderProjects() {
+        if (!projectGrid) return;
+        syncProjectToolbar();
+
+        const visibleProjects = getVisibleProjects();
+
+        if (projects.length === 0 || visibleProjects.length === 0) {
+            projectGrid.style.display = 'none';
+            if (emptyState) emptyState.style.display = 'block';
+
+            if (projects.length === 0) {
+                if (emptyStateTitle) emptyStateTitle.textContent = 'No projects yet';
+                if (emptyStateText) emptyStateText.textContent = 'Create your first project to start logging timecodes. Each project is linked to a Google Sheet.';
+                if (btnNewProjectEmpty) btnNewProjectEmpty.style.display = 'inline-flex';
+            } else {
+                if (emptyStateTitle) emptyStateTitle.textContent = 'No matching projects';
+                if (emptyStateText) emptyStateText.textContent = 'Try a different keyword or adjust the current status filter.';
+                if (btnNewProjectEmpty) btnNewProjectEmpty.style.display = 'none';
+            }
+            return;
+        }
+
+        projectGrid.style.display = '';
+        if (emptyState) emptyState.style.display = 'none';
+        if (btnNewProjectEmpty) btnNewProjectEmpty.style.display = 'inline-flex';
+
+        projectGrid.innerHTML = visibleProjects.map((project, index) => {
+            const projectNameDisplay = getDisplayProjectName(project.name);
+            const projectStatus = normalizeProjectStatus(project.status);
+            const projectStatusLabel = getProjectStatusLabel(projectStatus);
+            const speakerDisplay = project.speaker || '';
+            const sourceDisplay = project.source || '';
+            const sourceTextDisplay = getDisplayCompactText(sourceDisplay);
+            const sourceUrl = getExternalLinkUrl(sourceDisplay);
+            const linkDisplay = project.link || '';
+            const linkTextDisplay = getDisplayCompactText(linkDisplay);
+            const linkUrl = getExternalLinkUrl(linkDisplay);
+            const delay = Math.min(index * 0.08, 0.6);
+
+            return `
+                <div class="project-card status-${projectStatus}" style="animation-delay: ${delay}s" data-project-id="${escapeHtml(project.id)}">
+                    <div class="project-card-main">
+                        <div class="project-card-header">
+                            <div class="project-card-header-main">
+                                <div class="project-card-icon status-${projectStatus}">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="project-card-date">${formatDate(project.createdAt)}</span>
+                            </div>
+                            <div class="project-card-actions">
+                                <a class="card-action-btn" href="${escapeHtml(project.url)}" target="_blank" rel="noopener" title="Open in Google Sheets">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                </a>
+                                <button class="card-action-btn danger" data-delete-id="${project.id}" title="Remove project">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="project-card-name" data-edit-field="name" data-edit-id="${escapeHtml(project.id)}">${escapeHtml(projectNameDisplay)}</div>
+                        <div class="project-card-fields">
+                            <div class="project-text-row" data-edit-field="speaker" data-edit-id="${escapeHtml(project.id)}">
+                                <span class="info-label">Speaker</span>
+                                <span class="info-value ${speakerDisplay ? '' : 'empty'}">${speakerDisplay ? escapeHtml(speakerDisplay) : 'Not set'}</span>
+                            </div>
+                            <div class="project-text-row" data-edit-field="source" data-edit-id="${escapeHtml(project.id)}">
+                                <span class="info-label">Source</span>
+                                <span class="info-value ${sourceDisplay ? '' : 'empty'}" title="${sourceDisplay ? escapeHtml(sourceDisplay) : ''}">${sourceDisplay ? escapeHtml(sourceTextDisplay) : 'Not set'}</span>
+                                ${sourceUrl ? `
+                                    <a class="info-link-icon" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener" title="Open source link">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card-fields project-card-meta">
+                        <div class="info-row status-row" data-edit-field="status" data-edit-id="${escapeHtml(project.id)}">
+                            <span class="info-label">Status</span>
+                            <span class="info-value"><span class="status-pill status-${projectStatus}">${projectStatusLabel}</span></span>
+                        </div>
+                        <div class="info-row" data-edit-field="link" data-edit-id="${escapeHtml(project.id)}">
+                            <span class="info-label">Link</span>
+                            <span class="info-value info-value-inline ${linkDisplay ? '' : 'empty'}" title="${linkDisplay ? escapeHtml(linkDisplay) : ''}">${linkDisplay ? escapeHtml(linkTextDisplay) : 'Not set'}</span>
+                        </div>
+                    </div>
+
+                    <div class="project-card-footer">
+                        <div class="project-card-buttons">
+                            ${linkUrl ? `
+                                <a href="${escapeHtml(linkUrl)}" class="btn-open-link" target="_blank" rel="noopener">
+                                    Open Link
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                </a>
+                            ` : ''}
+                            <a href="${buildProjectAppUrl(project)}" class="btn-open-project">
+                                Open Project
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        attachCardListeners();
+    }
+
+    function attachCardListeners() {
+        // Delete buttons
+        document.querySelectorAll('[data-delete-id]').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const pId = btn.dataset.deleteId;
+                const project = projects.find(p => p.id === pId);
+                if (!project) return;
+
+                const shouldDelete = await openConfirmModal({
+                    title: 'Remove Project',
+                    message: `Remove "${getDisplayProjectName(project.name)}" from your project list?`,
+                    note: 'The Google Sheet file will not be deleted from Google Drive.',
+                    confirmText: 'Delete'
+                });
+
+                if (!shouldDelete) {
+                    return;
+                }
+
+                try {
+                    const res = await fetch('/tcpscript/api/projects', {
+                        method: 'DELETE',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({ id: pId })
+                    });
+                    if (!res.ok) throw new Error('Failed to delete project');
+                    projects = projects.filter(p => p.id !== pId);
+                    renderProjects();
+                    showSyncNotice('Project list synced successfully.');
+                } catch (err) {
+                    openMessageModal({
+                        title: 'Delete Failed',
+                        message: 'Could not remove this project.',
+                        note: err.message,
+                        isDanger: true
+                    });
+                }
+            });
+        });
+
+        // Edit info rows
+        document.querySelectorAll('[data-edit-field]').forEach(row => {
+            row.addEventListener('click', () => {
+                const field = row.dataset.editField;
+                const projectId = row.dataset.editId;
+                const idx = projects.findIndex(project => project.id === projectId);
+                if (isNaN(idx) || idx < 0 || idx >= projects.length) return;
+                openEditFieldModal(idx, field);
+            });
+        });
+
+        document.querySelectorAll('.info-link-icon').forEach((link) => {
+            link.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        });
+    }
+
+    // ── Create Project Modal ─────────────────────────────────
+    function openNewProjectModal() {
+        if (!newProjectModal) return;
+        const today = new Date().toISOString().slice(0, 10);
+        if (modalProjectName) modalProjectName.value = 'Project_' + today;
+        if (modalProjectStatus) modalProjectStatus.value = 'not_started';
+        if (modalSpeaker) modalSpeaker.value = '';
+        if (modalSource) modalSource.value = '';
+        if (modalLink) modalLink.value = '';
+        if (modalStatus) { modalStatus.style.display = 'none'; modalStatus.textContent = ''; }
+        if (modalCreate) modalCreate.disabled = false;
+
+        newProjectModal.style.display = 'flex';
+        if (modalProjectName) modalProjectName.focus();
+    }
+
+    function closeNewProjectModal() {
+        if (newProjectModal) newProjectModal.style.display = 'none';
+    }
+
+    async function handleCreateProject() {
+        const projectName = modalProjectName ? modalProjectName.value.trim() : '';
+        const status = modalProjectStatus ? normalizeProjectStatus(modalProjectStatus.value) : 'not_started';
+        const speaker = modalSpeaker ? modalSpeaker.value.trim() : '';
+        const source = modalSource ? modalSource.value.trim() : '';
+        const link = modalLink ? modalLink.value.trim() : '';
+
+        if (!projectName) {
+            showModalStatus('Please enter a project name.', 'error');
+            return;
+        }
+
+        if (modalCreate) modalCreate.disabled = true;
+        showModalStatus('Creating Google Sheet clone via Apps Script owner...', 'loading');
+
+        try {
+            const res = await fetch('/tcpscript/api/projects', {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    name: projectName,
+                    status,
+                    speaker,
+                    source,
+                    link
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Server error');
+            }
+
+            // Project created successfully!
+            projects.unshift(data);
+
+            if (data.moveStatus === 'failed') {
+                showModalStatus(`Created, but failed to move to folder: ${data.moveError}`, 'error');
+                setTimeout(() => {
+                    closeNewProjectModal();
+                    renderProjects();
+                }, 6000);
+            } else if (data.moveStatus === 'outdated_script') {
+                showModalStatus('Created. Warning: Google Apps Script Web App is outdated. Please deploy a "New Version".', 'error');
+                setTimeout(() => {
+                    closeNewProjectModal();
+                    renderProjects();
+                }, 6000);
+            } else {
+                showModalStatus('Project created successfully!', 'success');
+                setTimeout(() => {
+                    closeNewProjectModal();
+                    renderProjects();
+                    showSyncNotice('Project synced successfully.');
+                }, 800);
+            }
+
+        } catch (err) {
+            console.error('[Project] Create error:', err);
+            showModalStatus('Error: ' + err.message, 'error');
+            if (modalCreate) modalCreate.disabled = false;
+        }
+    }
+
+    function showModalStatus(msg, type) {
+        if (!modalStatus) return;
+        modalStatus.style.display = 'flex';
+        modalStatus.className = 'modal-status' + (type === 'error' ? ' error' : type === 'success' ? ' success' : '');
+
+        if (type === 'loading') {
+            modalStatus.innerHTML = `<span class="spinner"></span>${escapeHtml(msg)}`;
+        } else {
+            modalStatus.textContent = msg;
+        }
+    }
+
+    // ── Edit Field Modal ─────────────────────────────────────
+    function openEditFieldModal(index, field) {
+        if (!editFieldModal) return;
+        editingProject = { index, field };
+
+        const project = projects[index];
+        const fieldConfig = {
+            name: {
+                title: 'Edit Project Name',
+                label: 'Project Name',
+                value: getDisplayProjectName(project.name),
+                inputType: 'text'
+            },
+            status: {
+                title: 'Edit Status',
+                label: 'Status',
+                value: normalizeProjectStatus(project.status),
+                inputType: 'select'
+            },
+            speaker: {
+                title: 'Edit Speaker',
+                label: 'Speaker (B1)',
+                value: project.speaker || '',
+                inputType: 'text'
+            },
+            source: {
+                title: 'Edit Source',
+                label: 'Source (B2)',
+                value: project.source || '',
+                inputType: 'text'
+            },
+            link: {
+                title: 'Edit Link',
+                label: 'Link',
+                value: project.link || '',
+                inputType: 'url'
+            }
+        };
+
+        const config = fieldConfig[field] || fieldConfig.speaker;
+        const isSelect = config.inputType === 'select';
+
+        if (editFieldTitle) editFieldTitle.textContent = config.title;
+        if (editFieldLabel) editFieldLabel.textContent = config.label;
+        if (editFieldInput) {
+            editFieldInput.type = config.inputType === 'url' ? 'url' : 'text';
+            editFieldInput.value = isSelect ? '' : config.value;
+            editFieldInput.style.display = isSelect ? 'none' : '';
+        }
+        if (editFieldSelect) {
+            editFieldSelect.value = isSelect ? config.value : 'not_started';
+            editFieldSelect.style.display = isSelect ? '' : 'none';
+        }
+
+        editFieldModal.style.display = 'flex';
+        if (isSelect && editFieldSelect) {
+            editFieldSelect.focus();
+        } else if (editFieldInput) {
+            editFieldInput.focus();
+        }
+    }
+
+    function closeEditFieldModal() {
+        if (editFieldModal) editFieldModal.style.display = 'none';
+        editingProject = null;
+    }
+
+    async function handleSaveField() {
+        if (!editingProject) return;
+
+        const { index, field } = editingProject;
+        const project = projects[index];
+        const newValue = field === 'status'
+            ? (editFieldSelect ? normalizeProjectStatus(editFieldSelect.value) : 'done')
+            : (editFieldInput ? editFieldInput.value.trim() : '');
+
+        if (field === 'name' && !newValue) {
+            openMessageModal({
+                title: 'Missing Project Name',
+                message: 'Project name is required.'
+            });
+            return;
+        }
+
+        const updateBody = {
+            id: project.id,
+            name: field === 'name' ? newValue : getDisplayProjectName(project.name),
+            status: field === 'status' ? newValue : normalizeProjectStatus(project.status),
+            speaker: field === 'speaker' ? newValue : (project.speaker || ''),
+            source: field === 'source' ? newValue : (project.source || ''),
+            link: field === 'link' ? newValue : (project.link || '')
+        };
+
+        project.name = updateBody.name;
+        project.status = updateBody.status;
+        project.speaker = updateBody.speaker;
+        project.source = updateBody.source;
+        project.link = updateBody.link;
+        renderProjects();
+        closeEditFieldModal();
+
+        // Save to backend via proxy
+        try {
+            const res = await fetch('/tcpscript/api/projects', {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(updateBody)
+            });
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || 'Failed to update metadata');
+            }
+            showSyncNotice('Changes synced successfully.');
+        } catch (err) {
+            console.error('Update metadata failed:', err);
+            openMessageModal({
+                title: 'Sync Failed',
+                message: 'Could not save changes to KV or Sheet.',
+                note: err.message,
+                isDanger: true
+            });
+            // Refresh to restore original data
+            loadProjects();
+        }
+    }
+
+    // ── Admin: User Management Panel ─────────────────────────
+    // ── Logout ───────────────────────────────────────────────
+    function handleLogout() {
+        localStorage.removeItem('autoscript_session_token');
+        localStorage.removeItem('autoscript_session_username');
+        document.cookie = 'autoscript_session_token=; path=/; max-age=0; SameSite=Lax';
+        window.location.href = '/tcpscript/login';
+    }
+
+    // ── Event Listeners ──────────────────────────────────────
+    if (btnNewProject) btnNewProject.addEventListener('click', openNewProjectModal);
+    if (btnNewProjectEmpty) btnNewProjectEmpty.addEventListener('click', openNewProjectModal);
+    if (btnLogout) btnLogout.addEventListener('click', handleLogout);
+    if (projectSearchInput) {
+        projectSearchInput.value = projectSearchQuery;
+        projectSearchInput.addEventListener('input', (e) => {
+            projectSearchQuery = e.target.value || '';
+            renderProjects();
+        });
+    }
+    if (projectStatusFilterSelect) {
+        projectStatusFilterSelect.value = projectStatusFilter;
+        projectStatusFilterSelect.addEventListener('change', (e) => {
+            setProjectStatusFilter(e.target.value);
+        });
+    }
+    if (projectSortSelect) {
+        projectSortSelect.value = projectSortMode;
+        projectSortSelect.addEventListener('change', (e) => {
+            setProjectSortMode(e.target.value);
+        });
+    }
+    if (btnGridView) btnGridView.addEventListener('click', () => setProjectViewMode('grid'));
+    if (btnListView) btnListView.addEventListener('click', () => setProjectViewMode('list'));
+    
+    // New project modal
+    if (modalClose) modalClose.addEventListener('click', closeNewProjectModal);
+    if (modalCancel) modalCancel.addEventListener('click', closeNewProjectModal);
+    if (modalCreate) modalCreate.addEventListener('click', handleCreateProject);
+
+    // Edit field modal
+    if (editFieldClose) editFieldClose.addEventListener('click', closeEditFieldModal);
+    if (editFieldCancel) editFieldCancel.addEventListener('click', closeEditFieldModal);
+    if (editFieldSave) editFieldSave.addEventListener('click', handleSaveField);
+    if (confirmModalClose) confirmModalClose.addEventListener('click', () => closeConfirmModal(false));
+    if (confirmModalCancel) confirmModalCancel.addEventListener('click', () => closeConfirmModal(false));
+    if (confirmModalConfirm) confirmModalConfirm.addEventListener('click', () => closeConfirmModal(true));
+
+    // Close modals on overlay click
+    [newProjectModal, editFieldModal, confirmModal].forEach(modal => {
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    if (modal === confirmModal) {
+                        closeConfirmModal(false);
+                        return;
+                    }
+                    modal.style.display = 'none';
+                    if (modal === editFieldModal) editingProject = null;
+                }
+            });
+        }
+    });
+
+    // Keyboard shortcuts for modals
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeNewProjectModal();
+            closeEditFieldModal();
+            closeConfirmModal(false);
+        }
+        if (e.key === 'Enter') {
+            if (editFieldModal && editFieldModal.style.display === 'flex') {
+                e.preventDefault();
+                handleSaveField();
+            } else if (newProjectModal && newProjectModal.style.display === 'flex') {
+                e.preventDefault();
+                handleCreateProject();
+            }
+        }
+    });
+
+    // ── Initialize ───────────────────────────────────────────
+    renderUserInfo();
+    syncProjectToolbar();
+    loadProjects();
+
+})();
+</script>
+</body>
+</html>

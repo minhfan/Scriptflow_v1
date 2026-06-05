@@ -1,0 +1,71 @@
+        <div class="right-col" id="tablePanel">
+            <div class="table-header" style="align-items: center;">
+                <h2 class="section-title" style="display: flex; align-items: center; gap: 12px; margin: 0; font-size: 24px;">
+                    <span id="defaultScriptTitle" style="font-weight: 700;">Script</span>
+                    <a id="activeSheetLink" href="#" target="_blank" style="display: none; color: var(--text-main); text-decoration: none; align-items: center; gap: 8px; font-weight: 700; transition: color var(--t-fast);">
+                        <span id="activeSheetName">Sheet</span>
+                    </a>
+                    <span class="log-count-badge" id="logCount" style="margin-left: 8px; font-size: 14px;">0</span>
+                </h2>
+            </div>
+            <div class="action-btns" style="display: flex; align-items: center; width: 100%; margin-bottom: 12px; gap: 10px;">
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; display: flex; align-items: center;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                    </span>
+                    <select id="filterAction" style="background: var(--bg-input); border: 1px solid var(--border-bright); border-radius: var(--r-sm); color: var(--text-main); font-size: 9.17px; padding: 6px 24px 6px 26px; outline: none; font-family: 'Outfit', sans-serif; cursor: pointer; appearance: none; width: auto;">
+                        <option value="ALL" data-i18n="opt_all_actions">All actions</option>
+                        <option value="DELETE">DELETE</option>
+                        <option value="SWAP">SWAP</option>
+                        <option value="POP-UP">POP-UP</option>
+                        <option value="QUESTION">QUESTION</option>
+                        <option value="QUOTE">QUOTE</option>
+                        <option value="NOTE">NOTE</option>
+                        <option value="OTHERS">OTHERS</option>
+                    </select>
+                    <span style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; font-size: 7.5px;">▼</span>
+                </div>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; display: flex; align-items: center;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Search script, timecode..." style="background: var(--bg-input); border: 1px solid var(--border-bright); border-radius: var(--r-sm); color: var(--text-main); font-size: 9.17px; padding: 6px 10px 6px 26px; width: 220px; outline: none; font-family: 'Outfit', sans-serif;">
+                </div>
+                <div style="display: flex; gap: 5px; margin-left: auto; align-items: center;">
+                    <label class="btn-action btn-import" id="lblImport" style="cursor: pointer; margin: 0;">
+                        <input type="file" id="csvImport" accept=".csv, .xlsx, .xls" style="display: none;">
+                        Import
+                    </label>
+                    <button type="button" class="btn-action btn-sync-brand" id="btnSyncSheets" title="Sync current sheet">Sync Sheet</button>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table id="logTable">
+                    <colgroup>
+                        <col class="col-stt">
+                        <col class="col-play" style="width: 44px;">
+                        <col class="col-action">
+                        <col class="col-tc">
+                        <col class="col-tc">
+                        <col class="col-tc">
+                        <col>
+                        <col>
+                        <col class="col-delete">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th data-i18n="col_stt">STT</th>
+                            <th></th>
+                            <th data-i18n="col_tag">TAG</th>
+                            <th data-i18n="col_in">TC IN</th>
+                            <th data-i18n="col_out">TC OUT</th>
+                            <th data-i18n="col_swap">TC SWAP</th>
+                            <th data-i18n="col_script">SCRIPT</th>
+                            <th data-i18n="col_note">NOTE</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="logBody"></tbody>
+                </table>
+            </div>
+        </div>

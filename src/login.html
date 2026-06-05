@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptFlow TCP — Sign In</title>
+    <meta name="description" content="Sign in to Autoscript TCP Pro to manage your video logging projects.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="login-container">
+        <!-- Left: Branding Panel -->
+        <div class="login-brand">
+            <div class="brand-content">
+                <div class="brand-badge">VIDEO LOGGING TOOL</div>
+                <h1 class="brand-title">TCP <span>ScriptFlow</span></h1>
+                <p class="brand-subtitle">v2.0</p>
+                <p class="brand-desc">Professional timecode logging and script automation for editors. Mark, review, and sync your cuts directly to Google Sheets.</p>
+                <div class="brand-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <span>Timecode precision logging</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                        </div>
+                        <span>Multi-project management</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        </div>
+                        <span>Real-time Google Sheets sync</span>
+                    </div>
+                </div>
+            </div>
+            <div class="brand-bg-glow"></div>
+        </div>
+
+        <!-- Right: Auth Panel -->
+        <div class="login-auth">
+            <div class="auth-card" id="authCard">
+                <!-- Step 1: Netflix-style Profile Selection -->
+                <div class="auth-step" id="stepProfiles">
+                    <div class="auth-header">
+                        <h2>Who's using Autoscript?</h2>
+                        <p>Select a profile to continue</p>
+                    </div>
+                    <div class="profiles-grid" id="profilesGrid">
+                        <!-- Profiles will be injected here dynamically -->
+                        <div class="profiles-loading">
+                            <div class="config-spinner"></div>
+                            <span>Loading profiles...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: PIN Lock Screen -->
+                <div class="auth-step auth-step-hidden" id="stepPin">
+                    <div class="pin-profile-header">
+                        <div class="profile-avatar-wrapper small" id="pinUserAvatar">
+                            <span class="profile-initial">A</span>
+                        </div>
+                        <h3 id="pinUsername">Admin</h3>
+                    </div>
+                    <div class="auth-header" style="margin-bottom: 24px;">
+                        <h2 id="pinTitle">Profile Lock is on</h2>
+                        <p id="pinSubtitle">Enter your 4-digit PIN to access this profile.</p>
+                    </div>
+                    
+                    <div class="pin-inputs-container" id="pinInputsContainer">
+                        <input type="password" maxlength="1" class="pin-box" inputmode="numeric" pattern="[0-9]*" autocomplete="off" data-index="0">
+                        <input type="password" maxlength="1" class="pin-box" inputmode="numeric" pattern="[0-9]*" autocomplete="off" data-index="1">
+                        <input type="password" maxlength="1" class="pin-box" inputmode="numeric" pattern="[0-9]*" autocomplete="off" data-index="2">
+                        <input type="password" maxlength="1" class="pin-box" inputmode="numeric" pattern="[0-9]*" autocomplete="off" data-index="3">
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px;">
+                        <button type="button" class="btn-continue" id="btnUnlock" style="display: none;">Unlock</button>
+                        <button type="button" class="btn-back-profiles" id="btnBackProfiles">Back to profiles</button>
+                    </div>
+                </div>
+
+                <!-- Error display -->
+                <div class="auth-error" id="authError" style="display: none;"></div>
+            </div>
+
+            <div class="auth-footer-wrap">
+                <button type="button" class="admin-access-link" id="btnAdminAccess" style="display: none;">Sign in with Admin access</button>
+                <p class="auth-footer">ScriptFlow TCP Pro &mdash; Built for professional editors</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden settings gear icon — bottom-right corner, visible on hover -->
+    <a href="/tcpscript/setting" class="gear-icon" id="gearIcon" title="Application Settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    </a>
+
+    <script src="login.js"></script>
+</body>
+</html>

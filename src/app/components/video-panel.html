@@ -1,0 +1,30 @@
+            <div class="video-section" id="videoSection">
+                <label class="file-upload" id="uploadLabel">
+                    <input type="file" id="videoUpload" accept="video/*" style="display: none;">
+                    <span id="uploadText">Click or press 'V' to upload a video file</span>
+                </label>
+                <div id="videoMetaSummary" class="video-meta-summary"></div>
+                <div class="video-wrapper">
+                    <video id="videoPlayer" disablePictureInPicture></video>
+                </div>
+
+                <div class="video-controls">
+                    <div class="control-group">
+                        <span class="control-label">Speed</span>
+                        <div class="speed-control" id="speedDisplay" title="Drag L/R or Click">1.00x</div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <button type="button" class="tool-btn icon primary" id="btnPlayVideo" title="Phát video" aria-label="Phát video" style="font-size: 20px; min-width: 48px; height: 32px; display: flex; justify-content: center; align-items: center; padding: 0;">&#9658;</button>
+                        <div class="big-timecode" id="bigTimecode" title="Click to Copy" style="margin: 0; padding: 0;">00:00:00:00</div>
+                    </div>
+
+                    <div class="control-group" style="display: flex; gap: 15px;">
+                        <div class="control-group" style="margin: 0;">
+                            <span class="control-label">Vol</span>
+                            <input type="range" id="volumeSlider" class="vol-slider" min="0" max="1" step="0.05" value="1">
+                        </div>
+                        <button type="button" class="preview-cut-btn" id="btnPreviewCut" title="Preview Cut: OFF (P)" aria-label="Toggle Preview Cut"></button>
+                    </div>
+                </div>
+            </div>

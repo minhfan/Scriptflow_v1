@@ -1,0 +1,67 @@
+            <div class="form-section" id="formSection">
+                <div class="tc-row">
+                    <div class="tc-box" id="boxIn" title="Seek to IN (Q) / Mark if empty">
+                        <span>TC IN</span>
+                        <div class="time" id="valTcIn">00:00:00:00</div>
+                    </div>
+                    <div class="tc-box" id="boxOut" title="Seek to OUT (W) / Mark if empty">
+                        <span>TC OUT</span>
+                        <div class="time" id="valTcOut">00:00:00:00</div>
+                    </div>
+                    <div class="tc-box" id="boxSwap" title="Seek to SWAP (E) / Mark if empty" style="display: none;">
+                        <span>TC SWAP (E)</span>
+                        <div class="time" id="valTcSwap">00:00:00:00</div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative;" id="tagPresetContainer">
+                        <!-- Custom Dropdown Trigger -->
+                        <button id="btnTagPreset" class="btn-tag-preset" aria-haspopup="true" aria-expanded="false">
+                            <span class="preset-label" data-i18n="lbl_tag">TAG (T):</span>
+                            <span class="preset-name" id="currentPresetName">Standard</span>
+                            <span class="preset-arrow">▾</span>
+                        </button>
+                        
+                        <!-- Custom Dropdown Menu -->
+                        <div id="tagPresetMenu" class="custom-preset-menu" style="display: none;">
+                            <div class="custom-preset-list" id="customPresetList">
+                                <!-- Populated dynamically by playback.js -->
+                            </div>
+                            <div class="custom-preset-footer">
+                                <button id="btnCreatePreset" class="btn-create-preset" data-i18n="btn_add_preset">+ Thêm Preset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-button-group" id="actionButtonGroup" role="radiogroup" aria-label="Chọn tag">
+                        <button type="button" class="action-button" data-action="DELETE" role="radio">DELETE</button>
+                        <button type="button" class="action-button" data-action="POP-UP" role="radio">POP-UP</button>
+                        <button type="button" class="action-button" data-action="SWAP" role="radio">SWAP</button>
+                        <button type="button" class="action-button" data-action="QUESTION" role="radio">QUESTION</button>
+                        <button type="button" class="action-button" data-action="QUOTE" role="radio">QUOTE</button>
+                        <button type="button" class="action-button" data-action="NOTE" role="radio">NOTE</button>
+                        <button type="button" class="action-button" data-action="OTHERS" role="radio">OTHERS</button>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: stretch; margin-top: 10px; flex: 1;">
+                    <div style="display: flex; flex-direction: column; flex: 1; gap: 10px;">
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                            <label id="labelScript" data-i18n="lbl_script">SCRIPT (S):</label>
+                            <textarea id="inputScript" style="flex: 1; resize: none; overflow-y: hidden;" data-i18n="col_script"></textarea>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                            <label id="labelNote" data-i18n="lbl_note">NOTE (N):</label>
+                            <textarea id="inputNote" style="flex: 1; resize: none; overflow-y: hidden;" data-i18n="col_note"></textarea>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px; height: 100%;">
+                        <label style="visibility: hidden; margin-bottom: 2px;">IMPORT</label>
+                        <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; width: 70px;">
+                            <button type="button" id="btnToolbarImport" title="Import action (Shift+Enter)" style="flex: 2; font-size: 24.00px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center;">&#10140;</button>
+                            <div class="import-short-wrapper">
+                                <button type="button" id="btnToolbarImportShort" title="Import to specific Short tab" style="width:100%; font-size: 16px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center;">&#10140;<sub style="font-size: 9px; margin-left: 2px; font-weight: bold; position: relative; bottom: -2px;">S</sub></button>
+                                <div class="floating-tab-menu" id="importShortFloatingMenu"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>

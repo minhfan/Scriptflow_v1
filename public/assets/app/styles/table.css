@@ -1,0 +1,212 @@
+/* ============================================================
+   AUTOSCRIPT TCP Pro — Table
+   Log table, row styles, action tags, send/delete buttons
+   ============================================================ */
+
+/* ── Table Header Controls ──────────────────────────────────── */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
+.table-header h3 {
+    font-size: 10.83px;
+    font-weight: 700;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    letter-spacing: -0.01em;
+    color: var(--text-main);
+}
+
+.log-count-badge {
+    font-size: 8.33px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg-hover);
+    border: 1px solid var(--border-bright);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 99px;
+}
+
+/* ── Table Wrap ─────────────────────────────────────────────── */
+.table-wrap {
+    overflow: auto;
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--bg-main);
+}
+
+/* ── Table Base ─────────────────────────────────────────────── */
+table {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    text-align: left;
+    font-size: 9.58px;
+}
+
+#logTable .col-stt    { width: 36px; }
+#logTable .col-play   { width: 36px; }
+#logTable .col-action { width: 90px; }
+#logTable .col-tc     { width: 110px; }
+#logTable .col-delete { width: 76px; }
+
+th {
+    background: var(--bg-input);
+    color: var(--text-sub);
+    font-weight: 700;
+    font-size: 8.33px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    border-bottom: 1px solid var(--border-bright);
+}
+th, td {
+    padding: 7px 9px;
+    border-bottom: 1px solid var(--border);
+    height: 32px;
+    vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+td.td-text {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover { background: var(--bg-hover); }
+tr:hover .row-tools { opacity: 1; }
+
+td[contenteditable="true"] {
+    cursor: text;
+    outline: none;
+    transition: background var(--t-fast);
+}
+td[contenteditable="true"]:focus {
+    background: var(--accent-dim);
+    box-shadow: inset 0 0 0 1px var(--accent);
+    border-radius: 4px;
+}
+
+/* ── Table Cell Types ───────────────────────────────────────── */
+.td-tc {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 9.17px;
+    cursor: pointer !important;
+    color: var(--accent);
+    text-align: left;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+.td-tc:hover { text-decoration: underline; }
+.td-action { cursor: pointer; text-align: center; white-space: nowrap; }
+.td-text { max-width: 0; }
+.td-delete { text-align: center; white-space: nowrap; }
+.td-stt {
+    text-align: center;
+    font-weight: 700;
+    color: var(--text-sub);
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+}
+.td-stt:hover { color: var(--text-main); background: var(--bg-hover); }
+tr.selected-row { background: var(--bg-hover); box-shadow: inset 3px 0 0 var(--accent); }
+
+.row-tools {
+    display: flex;
+    gap: 3px;
+    opacity: 0;
+    transition: opacity var(--t-fast);
+    justify-content: center;
+    align-items: center;
+}
+.td-play {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    text-align: center;
+    padding: 0;
+}
+
+/* ── Action Tag ─────────────────────────────────────────────── */
+.action-tag {
+    padding: 3px 8px;
+    border-radius: var(--r-sm);
+    font-weight: 700;
+    font-size: 7.92px;
+    font-family: 'Outfit', sans-serif;
+    display: inline-block;
+    min-width: 68px;
+    text-align: center;
+    letter-spacing: 0.05em;
+}
+
+/* ── Row Buttons ────────────────────────────────────────────── */
+.btn-delete {
+    background: var(--danger-dim);
+    color: var(--danger);
+    border: 1px solid transparent;
+    padding: 3px 8px;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 8.33px;
+    font-family: 'Outfit', sans-serif;
+    transition: all var(--t-fast);
+    display: inline-block;
+}
+.btn-delete:hover { background: var(--danger); color: #fff; }
+
+.btn-play-delete {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid transparent;
+    padding: 3px 8px;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 8.33px;
+    font-family: 'Outfit', sans-serif;
+    transition: all var(--t-fast);
+    display: inline-block;
+}
+.btn-play-delete:hover { background: var(--accent); color: #000; }
+
+/* ── Send Tab Buttons ───────────────────────────────────────── */
+.btn-send {
+    color: #3b82f6;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    font-size: 10px;
+    padding: 2px 6px;
+    transition: all 0.2s;
+}
+.btn-send:hover { background: #3b82f6; color: #fff; }
+
+/* ── Row Editing ────────────────────────────────────────────── */
+.row-editing {
+    outline: 2px solid #FFC107;
+    background: rgba(255, 193, 7, 0.1) !important;
+}
+
+/* ── Flash Animations ───────────────────────────────────────── */
+.highlight-new {
+    animation: flashNew 2s ease-out forwards;
+}
+@keyframes flashNew {
+    0% { background-color: rgba(255, 193, 7, 0.5) !important; }
+    100% { background-color: transparent; }
+}

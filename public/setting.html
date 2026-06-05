@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptFlow TCP — Settings</title>
+    <meta name="description" content="Configure Autoscript TCP Pro application settings.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+/* ============================================================
+   AUTOSCRIPT TCP — Setting Page Styles
+   Design: design-taste-frontend-v1
+   Palette: Zinc/Slate base + Emerald accent
+   Font: Outfit + JetBrains Mono
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+    --bg-deep: #09090b;
+    --bg-surface: #18181b;
+    --bg-card: rgba(24, 24, 27, 0.7);
+    --bg-input: #27272a;
+    --bg-input-focus: #3f3f46;
+    --border: #27272a;
+    --border-bright: #3f3f46;
+    --border-subtle: rgba(255,255,255,0.06);
+    --text-main: #fafafa;
+    --text-sub: #a1a1aa;
+    --text-muted: #71717a;
+    --text-dim: #52525b;
+    --accent: #10b981;
+    --accent-dim: rgba(16, 185, 129, 0.12);
+    --accent-glow: rgba(16, 185, 129, 0.2);
+    --danger: #ef4444;
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 20px;
+    --r-xl: 28px;
+    --shadow-card: 0 20px 40px -15px rgba(0,0,0,0.4);
+    --transition-base: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+html { height: 100%; }
+
+body {
+    font-family: var(--font-sans);
+    background: var(--bg-deep);
+    color: var(--text-main);
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Layout ──────────────────────────────────────────────── */
+.setting-container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+/* ── Back Link ───────────────────────────────────────────── */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 32px;
+    transition: var(--transition-base);
+    align-self: flex-start;
+}
+
+.back-link:hover {
+    color: var(--accent);
+}
+
+/* ── Setting Card ────────────────────────────────────────── */
+.setting-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-xl);
+    padding: 36px 32px 32px;
+    box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.04);
+    animation: fadeScaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.setting-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.setting-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-dim);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    border-radius: var(--r-md);
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+.setting-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.setting-header p {
+    font-size: 12.5px;
+    color: var(--text-muted);
+}
+
+.sync-notice {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    margin: -8px 0 24px;
+    padding: 0 14px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.22);
+    border-radius: var(--r-md);
+    color: #a7f3d0;
+    font-size: 12.5px;
+    font-weight: 500;
+    animation: fadeSlideUp 0.25s ease forwards;
+}
+
+.setting-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 28px;
+    padding: 6px;
+    background: rgba(9, 9, 11, 0.42);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+}
+
+.setting-tab {
+    min-width: 112px;
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.setting-tab:hover {
+    color: var(--text-main);
+}
+
+.setting-tab.active {
+    background: var(--accent-dim);
+    color: var(--accent);
+    box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.18);
+}
+
+.setting-panel[hidden] {
+    display: none !important;
+}
+
+.section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.section-header h2 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.section-header p {
+    font-size: 12.5px;
+    color: var(--text-muted);
+}
+
+/* ── Loading ─────────────────────────────────────────────── */
+.setting-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 40px 0;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-bright);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+/* ── Form ─────────────────────────────────────────────────── */
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-sub);
+    letter-spacing: 0.02em;
+    margin-bottom: 10px;
+}
+
+.label-badge {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 100px;
+    text-transform: uppercase;
+}
+
+.label-badge.required {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.label-badge.optional {
+    background: rgba(113, 113, 122, 0.1);
+    color: var(--text-dim);
+    border: 1px solid rgba(113, 113, 122, 0.15);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 13px 16px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    color: var(--text-main);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    outline: none;
+    transition: var(--transition-base);
+}
+
+.form-group input::placeholder {
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+}
+
+.form-group input:focus {
+    border-color: var(--accent);
+    background: var(--bg-input-focus);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.form-hint {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    line-height: 1.6;
+}
+
+.form-hint a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.form-hint a:hover {
+    text-decoration: underline;
+}
+
+/* ── Form Actions ────────────────────────────────────────── */
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.btn-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.btn-save:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px var(--accent-glow);
+}
+
+.btn-save:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-save:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-save.saving {
+    pointer-events: none;
+}
+
+/* ── Status ──────────────────────────────────────────────── */
+.form-status {
+    font-size: 12px;
+    font-weight: 500;
+    animation: fadeSlideUp 0.3s ease forwards;
+}
+
+.form-status.success {
+    color: var(--accent);
+}
+
+.form-status.error {
+    color: #fca5a5;
+}
+
+/* ── Info Note ───────────────────────────────────────────── */
+.setting-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 24px;
+    padding: 14px 16px;
+    background: rgba(16, 185, 129, 0.04);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    border-radius: var(--r-md);
+    font-size: 11.5px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.setting-note svg {
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.users-list-table-container {
+    background: rgba(9, 9, 11, 0.32);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.users-table th {
+    background: #111113;
+    padding: 16px 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+}
+
+.users-table td {
+    padding: 16px 20px;
+    font-size: 13.5px;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: middle;
+}
+
+.users-table tr:last-child td {
+    border-bottom: none;
+}
+
+.users-table-placeholder {
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.user-pin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 100px;
+    line-height: 1;
+}
+
+.user-pin-badge.set {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.user-pin-badge.unset {
+    background: rgba(239, 68, 68, 0.12);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.user-actions-cell {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-user-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: var(--transition-base);
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text-sub);
+}
+
+.btn-user-action.reset:hover {
+    background: var(--bg-input);
+    color: var(--text-main);
+    border-color: var(--text-sub);
+}
+
+.btn-user-action.delete {
+    border-color: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+}
+
+.btn-user-action.delete:hover {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: var(--danger);
+    color: #ffffff;
+}
+
+.btn-add-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-bright);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 600;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: var(--transition-base);
+    white-space: nowrap;
+}
+
+.btn-add-user:hover {
+    background: var(--bg-input-focus);
+    border-color: var(--text-sub);
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeSlideUp 0.2s ease forwards;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+
+.modal-card-sm {
+    max-width: 380px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: var(--r-sm);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.modal-close:hover {
+    background: var(--bg-input);
+    color: var(--text-main);
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-input-group label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-sub);
+    margin-bottom: 8px;
+}
+
+.modal-input-group input {
+    width: 100%;
+    padding: 11px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    outline: none;
+    transition: var(--transition-base);
+}
+
+.modal-input-group input:focus {
+    border-color: var(--accent);
+    background: var(--bg-input-focus);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.confirm-modal-text {
+    font-size: 14px;
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+.confirm-modal-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+}
+
+.btn-modal-cancel {
+    padding: 9px 18px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    color: var(--text-sub);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.btn-modal-cancel:hover {
+    background: var(--bg-input);
+}
+
+.btn-modal-create {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.btn-modal-create:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.btn-modal-danger {
+    background: var(--danger);
+}
+
+.btn-modal-danger:hover {
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.24);
+}
+
+/* ── Animations ──────────────────────────────────────────── */
+@keyframes fadeScaleIn {
+    from { opacity: 0; transform: scale(0.97) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .setting-container {
+        padding: 32px 16px 60px;
+    }
+
+    .setting-card {
+        padding: 28px 20px;
+        border-radius: var(--r-lg);
+    }
+
+    .setting-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .setting-tabs {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .setting-tab {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .users-table th,
+    .users-table td {
+        padding: 14px 12px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-save {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+</head>
+<body>
+    <div class="setting-container">
+        <a href="/tcpscript/project" class="back-link" id="backLink">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Back to Projects</span>
+        </a>
+
+        <div class="setting-card" id="settingCard">
+            <div class="setting-header">
+                <div class="setting-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </div>
+                <div>
+                    <h1>Settings</h1>
+                    <p>Manage each settings group in its own tab.</p>
+                </div>
+            </div>
+
+            <div class="sync-notice" id="syncNotice" style="display: none;"></div>
+
+            <!-- Loading state -->
+            <div class="setting-loading" id="settingLoading">
+                <div class="spinner"></div>
+                <span>Loading settings...</span>
+            </div>
+
+            <!-- Settings form -->
+            <div class="setting-form" id="settingForm" style="display: none;">
+                <div class="setting-tabs" id="settingTabs" role="tablist" aria-label="Setting sections">
+                    <button type="button" class="setting-tab active" id="settingTabApplication" data-setting-tab="application" role="tab" aria-selected="true" aria-controls="settingPanelApplication">
+                        Application
+                    </button>
+                    <button type="button" class="setting-tab" id="settingTabUser" data-setting-tab="user" role="tab" aria-selected="false" aria-controls="settingPanelUser" tabindex="-1">
+                        User
+                    </button>
+                    <button type="button" class="setting-tab" id="settingTabPresets" data-setting-tab="presets" role="tab" aria-selected="false" aria-controls="settingPanelPresets" tabindex="-1">
+                        Presets
+                    </button>
+                </div>
+
+                <section class="setting-section setting-panel" id="settingPanelApplication" data-setting-panel="application" role="tabpanel" aria-labelledby="settingTabApplication">
+                    <div class="section-header">
+                        <div>
+                            <h2>Cloud Settings</h2>
+                            <p>Manage Google API details used to clone and sync projects.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="settingWebAppUrl">
+                            Google Sheets Web App URL
+                            <span class="label-badge required">Required</span>
+                        </label>
+                        <input type="text" id="settingWebAppUrl" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off" spellcheck="false">
+                        <p class="form-hint">Google Apps Script Web App URL. Required for server-side cloning and syncing sheets under the owner's Google account.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="settingTemplateId">
+                            Google Sheets Template ID / URL
+                            <span class="label-badge required">Required</span>
+                        </label>
+                        <input type="text" id="settingTemplateId" placeholder="Paste template sheet URL or Spreadsheet ID..." autocomplete="off" spellcheck="false">
+                        <p class="form-hint">Google Sheets Spreadsheet ID or the full spreadsheet URL used as a template when creating new projects. The code will automatically extract the ID from the URL.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="settingFolderId">
+                            Google Drive Target Folder ID / URL
+                            <span class="label-badge optional">Optional</span>
+                        </label>
+                        <input type="text" id="settingFolderId" placeholder="Paste Google Drive folder URL or Folder ID..." autocomplete="off" spellcheck="false">
+                        <p class="form-hint">The Google Drive folder ID or the full folder link where newly cloned sheets will be automatically moved. The code will automatically extract the ID from the URL. Leave blank to save to root Drive.</p>
+                    </div>
+
+                    <div class="form-actions">
+                        <div class="form-status" id="formStatus" style="display: none;"></div>
+                        <button type="button" class="btn-save" id="btnSave">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>Save to Cloud</span>
+                        </button>
+                    </div>
+
+                    <div class="setting-note">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        <span>Settings are stored securely on Cloudflare KV and shared across all sessions.</span>
+                    </div>
+                </section>
+
+                <section class="setting-section setting-panel admin-section" id="settingPanelUser" data-setting-panel="user" role="tabpanel" aria-labelledby="settingTabUser" hidden>
+                    <div class="section-header">
+                        <div>
+                            <h2>User Profiles</h2>
+                            <p>Manage editor profiles, PIN locks, and access permissions.</p>
+                        </div>
+                        <button type="button" class="btn-add-user" id="btnAddUser">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <span>Add Profile</span>
+                        </button>
+                    </div>
+
+                    <div class="users-list-table-container">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Profile Name</th>
+                                    <th>PIN Lock Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersListBody">
+                                <tr>
+                                    <td colspan="3" class="users-table-placeholder">Loading profiles...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <section class="setting-section setting-panel" id="settingPanelPresets" data-setting-panel="presets" role="tabpanel" aria-labelledby="settingTabPresets" hidden>
+                    <div class="section-header">
+                        <div>
+                            <h2>Action Presets</h2>
+                            <p>Create and customize your timeline action buttons.</p>
+                        </div>
+                        <button type="button" class="btn-add-user" id="btnAddPreset" style="background:var(--accent);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <span>New Preset</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="selectPresetEdit">Select Preset to Edit</label>
+                        <select id="selectPresetEdit" style="background: var(--bg-input); border: 1px solid var(--border-bright); border-radius: var(--r-sm); color: var(--text-main); font-size: 14px; padding: 10px; outline: none; font-family: 'Outfit', sans-serif; cursor: pointer; width: 100%;"></select>
+                    </div>
+
+                    <div id="presetEditorContainer" style="display: none; background: rgba(0,0,0,0.2); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+                        <div class="form-group">
+                            <label>Preset Name</label>
+                            <input type="text" id="presetEditName" placeholder="Preset Name">
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; margin-bottom: 10px;">
+                            <label style="margin: 0;">Actions</label>
+                            <button type="button" id="btnAddActionToPreset" style="background: transparent; border: 1px solid var(--border-bright); color: var(--text-main); padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;">+ Add Action</button>
+                        </div>
+                        
+                        <div id="presetActionsList" style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; padding-right: 4px;">
+                            <!-- Dynamic action rows -->
+                        </div>
+
+                        <div class="form-actions" style="margin-top: 20px;">
+                            <div class="form-status" id="presetFormStatus" style="display: none;"></div>
+                            <button type="button" class="btn-save" id="btnSavePreset">
+                                <span>Save Presets</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addUserModal" style="display: none;">
+        <div class="modal-card modal-card-sm">
+            <div class="modal-header">
+                <h2>Add Profile</h2>
+                <button type="button" class="modal-close" id="addUserClose">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-input-group">
+                    <label for="newUsername">Profile Name</label>
+                    <input type="text" id="newUsername" placeholder="e.g. Huy, Linh..." autocomplete="off">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" id="addUserCancel">Cancel</button>
+                <button type="button" class="btn-modal-create" id="addUserSave">Create Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="pinModal" style="display: none;">
+        <div class="modal-card modal-card-sm">
+            <div class="modal-header">
+                <h2 id="pinModalTitle">Change PIN</h2>
+                <button type="button" class="modal-close" id="pinModalClose">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-input-group">
+                    <label for="pinModalInput" id="pinModalLabel">New 4-digit PIN</label>
+                    <input type="password" id="pinModalInput" inputmode="numeric" maxlength="4" placeholder="1234" autocomplete="off">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" id="pinModalCancel">Cancel</button>
+                <button type="button" class="btn-modal-create" id="pinModalConfirm">Save PIN</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirmModal" style="display: none;">
+        <div class="modal-card modal-card-sm">
+            <div class="modal-header">
+                <h2 id="confirmModalTitle">Confirm Action</h2>
+                <button type="button" class="modal-close" id="confirmModalClose">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="confirm-modal-text" id="confirmModalText"></p>
+                <p class="confirm-modal-note" id="confirmModalNote" style="display: none;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" id="confirmModalCancel">Cancel</button>
+                <button type="button" class="btn-modal-create btn-modal-danger" id="confirmModalConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="messageModal" style="display: none;">
+        <div class="modal-card modal-card-sm">
+            <div class="modal-header">
+                <h2 id="messageModalTitle">Notice</h2>
+                <button type="button" class="modal-close" id="messageModalClose">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="confirm-modal-text" id="messageModalText"></p>
+                <p class="confirm-modal-note" id="messageModalNote" style="display: none;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-create" id="messageModalConfirm">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// ============================================================
+//  AUTOSCRIPT TCP — Setting Page Logic
+//  Fetches settings from Cloudflare KV via /api/settings,
+//  saves updated values back to KV on "Save" click.
+//  Restricted to Admin profile only.
+// ============================================================
+
+(function () {
+    'use strict';
+
+    // ── Session Checking & Auth ─────────────────────────────
+    const sessionToken = localStorage.getItem('autoscript_session_token');
+    const sessionUser = localStorage.getItem('autoscript_session_username');
+
+    if (!sessionToken || !sessionUser) {
+        window.location.href = '/tcpscript/login';
+        return;
+    }
+
+    if (sessionUser.toLowerCase() !== 'admin') {
+        window.location.href = '/tcpscript/project';
+        return;
+    }
+
+    const API_URL = '/tcpscript/api/settings';
+    const SETTING_TAB_STORAGE_KEY = 'autoscript_setting_active_tab';
+    let users = [];
+
+    // Helper for API headers
+    function getAuthHeaders() {
+        return {
+            'Authorization': `Bearer ${sessionToken}`,
+            'Content-Type': 'application/json'
+        };
+    }
+
+    // ── DOM References ───────────────────────────────────────
+    const settingLoading = document.getElementById('settingLoading');
+    const settingForm = document.getElementById('settingForm');
+    const settingWebAppUrl = document.getElementById('settingWebAppUrl');
+    const settingTemplateId = document.getElementById('settingTemplateId');
+    const settingFolderId = document.getElementById('settingFolderId');
+    const btnSave = document.getElementById('btnSave');
+    const formStatus = document.getElementById('formStatus');
+    const usersListBody = document.getElementById('usersListBody');
+    const btnAddUser = document.getElementById('btnAddUser');
+    const syncNotice = document.getElementById('syncNotice');
+    const addUserModal = document.getElementById('addUserModal');
+    const addUserClose = document.getElementById('addUserClose');
+    const addUserCancel = document.getElementById('addUserCancel');
+    const addUserSave = document.getElementById('addUserSave');
+    const newUsernameInput = document.getElementById('newUsername');
+    const pinModal = document.getElementById('pinModal');
+    const pinModalTitle = document.getElementById('pinModalTitle');
+    const pinModalLabel = document.getElementById('pinModalLabel');
+    const pinModalInput = document.getElementById('pinModalInput');
+    const pinModalClose = document.getElementById('pinModalClose');
+    const pinModalCancel = document.getElementById('pinModalCancel');
+    const pinModalConfirm = document.getElementById('pinModalConfirm');
+    const confirmModal = document.getElementById('confirmModal');
+    const confirmModalTitle = document.getElementById('confirmModalTitle');
+    const confirmModalText = document.getElementById('confirmModalText');
+    const confirmModalNote = document.getElementById('confirmModalNote');
+    const confirmModalClose = document.getElementById('confirmModalClose');
+    const confirmModalCancel = document.getElementById('confirmModalCancel');
+    const confirmModalConfirm = document.getElementById('confirmModalConfirm');
+    const messageModal = document.getElementById('messageModal');
+    const messageModalTitle = document.getElementById('messageModalTitle');
+    const messageModalText = document.getElementById('messageModalText');
+    const messageModalNote = document.getElementById('messageModalNote');
+    const messageModalClose = document.getElementById('messageModalClose');
+    const messageModalConfirm = document.getElementById('messageModalConfirm');
+    const settingTabButtons = Array.from(document.querySelectorAll('[data-setting-tab]'));
+    const settingPanels = Array.from(document.querySelectorAll('[data-setting-panel]'));
+    let syncNoticeTimer = null;
+    let confirmModalResolver = null;
+    let messageModalResolver = null;
+    let pinModalResolver = null;
+
+    // ── Helpers ──────────────────────────────────────────────
+    function showStatus(msg, type) {
+        if (!formStatus) return;
+        formStatus.textContent = msg;
+        formStatus.className = 'form-status ' + type;
+        formStatus.style.display = 'block';
+
+        if (type === 'success') {
+            setTimeout(() => {
+                formStatus.style.display = 'none';
+            }, 4000);
+        }
+    }
+
+    function showSyncNotice(message) {
+        if (!syncNotice) return;
+        if (syncNoticeTimer) clearTimeout(syncNoticeTimer);
+        syncNotice.textContent = message || 'Changes synced to KV successfully.';
+        syncNotice.style.display = 'flex';
+        syncNoticeTimer = setTimeout(() => {
+            syncNotice.style.display = 'none';
+        }, 3200);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function closeConfirmModal(result) {
+        if (confirmModal) confirmModal.style.display = 'none';
+        if (confirmModalResolver) {
+            const resolve = confirmModalResolver;
+            confirmModalResolver = null;
+            resolve(Boolean(result));
+        }
+    }
+
+    function openConfirmModal(config) {
+        if (!confirmModal || !confirmModalTitle || !confirmModalText || !confirmModalConfirm) {
+            return Promise.resolve(false);
+        }
+
+        confirmModalTitle.textContent = config && config.title ? config.title : 'Confirm Action';
+        confirmModalText.textContent = config && config.message ? config.message : 'Please confirm this action.';
+        confirmModalConfirm.textContent = config && config.confirmText ? config.confirmText : 'Confirm';
+        confirmModalConfirm.classList.toggle('btn-modal-danger', Boolean(config && config.isDanger));
+
+        if (confirmModalNote) {
+            const note = config && config.note ? config.note : '';
+            confirmModalNote.textContent = note;
+            confirmModalNote.style.display = note ? 'block' : 'none';
+        }
+
+        confirmModal.style.display = 'flex';
+        confirmModalConfirm.focus();
+
+        return new Promise((resolve) => {
+            confirmModalResolver = resolve;
+        });
+    }
+
+    function closeMessageModal() {
+        if (messageModal) messageModal.style.display = 'none';
+        if (messageModalResolver) {
+            const resolve = messageModalResolver;
+            messageModalResolver = null;
+            resolve(true);
+        }
+    }
+
+    function openMessageModal(config) {
+        if (!messageModal || !messageModalTitle || !messageModalText) {
+            return Promise.resolve(true);
+        }
+
+        messageModalTitle.textContent = config && config.title ? config.title : 'Notice';
+        messageModalText.textContent = config && config.message ? config.message : '';
+
+        if (messageModalNote) {
+            const note = config && config.note ? config.note : '';
+            messageModalNote.textContent = note;
+            messageModalNote.style.display = note ? 'block' : 'none';
+        }
+
+        messageModal.style.display = 'flex';
+        if (messageModalConfirm) messageModalConfirm.focus();
+
+        return new Promise((resolve) => {
+            messageModalResolver = resolve;
+        });
+    }
+
+    function closePinModal(result) {
+        if (pinModal) pinModal.style.display = 'none';
+        if (pinModalResolver) {
+            const resolve = pinModalResolver;
+            pinModalResolver = null;
+            resolve(result);
+        }
+    }
+
+    function openPinModal(config) {
+        if (!pinModal || !pinModalTitle || !pinModalInput) {
+            return Promise.resolve(null);
+        }
+
+        if (pinModalTitle) pinModalTitle.textContent = config && config.title ? config.title : 'Change PIN';
+        if (pinModalLabel) pinModalLabel.textContent = config && config.label ? config.label : 'New 4-digit PIN';
+        if (pinModalConfirm) pinModalConfirm.textContent = config && config.confirmText ? config.confirmText : 'Save PIN';
+        pinModalInput.value = '';
+        pinModal.style.display = 'flex';
+        pinModalInput.focus();
+
+        return new Promise((resolve) => {
+            pinModalResolver = resolve;
+        });
+    }
+
+    function setActiveSettingTab(tabName) {
+        const hasPanel = settingPanels.some((panel) => panel.dataset.settingPanel === tabName);
+        const nextTab = hasPanel ? tabName : 'application';
+
+        settingTabButtons.forEach((button) => {
+            const isActive = button.dataset.settingTab === nextTab;
+            button.classList.toggle('active', isActive);
+            button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            button.tabIndex = isActive ? 0 : -1;
+        });
+
+        settingPanels.forEach((panel) => {
+            panel.hidden = panel.dataset.settingPanel !== nextTab;
+        });
+
+        localStorage.setItem(SETTING_TAB_STORAGE_KEY, nextTab);
+    }
+
+    // ── Load settings from KV ────────────────────────────────
+    async function loadSettings() {
+        const defaultWebAppUrl = 'https://script.google.com/macros/s/EXAMPLE_SPREADSHEET_APPS_SCRIPT_URL_ABC123/exec';
+        const defaultTemplateId = '1S6YxzKJE7X5vZRZduA36KDc_E00Cdkxp2mD3VXhwfmA';
+
+        try {
+            const res = await fetch(API_URL, {
+                headers: getAuthHeaders()
+            });
+            if (res.status === 401) {
+                window.location.href = '/tcpscript/login';
+                return;
+            }
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+
+            if (settingWebAppUrl) {
+                settingWebAppUrl.value = data.googleSheetsWebAppUrl || localStorage.getItem('autoscript_google_sheets_url') || defaultWebAppUrl;
+            }
+            if (settingTemplateId) {
+                settingTemplateId.value = data.googleTemplateId || localStorage.getItem('autoscript_google_template_id') || defaultTemplateId;
+            }
+            if (settingFolderId) {
+                settingFolderId.value = data.googleDriveFolderId || localStorage.getItem('autoscript_google_folder_id') || '';
+            }
+        } catch (err) {
+            console.warn('[Setting] Could not load from KV, trying localStorage:', err);
+
+            // Fallback: load from localStorage
+            if (settingWebAppUrl) {
+                settingWebAppUrl.value = localStorage.getItem('autoscript_google_sheets_url') || defaultWebAppUrl;
+            }
+            if (settingTemplateId) {
+                settingTemplateId.value = localStorage.getItem('autoscript_google_template_id') || defaultTemplateId;
+            }
+            if (settingFolderId) {
+                settingFolderId.value = localStorage.getItem('autoscript_google_folder_id') || '';
+            }
+        } finally {
+            // Show form, hide loading
+            if (settingLoading) settingLoading.style.display = 'none';
+            if (settingForm) settingForm.style.display = '';
+        }
+    }
+
+    // ── Save settings to KV ──────────────────────────────────
+    async function saveSettings() {
+        if (formStatus) formStatus.style.display = 'none';
+
+        const webAppUrl = settingWebAppUrl ? settingWebAppUrl.value.trim() : '';
+        let templateId = settingTemplateId ? settingTemplateId.value.trim() : '';
+        let folderId = settingFolderId ? settingFolderId.value.trim() : '';
+
+        // Auto-extract Sheet ID if a full Google Sheets URL is pasted
+        if (templateId) {
+            const sheetIdMatch = templateId.match(/\/spreadsheets\/d\/([a-zA-Z0-9_\-]+)/);
+            if (sheetIdMatch && sheetIdMatch[1]) {
+                templateId = sheetIdMatch[1];
+                if (settingTemplateId) settingTemplateId.value = templateId;
+            }
+        }
+
+        // Auto-extract Folder ID if a full Google Drive Folder URL is pasted
+        if (folderId) {
+            const folderIdMatch = folderId.match(/\/folders\/([a-zA-Z0-9_\-]+)/);
+            if (folderIdMatch && folderIdMatch[1]) {
+                folderId = folderIdMatch[1];
+                if (settingFolderId) settingFolderId.value = folderId;
+            }
+        }
+
+        if (!webAppUrl || webAppUrl.includes('EXAMPLE_SPREADSHEET_APPS_SCRIPT_URL_ABC123')) {
+            showStatus('Google Sheets Web App URL is required.', 'error');
+            if (settingWebAppUrl) settingWebAppUrl.focus();
+            return;
+        }
+
+        if (!templateId) {
+            showStatus('Template Spreadsheet ID or URL is required.', 'error');
+            if (settingTemplateId) settingTemplateId.focus();
+            return;
+        }
+
+        if (btnSave) {
+            btnSave.disabled = true;
+            btnSave.classList.add('saving');
+            btnSave.querySelector('span').textContent = 'Saving...';
+        }
+
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    googleSheetsWebAppUrl: webAppUrl,
+                    googleTemplateId: templateId,
+                    googleDriveFolderId: folderId
+                }),
+            });
+
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.error || 'HTTP ' + res.status);
+            }
+
+            // Also save to localStorage as cache
+            localStorage.setItem('autoscript_google_sheets_url', webAppUrl);
+            localStorage.setItem('autoscript_google_template_id', templateId);
+            localStorage.setItem('autoscript_google_folder_id', folderId);
+
+            showSyncNotice('Settings synced to KV successfully.');
+        } catch (err) {
+            console.error('[Setting] Save error:', err);
+            openMessageModal({
+                title: 'Save Failed',
+                message: 'Could not save settings to KV.',
+                note: err.message,
+                isDanger: true
+            });
+        } finally {
+            if (btnSave) {
+                btnSave.disabled = false;
+                btnSave.classList.remove('saving');
+                btnSave.querySelector('span').textContent = 'Save to Cloud';
+            }
+        }
+    }
+
+    async function loadUsersList() {
+        try {
+            const res = await fetch('/tcpscript/api/users', {
+                headers: getAuthHeaders()
+            });
+            if (!res.ok) throw new Error('Failed to retrieve user profiles');
+            users = await res.json();
+            renderUsersList();
+        } catch (err) {
+            console.error(err);
+            if (usersListBody) {
+                usersListBody.innerHTML = `<tr><td colspan="3" class="users-table-placeholder" style="color: #fca5a5;">Failed to load user accounts.</td></tr>`;
+            }
+        }
+    }
+
+    function renderUsersList() {
+        if (!usersListBody) return;
+        usersListBody.innerHTML = '';
+
+        if (users.length === 0) {
+            usersListBody.innerHTML = `<tr><td colspan="3" class="users-table-placeholder">No profiles configured.</td></tr>`;
+            return;
+        }
+
+        users.forEach((user) => {
+            const isSet = user.hasPin;
+            const badgeClass = isSet ? 'set' : 'unset';
+            const badgeText = isSet ? 'Password PIN Set' : 'No PIN (Unconfigured)';
+            const isSelfAdmin = user.username.toLowerCase() === 'admin';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong style="font-size: 14px; font-weight: 600;">${escapeHtml(user.username)}</strong></td>
+                <td><span class="user-pin-badge ${badgeClass}">${badgeText}</span></td>
+                <td>
+                    <div class="user-actions-cell">
+                        <button type="button" class="btn-user-action reset" data-change-username="${escapeHtml(user.username)}">Change PIN</button>
+                        <button type="button" class="btn-user-action reset" data-reset-username="${escapeHtml(user.username)}">Reset PIN</button>
+                        ${isSelfAdmin ? '' : `<button type="button" class="btn-user-action delete" data-delete-username="${escapeHtml(user.username)}">Delete Profile</button>`}
+                    </div>
+                </td>
+            `;
+
+            usersListBody.appendChild(row);
+        });
+
+        attachUserActionListeners();
+    }
+
+    function attachUserActionListeners() {
+        document.querySelectorAll('[data-change-username]').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const username = btn.dataset.changeUsername;
+                const newPin = await openPinModal({
+                    title: 'Change PIN',
+                    label: `New 4-digit PIN for "${username}"`,
+                    confirmText: 'Save PIN'
+                });
+                if (newPin === null) return;
+
+                const pinTrimmed = newPin.trim();
+                if (!/^\d{4}$/.test(pinTrimmed)) {
+                    openMessageModal({
+                        title: 'Invalid PIN',
+                        message: 'PIN must be a 4-digit number.',
+                        note: 'Example: 1234',
+                        isDanger: true
+                    });
+                    return;
+                }
+
+                try {
+                    const res = await fetch('/tcpscript/api/users', {
+                        method: 'POST',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({
+                            username,
+                            pin: pinTrimmed,
+                            action: 'changePin'
+                        })
+                    });
+                    if (!res.ok) {
+                        const data = await res.json();
+                        throw new Error(data.error || 'Failed to change PIN');
+                    }
+                    const data = await res.json();
+                    users = data.users;
+                    renderUsersList();
+                    showSyncNotice(`PIN for "${username}" synced to KV successfully.`);
+                } catch (err) {
+                    openMessageModal({
+                        title: 'PIN Update Failed',
+                        message: `Could not update PIN for "${username}".`,
+                        note: err.message,
+                        isDanger: true
+                    });
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-reset-username]').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const username = btn.dataset.resetUsername;
+                const shouldReset = await openConfirmModal({
+                    title: 'Reset PIN',
+                    message: `Reset the PIN for "${username}"?`,
+                    note: 'They will need to set a new PIN the next time they select this profile.',
+                    confirmText: 'Reset PIN'
+                });
+                if (!shouldReset) {
+                    return;
+                }
+
+                try {
+                    const res = await fetch('/tcpscript/api/users', {
+                        method: 'POST',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({
+                            username,
+                            action: 'reset'
+                        })
+                    });
+                    if (!res.ok) throw new Error('Failed to reset PIN');
+                    const data = await res.json();
+                    users = data.users;
+                    renderUsersList();
+                    showSyncNotice(`PIN reset for "${username}" synced to KV successfully.`);
+                } catch (err) {
+                    openMessageModal({
+                        title: 'PIN Reset Failed',
+                        message: `Could not reset PIN for "${username}".`,
+                        note: err.message,
+                        isDanger: true
+                    });
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-delete-username]').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const username = btn.dataset.deleteUsername;
+                const shouldDelete = await openConfirmModal({
+                    title: 'Delete Profile',
+                    message: `Delete profile "${username}"?`,
+                    note: 'This will completely delete their profile and project logs from KV. This cannot be undone.',
+                    confirmText: 'Delete Profile',
+                    isDanger: true
+                });
+                if (!shouldDelete) {
+                    return;
+                }
+
+                try {
+                    const res = await fetch('/tcpscript/api/users', {
+                        method: 'DELETE',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({ username })
+                    });
+                    if (!res.ok) throw new Error('Failed to delete user');
+                    const data = await res.json();
+                    users = data.users;
+                    renderUsersList();
+                    showSyncNotice(`Profile "${username}" removed from KV successfully.`);
+                } catch (err) {
+                    openMessageModal({
+                        title: 'Delete Failed',
+                        message: `Could not delete profile "${username}".`,
+                        note: err.message,
+                        isDanger: true
+                    });
+                }
+            });
+        });
+    }
+
+    function openAddUserModal() {
+        if (addUserModal) addUserModal.style.display = 'flex';
+        if (newUsernameInput) {
+            newUsernameInput.value = '';
+            newUsernameInput.focus();
+        }
+    }
+
+    function closeAddUserModal() {
+        if (addUserModal) addUserModal.style.display = 'none';
+    }
+
+    async function handleAddUserSave() {
+        const username = newUsernameInput ? newUsernameInput.value.trim() : '';
+        if (!username) {
+            openMessageModal({
+                title: 'Missing Profile Name',
+                message: 'Please enter a profile name.'
+            });
+            return;
+        }
+
+        try {
+            const res = await fetch('/tcpscript/api/users', {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    username,
+                    action: 'create'
+                })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to create profile');
+
+            users = data.users;
+            renderUsersList();
+            closeAddUserModal();
+            showSyncNotice(`Profile "${username}" synced to KV successfully.`);
+        } catch (err) {
+            openMessageModal({
+                title: 'Create Failed',
+                message: `Could not create profile "${username}".`,
+                note: err.message,
+                isDanger: true
+            });
+        }
+    }
+
+    // ── Event Listeners ──────────────────────────────────────
+    if (btnSave) {
+        btnSave.addEventListener('click', saveSettings);
+    }
+    if (btnAddUser) {
+        btnAddUser.addEventListener('click', openAddUserModal);
+    }
+    settingTabButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            setActiveSettingTab(button.dataset.settingTab);
+        });
+    });
+    if (addUserClose) addUserClose.addEventListener('click', closeAddUserModal);
+    if (addUserCancel) addUserCancel.addEventListener('click', closeAddUserModal);
+    if (addUserSave) addUserSave.addEventListener('click', handleAddUserSave);
+    if (pinModalClose) pinModalClose.addEventListener('click', () => closePinModal(null));
+    if (pinModalCancel) pinModalCancel.addEventListener('click', () => closePinModal(null));
+    if (pinModalConfirm) pinModalConfirm.addEventListener('click', () => closePinModal(pinModalInput ? pinModalInput.value : ''));
+    if (confirmModalClose) confirmModalClose.addEventListener('click', () => closeConfirmModal(false));
+    if (confirmModalCancel) confirmModalCancel.addEventListener('click', () => closeConfirmModal(false));
+    if (confirmModalConfirm) confirmModalConfirm.addEventListener('click', () => closeConfirmModal(true));
+    if (messageModalClose) messageModalClose.addEventListener('click', closeMessageModal);
+    if (messageModalConfirm) messageModalConfirm.addEventListener('click', closeMessageModal);
+
+    // Save on Enter key in inputs
+    [settingWebAppUrl, settingTemplateId, settingFolderId].forEach(input => {
+        if (input) {
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveSettings();
+                }
+            });
+        }
+    });
+
+    if (addUserModal) {
+        addUserModal.addEventListener('click', (e) => {
+            if (e.target === addUserModal) {
+                closeAddUserModal();
+            }
+        });
+    }
+    if (pinModal) {
+        pinModal.addEventListener('click', (e) => {
+            if (e.target === pinModal) {
+                closePinModal(null);
+            }
+        });
+    }
+    if (confirmModal) {
+        confirmModal.addEventListener('click', (e) => {
+            if (e.target === confirmModal) {
+                closeConfirmModal(false);
+            }
+        });
+    }
+    if (messageModal) {
+        messageModal.addEventListener('click', (e) => {
+            if (e.target === messageModal) {
+                closeMessageModal();
+            }
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeAddUserModal();
+            closePinModal(null);
+            closeConfirmModal(false);
+            closeMessageModal();
+        }
+        if (e.key === 'Enter' && addUserModal && addUserModal.style.display === 'flex') {
+            e.preventDefault();
+            handleAddUserSave();
+        }
+        if (e.key === 'Enter' && pinModal && pinModal.style.display === 'flex') {
+            e.preventDefault();
+            closePinModal(pinModalInput ? pinModalInput.value : '');
+        }
+    });
+
+    // ── Presets Logic ────────────────────────────────────────
+    const defaultPresets = {
+        'default': {
+            id: 'default', name: 'Standard', isDefault: true,
+            actionList: ['DELETE', 'POP-UP', 'SWAP', 'LOWER 3RD', 'B-ROLL', 'MUSIC', 'ZOOM', 'PAN/CROP', 'SPEED', 'COLOR', 'TEXT', 'SFX', 'VFX', 'TRANSITION', 'THUMBNAIL'],
+            actionColors: {
+                'DELETE': { bg: '#ef4444', color: '#ffffff' },
+                'POP-UP': { bg: '#eab308', color: '#1e293b' },
+                'SWAP':   { bg: '#ea580c', color: '#ffffff' }
+            },
+            actions: ['DELETE', 'POP-UP', 'SWAP', 'LOWER 3RD', 'B-ROLL', 'MUSIC', 'ZOOM', 'PAN/CROP', 'SPEED', 'COLOR', 'TEXT', 'SFX', 'VFX', 'TRANSITION', 'THUMBNAIL'],
+            colors: {
+                'DELETE': { bg: '#ef4444', color: '#ffffff' },
+                'POP-UP': { bg: '#eab308', color: '#1e293b' },
+                'SWAP':   { bg: '#ea580c', color: '#ffffff' }
+            }
+        },
+        'podcast': {
+            id: 'podcast', name: 'Podcast (Multi-cam)', isDefault: true,
+            actionList: ['DELETE', 'HOST', 'GUEST', 'WIDE', 'LAUGH', 'SPONSOR', 'B-ROLL', 'MUSIC', 'SFX'],
+            actionColors: {
+                'DELETE':  { bg: '#ef4444', color: '#ffffff' },
+                'HOST':    { bg: '#3b82f6', color: '#ffffff' },
+                'GUEST':   { bg: '#8b5cf6', color: '#ffffff' },
+                'WIDE':    { bg: '#10b981', color: '#ffffff' },
+                'SPONSOR': { bg: '#eab308', color: '#1e293b' }
+            },
+            actions: ['DELETE', 'HOST', 'GUEST', 'WIDE', 'LAUGH', 'SPONSOR', 'B-ROLL', 'MUSIC', 'SFX'],
+            colors: {
+                'DELETE':  { bg: '#ef4444', color: '#ffffff' },
+                'HOST':    { bg: '#3b82f6', color: '#ffffff' },
+                'GUEST':   { bg: '#8b5cf6', color: '#ffffff' },
+                'WIDE':    { bg: '#10b981', color: '#ffffff' },
+                'SPONSOR': { bg: '#eab308', color: '#1e293b' }
+            }
+        },
+        'vlog': {
+            id: 'vlog', name: 'Vlog / Travel', isDefault: true,
+            actionList: ['DELETE', 'POV', 'DRONE', 'TIMELAPSE', 'FOOD', 'MUSIC', 'SFX', 'B-ROLL', 'THUMBNAIL'],
+            actionColors: {
+                'DELETE':    { bg: '#ef4444', color: '#ffffff' },
+                'DRONE':     { bg: '#0ea5e9', color: '#ffffff' },
+                'TIMELAPSE': { bg: '#f59e0b', color: '#ffffff' },
+                'FOOD':      { bg: '#f43f5e', color: '#ffffff' }
+            },
+            actions: ['DELETE', 'POV', 'DRONE', 'TIMELAPSE', 'FOOD', 'MUSIC', 'SFX', 'B-ROLL', 'THUMBNAIL'],
+            colors: {
+                'DELETE':    { bg: '#ef4444', color: '#ffffff' },
+                'DRONE':     { bg: '#0ea5e9', color: '#ffffff' },
+                'TIMELAPSE': { bg: '#f59e0b', color: '#ffffff' },
+                'FOOD':      { bg: '#f43f5e', color: '#ffffff' }
+            }
+        }
+    };
+
+    let actionPresets = JSON.parse(localStorage.getItem('autoscript_action_presets')) || defaultPresets;
+    let currentEditingPresetId = null;
+
+    const selectPresetEdit = document.getElementById('selectPresetEdit');
+    const presetEditorContainer = document.getElementById('presetEditorContainer');
+    const presetEditName = document.getElementById('presetEditName');
+    const presetActionsList = document.getElementById('presetActionsList');
+    const btnAddActionToPreset = document.getElementById('btnAddActionToPreset');
+    const btnSavePreset = document.getElementById('btnSavePreset');
+    const btnAddPreset = document.getElementById('btnAddPreset');
+
+    function loadPresetsDropdown() {
+        if (!selectPresetEdit) return;
+        selectPresetEdit.innerHTML = '<option value="">-- Select a Preset to Edit --</option>';
+        for (const [id, preset] of Object.entries(actionPresets)) {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = preset.name + (preset.isDefault ? ' (Default - Read Only actions)' : '');
+            selectPresetEdit.appendChild(option);
+        }
+    }
+
+    function renderPresetEditor(presetId) {
+        if (!presetId || !actionPresets[presetId]) {
+            presetEditorContainer.style.display = 'none';
+            return;
+        }
+        currentEditingPresetId = presetId;
+        const preset = actionPresets[presetId];
+        presetEditorContainer.style.display = 'block';
+        presetEditName.value = preset.name;
+        presetEditName.disabled = !!preset.isDefault; // Disable renaming default presets
+        
+        presetActionsList.innerHTML = '';
+        preset.actionList = [...(preset.actionList || preset.actions)];
+        preset.actionList.forEach(actionName => {
+            const colors = (preset.actionColors && preset.actionColors[actionName]) || (preset.colors && preset.colors[actionName]) || { bg: '#1e293b', color: '#e2e8f0' };
+            addActionRow(actionName, colors.bg, colors.color, !!preset.isDefault);
+        });
+    }
+
+    function addActionRow(actionName = '', bg = '#1e293b', color = '#e2e8f0', isReadOnly = false) {
+        const row = document.createElement('div');
+        row.style.cssText = 'display: flex; gap: 8px; align-items: center; background: var(--bg-input); padding: 8px; border-radius: 4px;';
+        
+        const inputName = document.createElement('input');
+        inputName.type = 'text';
+        inputName.value = actionName;
+        inputName.placeholder = 'Action Name';
+        inputName.style.cssText = 'flex: 1; min-width: 0;';
+        if (isReadOnly) inputName.disabled = true;
+
+        const inputBg = document.createElement('input');
+        inputBg.type = 'color';
+        inputBg.value = bg;
+        inputBg.title = 'Background Color';
+        inputBg.style.cssText = 'width: 30px; height: 30px; padding: 0; border: none; cursor: pointer;';
+        if (isReadOnly) inputBg.disabled = true;
+
+        const inputColor = document.createElement('input');
+        inputColor.type = 'color';
+        inputColor.value = color;
+        inputColor.title = 'Text Color';
+        inputColor.style.cssText = 'width: 30px; height: 30px; padding: 0; border: none; cursor: pointer;';
+        if (isReadOnly) inputColor.disabled = true;
+
+        const btnRemove = document.createElement('button');
+        btnRemove.type = 'button';
+        btnRemove.innerHTML = '✖';
+        btnRemove.style.cssText = 'background: transparent; color: var(--text-muted); border: none; cursor: pointer; padding: 4px;';
+        if (isReadOnly) btnRemove.disabled = true;
+        btnRemove.onclick = () => { if (!isReadOnly) row.remove(); };
+
+        row.appendChild(inputName);
+        row.appendChild(inputBg);
+        row.appendChild(inputColor);
+        row.appendChild(btnRemove);
+        presetActionsList.appendChild(row);
+    }
+
+    if (selectPresetEdit) {
+        selectPresetEdit.addEventListener('change', (e) => {
+            renderPresetEditor(e.target.value);
+        });
+    }
+
+    if (btnAddActionToPreset) {
+        btnAddActionToPreset.addEventListener('click', () => {
+            if (currentEditingPresetId && actionPresets[currentEditingPresetId].isDefault) {
+                openMessageModal({title: 'Read Only', message: 'You cannot add actions to a default preset. Please create a custom one.'});
+                return;
+            }
+            addActionRow('NEW_ACTION', '#3b82f6', '#ffffff', false);
+        });
+    }
+
+    if (btnAddPreset) {
+        btnAddPreset.addEventListener('click', () => {
+            const newId = 'custom_' + Date.now();
+            actionPresets[newId] = {
+                id: newId,
+                name: 'My Custom Preset',
+                isDefault: false,
+                actions: ['ACTION1', 'ACTION2'],
+                colors: {
+                    'ACTION1': { bg: '#3b82f6', color: '#ffffff' },
+                    'ACTION2': { bg: '#eab308', color: '#1e293b' }
+                }
+            };
+            loadPresetsDropdown();
+            selectPresetEdit.value = newId;
+            renderPresetEditor(newId);
+        });
+    }
+
+    if (btnSavePreset) {
+        btnSavePreset.addEventListener('click', () => {
+            if (!currentEditingPresetId) return;
+            const preset = actionPresets[currentEditingPresetId];
+            
+            if (!preset.isDefault) {
+                preset.name = presetEditName.value.trim() || 'Unnamed Preset';
+                const newActions = [];
+                const newColors = {};
+                
+                Array.from(presetActionsList.children).forEach(row => {
+                    const inputs = row.querySelectorAll('input');
+                    const aName = inputs[0].value.trim().toUpperCase();
+                    const aBg = inputs[1].value;
+                    const aColor = inputs[2].value;
+                    
+                    if (aName) {
+                        newActions.push(aName);
+                        newColors[aName] = { bg: aBg, color: aColor };
+                    }
+                });
+                
+                preset.actions = [...new Set(newActions)]; // unique
+                preset.colors = newColors;
+                preset.actionList = preset.actions;
+                preset.actionColors = preset.colors;
+            }
+            
+            localStorage.setItem('autoscript_action_presets', JSON.stringify(actionPresets));
+            showSyncNotice('Presets saved locally! Reload the app to see changes.');
+            openMessageModal({
+                title: 'Presets Saved',
+                message: 'Your presets have been saved to local storage.',
+                note: 'Please refresh the App workspace to see the updated action buttons.'
+            });
+            loadPresetsDropdown();
+            selectPresetEdit.value = currentEditingPresetId;
+        });
+    }
+
+    // ── Initialize ───────────────────────────────────────────
+    setActiveSettingTab(localStorage.getItem(SETTING_TAB_STORAGE_KEY) || 'application');
+    loadSettings();
+    loadUsersList();
+    loadPresetsDropdown();
+
+})();
+</script>
+</body>
+</html>

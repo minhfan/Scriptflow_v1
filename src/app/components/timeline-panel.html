@@ -1,0 +1,45 @@
+            <div class="timeline-section" id="timelineSection" style="position: relative;">
+                <div class="timeline-zoom-controls" style="position: absolute; top: 12px; right: 12px; z-index: 10;">
+                    <div style="position: relative; display: inline-block;">
+                        <div class="control-group" style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <span class="control-label" style="margin: 0; font-size: 8.33px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Zoom (Z)</span>
+                            <div id="btnZoomDrag" class="speed-control" style="cursor: ew-resize; user-select: none; width: 64px; text-align: center; margin: 0; padding: 4px 12px; height: auto;" title="Drag L/R or Click">
+                                <span id="zoomText">1.00x</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-full-container">
+                    <div id="tcJumpOverlay" class="tc-jump-overlay">
+                        <input type="text" id="tcJumpInput" class="tc-jump-input" placeholder="00:00:00:00" />
+                        <div class="tc-jump-actions">
+                            <button id="tcJumpGo" class="btn-fs" style="padding: 2px 8px;">GO</button>
+                            <button id="tcJumpClose" class="btn-delete" style="padding: 2px 8px;">X</button>
+                        </div>
+                    </div>
+                    <span class="tc-bound" id="tcStart" title="Jump to Start" style="margin-right: 10px;">00:00:00:00</span>
+                    <div class="custom-timeline-wrapper" style="overflow-x: auto;">
+                        <div class="custom-timeline" id="customTimeline" style="width: 100%; min-width: 100%;">
+                            <div id="draftMarker" class="timeline-marker" style="display: none; z-index: 15;"></div>
+                            <div id="timelineTicks" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none;"></div>
+                            <div class="timeline-progress" id="timelineProgress"></div>
+                            <div class="timeline-active-range" id="activeRange"></div>
+                            <div id="activeSwapIndicator" style="display: none; position: absolute; top: -14px; transform: translateX(-50%); width: 14px; height: 14px; z-index: 25; pointer-events: auto; cursor: pointer;" onmousedown="if(activeSwapSec !== null) { document.getElementById('videoPlayer').currentTime = activeSwapSec; } event.stopPropagation();">
+                                <div style="position: absolute; top: -5px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #ea580c;"></div>
+                            </div>
+                            <div id="activeInIndicator" style="display: none; position: absolute; top: -14px; transform: translateX(-50%); width: 14px; height: 14px; z-index: 25; pointer-events: auto; cursor: pointer;" onmousedown="if(activeInSec !== null) { document.getElementById('videoPlayer').currentTime = activeInSec; } event.stopPropagation();">
+                                <div style="position: absolute; top: -5px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #3b82f6;"></div>
+                            </div>
+                            <div id="activeOutIndicator" style="display: none; position: absolute; top: -14px; transform: translateX(-50%); width: 14px; height: 14px; z-index: 25; pointer-events: auto; cursor: pointer;" onmousedown="if(activeOutSec !== null) { document.getElementById('videoPlayer').currentTime = activeOutSec; } event.stopPropagation();">
+                                <div style="position: absolute; top: -5px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #ef4444;"></div>
+                            </div>
+                            <div id="playheadIndicator" style="position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--text-main); z-index: 20; pointer-events: none; left: 0%;">
+                                <div style="position: absolute; top: -6px; left: -4px; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--text-main);"></div>
+                            </div>
+                            <div class="hover-tooltip" id="hoverTooltip"></div>
+                        </div>
+                    </div>
+                    <span class="tc-bound" id="tcEnd" title="Jump to End" style="margin-left: 10px;">00:00:00:00</span>
+                </div>
+            </div>

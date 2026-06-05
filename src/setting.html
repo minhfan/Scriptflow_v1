@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptFlow TCP — Settings</title>
+    <meta name="description" content="Configure Autoscript TCP Pro application settings.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="setting.css">
+</head>
+<body>
+    <div class="setting-container">
+        <a href="/tcpscript/project" class="back-link" id="backLink">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Back to Projects</span>
+        </a>
+
+        <div class="setting-card" id="settingCard">
+            <div class="setting-header">
+                <div class="setting-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </div>
+                <div>
+                    <h1>Settings</h1>
+                    <p>Manage each settings group in its own tab.</p>
+                </div>
+            </div>
+
+            <div class="sync-notice" id="syncNotice" style="display: none;"></div>
+
+            <!-- Loading state -->
+            <div class="setting-loading" id="settingLoading">
+                <div class="spinner"></div>
+                <span>Loading settings...</span>
+            </div>
+
+            <!-- Settings form -->
+            <div class="setting-form" id="settingForm" style="display: none;">
+                <div class="setting-tabs" id="settingTabs" role="tablist" aria-label="Setting sections">
+                    <button type="button" class="setting-tab active" id="settingTabApplication" data-setting-tab="application" role="tab" aria-selected="true" aria-controls="settingPanelApplication">
+                        Application
+                    </button>
+                    <button type="button" class="setting-tab" id="settingTabUser" data-setting-tab="user" role="tab" aria-selected="false" aria-controls="settingPanelUser" tabindex="-1">
+                        User
+                    </button>
+                    <button type="button" class="setting-tab" id="settingTabPresets" data-setting-tab="presets" role="tab" aria-selected="false" aria-controls="settingPanelPresets" tabindex="-1">
+                        Presets
+                    </button>
+                </div>
+
+                <section class="setting-section setting-panel" id="settingPanelApplication" data-setting-panel="application" role="tabpanel" aria-labelledby="settingTabApplication">
+                    <div class="section-header">
+                        <div>
+                            <h2>Cloud Settings</h2>
+                            <p>Manage Google API details used to clone and sync projects.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="settingWebAppUrl">
+                            Google Sheets Web App URL
+                            <span class="label-badge required">Required</span>
+                        </label>
+                        <input type="text" id="settingWebAppUrl" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off" spellcheck="false">
+                        <p class="form-hint">Google Apps Script Web App URL. Required for server-side cloning and syncing sheets under the owner's Google account.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="settingTemplateId">
+                            Google Sheets Template ID / URL
+                            <span class="label-badge required">Required</span>
+                        </label>
+                        <input type="text" id="settingTemplateId" placeholder="Paste template sheet URL or Spreadsheet ID..." autocomplete="off" spellcheck="false">
+                        <p class="form-hint">Google Sheets Spreadsheet ID or the full spreadsheet URL used as a template when creating new projects. The code will automatically extract the ID from the URL.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="settingFolderId">
+                            Google Drive Target Folder ID / URL
+                            <span class="label-badge optional">Optional</span>
+                        </label>
+                        <input type="text" id="settingFolderId" placeholder="Paste Google Drive folder URL or Folder ID..." autocomplete="off" spellcheck="false">
+                        <p class="form-hint">The Google Drive folder ID or the full folder link where newly cloned sheets will be automatically moved. The code will automatically extract the ID from the URL. Leave blank to save to root Drive.</p>
+                    </div>
+
+                    <div class="form-actions">
+                        <div class="form-status" id="formStatus" style="display: none;"></div>
+                        <button type="button" class="btn-save" id="btnSave">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>Save to Cloud</span>
+                        </button>
+                    </div>
+
+                    <div class="setting-note">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        <span>Settings are stored securely on Cloudflare KV and shared across all sessions.</span>
+                    </div>
+                </section>
+
+                <section class="setting-section setting-panel admin-section" id="settingPanelUser" data-setting-panel="user" role="tabpanel" aria-labelledby="settingTabUser" hidden>
+                    <div class="section-header">
+                        <div>
+                            <h2>User Profiles</h2>
+                            <p>Manage editor profiles, PIN locks, and access permissions.</p>
+                        </div>
+                        <button type="button" class="btn-add-user" id="btnAddUser">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <span>Add Profile</span>
+                        </button>
+                    </div>
+
+                    <div class="users-list-table-container">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Profile Name</th>
+                                    <th>PIN Lock Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersListBody">
+                                <tr>
+                                    <td colspan="3" class="users-table-placeholder">Loading profiles...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <section class="setting-section setting-panel" id="settingPanelPresets" data-setting-panel="presets" role="tabpanel" aria-labelledby="settingTabPresets" hidden>
+                    <div class="section-header">
+                        <div>
+                            <h2>Action Presets</h2>
+                            <p>Create and customize your timeline action buttons.</p>
+                        </div>
+                        <button type="button" class="btn-add-user" id="btnAddPreset" style="background:var(--accent);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <span>New Preset</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="selectPresetEdit">Select Preset to Edit</label>
+                        <select id="selectPresetEdit" style="background: var(--bg-input); border: 1px solid var(--border-bright); border-radius: var(--r-sm); color: var(--text-main); font-size: 14px; padding: 10px; outline: none; font-family: 'Outfit', sans-serif; cursor: pointer; width: 100%;"></select>
+                    </div>
+
+                    <div id="presetEditorContainer" style="display: none; background: rgba(0,0,0,0.2); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+                        <div class="form-group">
+                            <label>Preset Name</label>
+                            <input type="text" id="presetEditName" placeholder="Preset Name">
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; margin-bottom: 10px;">
+                            <label style="margin: 0;">Actions</label>
+                            <button type="button" id="btnAddActionToPreset" style="background: transparent; border: 1px solid var(--border-bright); color: var(--text-main); padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;">+ Add Action</button>
+                        </div>
+                        
+                        <div id="presetActionsList" style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; padding-right: 4px;">
+                            <!-- Dynamic action rows -->
+                        </div>
+
+                        <div class="form-actions" style="margin-top: 20px;">
+                            <div class="form-status" id="presetFormStatus" style="display: none;"></div>
+                            <button type="button" class="btn-save" id="btnSavePreset">
+                                <span>Save Presets</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addUserModal" style="display: none;">
+        <div class="modal-card modal-card-sm">
+            <div class="modal-header">
+                <h2>Add Profile</h2>
+                <button type="button" class="modal-close" id="addUserClose">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-input-group">
+                    <label for="newUsername">Profile Name</label>
+                    <input type="text" id="newUsername" placeholder="e.g. Huy, Linh..." autocomplete="off">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" id="addUserCancel">Cancel</button>
+                <button type="button" class="btn-modal-create" id="addUserSave">Create Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="pinModal" style="display: none;">
+        <div class="modal-card modal-card-sm">
+            <div class="modal-header">
+                <h2 id="pinModalTitle">Change PIN</h2>
+                <button type="button" class="modal-close" id="pinModalClose">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-input-group">
+                    <label for="pinModalInput" id="pinModalLabel">New 4-digit PIN</label>
+                    <input type="password" id="pinModalInput" inputmode="numeric" maxlength="4" placeholder="1234" autocomplete="off">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" id="pinModalCancel">Cancel</button>
+                <button type="button" class="btn-modal-create" id="pinModalConfirm">Save PIN</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirmModal" style="display: none;">
+        <div class="modal-card modal-card-sm">
+            <div class="modal-header">
+                <h2 id="confirmModalTitle">Confirm Action</h2>
+                <button type="button" class="modal-close" id="confirmModalClose">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="confirm-modal-text" id="confirmModalText"></p>
+                <p class="confirm-modal-note" id="confirmModalNote" style="display: none;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" id="confirmModalCancel">Cancel</button>
+                <button type="button" class="btn-modal-create btn-modal-danger" id="confirmModalConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="messageModal" style="display: none;">
+        <div class="modal-card modal-card-sm">
+            <div class="modal-header">
+                <h2 id="messageModalTitle">Notice</h2>
+                <button type="button" class="modal-close" id="messageModalClose">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="confirm-modal-text" id="messageModalText"></p>
+                <p class="confirm-modal-note" id="messageModalNote" style="display: none;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-create" id="messageModalConfirm">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="setting.js"></script>
+</body>
+</html>

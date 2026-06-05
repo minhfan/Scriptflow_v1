@@ -1,0 +1,26 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "autoscript",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-06-02",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "html_handling": "none",
+    "run_worker_first": [
+      "/tcpscript",
+      "/tcpscript/index.html",
+      "/tcpscript/login*",
+      "/tcpscript/app*",
+      "/tcpscript/project*",
+      "/tcpscript/setting*",
+      "/tcpscript/api*"
+    ]
+  },
+  "kv_namespaces": [
+    {
+      "binding": "SETTINGS_KV",
+      "id": "dd5dc60c58a74a4f88684641ca495836"
+    }
+  ]
+}
